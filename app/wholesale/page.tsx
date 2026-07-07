@@ -124,7 +124,7 @@ export default function WholesalePage() {
             className="text-white font-bold text-2xl md:text-3xl mb-4 text-center"
             style={{ fontFamily: "'Manrope', sans-serif" }}
           >
-            Let's Talk Business
+            Let&apos;s Talk Business
           </h2>
           <p
             className="text-[#C7BFB3] text-center mb-8 max-w-xl mx-auto"

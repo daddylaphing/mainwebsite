@@ -8,7 +8,7 @@ const AUTH_ROUTES = ["/login", "/signup", "/forgot-password", "/reset-password"]
 // Admin-only routes
 const ADMIN_ROUTES = ["/admin"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request,
   });
