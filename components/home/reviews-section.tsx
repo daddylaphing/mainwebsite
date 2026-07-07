@@ -38,7 +38,7 @@ export function ReviewsSection() {
           className="mb-10 text-center"
         >
           <h2 className="font-display text-3xl md:text-4xl text-white">What People Say</h2>
-          <p className="text-white/40 mt-2 font-mono text-sm">★ 4.9 / 5 from 200+ reviews</p>
+          <p className="text-white/40 mt-2 font-mono text-sm">4.9 / 5 from 200+ reviews</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

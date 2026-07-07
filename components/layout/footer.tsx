@@ -147,7 +147,7 @@ export function Footer() {
           className="text-[11px] text-white/15"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
-          Made with ❤️ for laphing lovers
+          Made with care for laphing lovers
         </p>
       </div>
     </footer>

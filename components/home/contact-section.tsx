@@ -180,7 +180,7 @@ export function ContactSection() {
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             {sent ? (
-              <>✓ Message Sent!</>
+              <>Message Sent!</>
             ) : (
               <>
                 <Send className="h-4 w-4" />

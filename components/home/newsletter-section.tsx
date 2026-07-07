@@ -14,7 +14,7 @@ export function NewsletterSection() {
     e.preventDefault();
     setLoading(true);
     await new Promise((r) => setTimeout(r, 800));
-    toast.success("You're subscribed! 🎉");
+    toast.success("You&apos;re subscribed!");
     setEmail("");
     setLoading(false);
   }

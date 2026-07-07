@@ -11,6 +11,20 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           "/account",
           "/account/settings",
+          "/checkout",
+          "/api/",
+          "/auth/",
+          "/admin/",
+          "/forgot-password",
+          "/auth/reset-password",
+        ],
+      },
+      {
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: [
+          "/account",
+          "/checkout",
           "/api/",
           "/auth/",
           "/admin/",

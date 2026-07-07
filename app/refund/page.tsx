@@ -105,19 +105,19 @@ export default function RefundPage() {
             </p>
             <div className="mt-4 space-y-2">
               <p className="text-[#C7BFB3] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                📞 General Orders:{" "}
+                General Orders:{" "}
                 <a href="tel:9873052538" className="text-[#E7B52C] hover:text-[#F4C542] hover:underline font-semibold">
                   9873052538
                 </a>
               </p>
               <p className="text-[#C7BFB3] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                💬 WhatsApp:{" "}
+                WhatsApp:{" "}
                 <a href="https://wa.me/919354775439" className="text-[#E7B52C] hover:text-[#F4C542] hover:underline font-semibold">
                   9354775439
                 </a>
               </p>
               <p className="text-[#C7BFB3] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                📦 Bulk Orders:{" "}
+                Bulk Orders:{" "}
                 <a href="tel:9211969977" className="text-[#E7B52C] hover:text-[#F4C542] hover:underline font-semibold">
                   9211969977
                 </a>

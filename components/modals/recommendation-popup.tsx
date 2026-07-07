@@ -70,15 +70,15 @@ export function RecommendationPopup({
             </p>
             <ul className="space-y-2 text-sm text-[#C7BFB3]/80">
               <li className="flex items-start gap-2">
-                <span className="text-[#E7B52C] mt-0.5">✓</span>
+                <span className="text-[#E7B52C] mt-0.5 font-bold">✔</span>
                 <span>1 Fresh Laphing Sheet</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#E7B52C] mt-0.5">✓</span>
+                <span className="text-[#E7B52C] mt-0.5 font-bold">✔</span>
                 <span>All essential sauces and seasonings</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#E7B52C] mt-0.5">✓</span>
+                <span className="text-[#E7B52C] mt-0.5 font-bold">✔</span>
                 <span>Preparation guide</span>
               </li>
             </ul>

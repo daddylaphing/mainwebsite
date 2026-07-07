@@ -176,18 +176,18 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs" style={{ fontFamily: "'Inter', sans-serif" }}>
                   <div className="space-y-1.5">
                     <p className="text-white/70">
-                      📍 <span className="font-semibold text-white">Delivery Areas:</span> Delhi, Noida, Gurugram, Ghaziabad only
+                      <span className="font-semibold text-white">Delivery Areas:</span> Delhi, Noida, Gurugram, Ghaziabad only
                     </p>
                     <p className="text-white/70">
-                      🕒 <span className="font-semibold text-white">Booking Window:</span> Between 3 PM to 6 PM only
+                      <span className="font-semibold text-white">Booking Window:</span> Between 3 PM to 6 PM only
                     </p>
                   </div>
                   <div className="space-y-1.5">
                     <p className="text-white/70">
-                      🛵 <span className="font-semibold text-white">Delivery Method:</span> Arrange your own ride via <span className="text-white font-medium">Uber, Rapido, or Porter</span>.
+                      <span className="font-semibold text-white">Delivery Method:</span> Arrange your own ride via <span className="text-white font-medium">Uber, Rapido, or Porter</span>.
                     </p>
                     <p className="text-white/70">
-                      ⭐ <span className="font-semibold text-white">Preference:</span> Uncle Delivery is highly recommended
+                      <span className="font-semibold text-white">Preference:</span> Uncle Delivery is highly recommended
                     </p>
                   </div>
                 </div>

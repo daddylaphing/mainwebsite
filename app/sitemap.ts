@@ -12,13 +12,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/#products`,
+      url: `${baseUrl}/products/laphing-kit`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/how-it-works`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/wholesale`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/about`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/contact`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.7,
@@ -58,6 +76,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/cookie-policy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.2,
     },
   ];
 }

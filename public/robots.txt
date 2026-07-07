@@ -1,0 +1,25 @@
+# Robots.txt for Laphing Daddy
+# This file is generated dynamically by Next.js
+# See app/robots.ts for the configuration
+
+User-agent: *
+Allow: /
+Disallow: /account
+Disallow: /account/settings
+Disallow: /checkout
+Disallow: /api/
+Disallow: /auth/
+Disallow: /admin/
+Disallow: /forgot-password
+Disallow: /auth/reset-password
+
+User-agent: Googlebot
+Allow: /
+Disallow: /account
+Disallow: /checkout
+Disallow: /api/
+Disallow: /auth/
+Disallow: /admin/
+
+Sitemap: https://laphing.in/sitemap.xml
+Host: https://laphing.in
