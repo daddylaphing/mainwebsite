@@ -26,7 +26,7 @@ const INGREDIENTS = [
   {
     name: "Laphing Sheet",
     desc: "Made fresh from mung bean starch. Silky, chewy, and handset every morning.",
-    imageUrl: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png",
+    imageUrl: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshsheet.png",
     delay: 0.2,
     rotateRange: [0, 4, -8, 0],
     yRange: [0, -22, 10, 0],

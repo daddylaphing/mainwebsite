@@ -52,7 +52,7 @@ Perfect for 1-2 servings. Best consumed fresh. Minimum order: 3 kits.',
   true,
   ARRAY[
     'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/laphingkit.png',
-    'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png',
+    'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshsheet.png',
     'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/signaturechillioil.png'
   ],
   ARRAY[
@@ -151,8 +151,8 @@ Our premium laphing sheets are handmade fresh daily using traditional Tibetan me
   true,
   true,
   ARRAY[
-    'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/laphingsheet.png',
-    'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png'
+    'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/sheet.png',
+    'https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshsheet.png'
   ],
   ARRAY[
     'Wheat Flour',
@@ -503,7 +503,7 @@ INSERT INTO public.products (
   'addon',
   false,
   true,
-  ARRAY['https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png'],
+  ARRAY['https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshsheet.png'],
   ARRAY['Wheat Flour', 'Water', 'Salt'],
   NULL,
   false,

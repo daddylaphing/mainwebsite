@@ -20,7 +20,7 @@ const ADDONS = [
     name: "Extra Laphing Sheet",
     price: 20,
     icon: Layers,
-    image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png",
+    image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshsheet.png",
   },
   {
     id: "chili",
