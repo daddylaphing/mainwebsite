@@ -88,16 +88,30 @@ export default async function HomePage() {
         </ErrorBoundary>
 
         {/* CurvedLoop — dark maroon band after Story */}
-        <CurvedLoopDivider
-          text="Crafted with Love ✦ Ancient Tibetan Recipe ✦ Made Fresh Every Day ✦ Delivered to Your Door ✦ "
-          bg="#FFFFFF"
-          fill="#6E1D25"
-          speed={1.6}
-          curveAmount={160}
-          direction="left"
-          height={180}
-          fontSize="2.2rem"
-        />
+        <div className="hidden md:block">
+          <CurvedLoopDivider
+            text="Crafted with Love ✦ Ancient Tibetan Recipe ✦ Made Fresh Every Day ✦ Delivered to Your Door ✦ "
+            bg="#FFFFFF"
+            fill="#6E1D25"
+            speed={1.6}
+            curveAmount={160}
+            direction="left"
+            height={180}
+            fontSize="2.2rem"
+          />
+        </div>
+        <div className="block md:hidden">
+          <CurvedLoopDivider
+            text="Crafted with Love ✦ Ancient Tibetan Recipe ✦ Made Fresh Every Day ✦ Delivered to Your Door ✦ "
+            bg="#FFFFFF"
+            fill="#6E1D25"
+            speed={1.2}
+            curveAmount={280}
+            direction="left"
+            height={220}
+            fontSize="1.8rem"
+          />
+        </div>
 
         {/* Products — 02 */}
         <ErrorBoundary>

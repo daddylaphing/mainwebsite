@@ -108,6 +108,7 @@ export function IngredientsSection() {
                   src={ing.imageUrl}
                   alt={ing.name}
                   fill
+                  unoptimized
                   className="object-contain p-4 drop-shadow-[0_12px_24px_rgba(26,26,26,0.08)]"
                   sizes="(max-width: 768px) 128px, 176px"
                 />

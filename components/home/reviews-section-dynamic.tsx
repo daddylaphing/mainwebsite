@@ -313,11 +313,11 @@ export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynam
 
         {/* ── Infinite Marquee ── */}
         <div className="relative w-full overflow-hidden">
-          {/* Left fade */}
-          <div className="absolute left-0 top-0 bottom-0 w-28 md:w-52 z-20 pointer-events-none"
+          {/* Left fade - hidden on mobile */}
+          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-28 md:w-52 z-20 pointer-events-none"
             style={{ background: "linear-gradient(to right, #F7F3EC 0%, rgba(247,243,236,0.85) 50%, transparent 100%)" }} />
-          {/* Right fade */}
-          <div className="absolute right-0 top-0 bottom-0 w-28 md:w-52 z-20 pointer-events-none"
+          {/* Right fade - hidden on mobile */}
+          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-28 md:w-52 z-20 pointer-events-none"
             style={{ background: "linear-gradient(to left, #F7F3EC 0%, rgba(247,243,236,0.85) 50%, transparent 100%)" }} />
 
           <div
