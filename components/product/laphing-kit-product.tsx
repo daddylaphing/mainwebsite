@@ -13,6 +13,7 @@ import { Button } from "../ui/button";
 import { Check, Package, Sparkles, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { getProxiedImageUrl } from "@/lib/image-proxy";
 import { MaskReveal, WordReveal } from "@/components/ui/text-reveal";
 
 interface LaphingKitProductProps {
@@ -118,9 +119,9 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
         {/* Product Image */}
         <div className="overflow-hidden bg-[#F0EBE0] border border-[rgba(26,26,26,0.08)]">
           <div className="aspect-square relative">
-            {config?.product_images.laphing_kit ? (
+            {product?.images?.[0] || config?.product_images.laphing_kit ? (
               <Image
-                src={config.product_images.laphing_kit}
+                src={getProxiedImageUrl(product?.images?.[0] || config?.product_images.laphing_kit)}
                 alt="Laphing Kit"
                 fill
                 className="object-cover"
