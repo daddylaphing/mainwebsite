@@ -13,18 +13,27 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 export function getProxiedImageUrl(url: string | null | undefined): string {
   if (!url) return "";
 
+  // Map old assets to new assets if they occur in the URL
+  let resolvedUrl = url;
+  if (resolvedUrl.includes("freshlaphingsheet.png")) {
+    resolvedUrl = resolvedUrl.replace("freshlaphingsheet.png", "freshsheet.png");
+  }
+  if (resolvedUrl.includes("laphingsheet.png")) {
+    resolvedUrl = resolvedUrl.replace("laphingsheet.png", "sheet.png");
+  }
+
   // If it's already a proxied URL, return as-is
-  if (url.startsWith("/api/image-proxy")) {
-    return url;
+  if (resolvedUrl.startsWith("/api/image-proxy")) {
+    return resolvedUrl;
   }
 
   // If it's a Supabase storage URL, proxy it
-  if (url.includes("supabase.co/storage/")) {
-    return `/api/image-proxy?url=${encodeURIComponent(url)}`;
+  if (resolvedUrl.includes("supabase.co/storage/")) {
+    return `/api/image-proxy?url=${encodeURIComponent(resolvedUrl)}`;
   }
 
   // For other URLs (like Googleusercontent), return as-is
-  return url;
+  return resolvedUrl;
 }
 
 /**

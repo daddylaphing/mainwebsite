@@ -13,7 +13,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Decode the URL if it's encoded
-    const decodedUrl = decodeURIComponent(imageUrl);
+    let decodedUrl = decodeURIComponent(imageUrl);
+
+    // Map old assets to new assets if they occur in the URL
+    if (decodedUrl.includes("freshlaphingsheet.png")) {
+      decodedUrl = decodedUrl.replace("freshlaphingsheet.png", "freshsheet.png");
+    }
+    if (decodedUrl.includes("laphingsheet.png")) {
+      decodedUrl = decodedUrl.replace("laphingsheet.png", "sheet.png");
+    }
 
     // Only allow Supabase storage URLs for security
     if (!decodedUrl.includes("supabase.co/storage/")) {
