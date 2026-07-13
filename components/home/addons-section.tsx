@@ -52,30 +52,30 @@ export function AddonsSection() {
   };
 
   return (
-    <section className="pt-20 pb-20 border-t border-white/5">
+    <section className="pt-20 pb-20 border-t border-[#E6DFD5]">
       <motion.h2
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="font-bold text-[32px] text-white mb-6 leading-[1.3]"
-        style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.01em" }}
+        className="font-bold text-[28px] text-[#1A1A1A] mb-4 leading-[1.3]"
+        style={{ fontFamily: "'Playfair Display', serif" }}
       >
-        ADD EXTRA (A LA CARTE)
+        Add Extra (A La Carte)
       </motion.h2>
 
       <motion.p
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="text-[#C7BFB3] mb-12 text-[16px] leading-[1.5]"
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+        className="text-[#7A7570] mb-8 text-[14px] leading-[1.5]"
         style={{ fontFamily: "'Inter', sans-serif" }}
       >
         Customize your experience with additional portions.
       </motion.p>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {ADDONS.map((addon, index) => (
           <motion.div
             key={addon.id}
@@ -83,37 +83,37 @@ export function AddonsSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: index * 0.1 }}
-            className="flex items-center justify-between p-4 bg-[#141414] border border-white/[0.08] rounded-xl hover:bg-white/5 transition-colors"
+            className="flex items-center justify-between p-4 bg-white border border-[#E6DFD5] rounded-xl hover:bg-[#F7F3EC]/30 transition-all shadow-sm"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded bg-[#111111] flex items-center justify-center border border-white/[0.08] overflow-hidden">
+              <div className="w-12 h-12 rounded-lg bg-[#F7F3EC] flex items-center justify-center border border-[#E6DFD5]/40 overflow-hidden shrink-0">
                 {addon.image ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={addon.image} alt={addon.name} className="w-full h-full object-cover rounded opacity-80" />
+                  <img src={addon.image} alt={addon.name} className="w-full h-full object-cover rounded" />
                 ) : addon.icon ? (
-                  <addon.icon className="text-white/50" size={24} />
+                  <addon.icon className="text-[#7A7570]" size={20} />
                 ) : null}
               </div>
               <div>
                 <h4
-                  className="font-bold text-white text-sm"
+                  className="font-bold text-[#1A1A1A] text-sm"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {addon.name}
                 </h4>
-                <p className="text-xs text-[#E7B52C] font-semibold">₹{addon.price}</p>
+                <p className="text-xs text-[#6E1D25] font-semibold">₹{addon.price}</p>
               </div>
             </div>
 
-            <div className="flex items-center bg-[#111111] border border-white/[0.08] rounded-lg overflow-hidden h-8">
+            <div className="flex items-center bg-[#F7F3EC] border border-[#E6DFD5] rounded-lg overflow-hidden h-8">
               <button
                 onClick={() => updateQuantity(addon.id, -1)}
-                className="px-2 text-white/50 hover:text-white hover:bg-white/5 transition-colors text-sm"
+                className="px-3 text-[#7A7570] hover:text-[#1A1A1A] hover:bg-[#E6DFD5]/40 transition-colors text-sm font-semibold"
               >
                 -
               </button>
               <input
-                className="w-8 bg-transparent border-none text-center text-white text-xs focus:ring-0 p-0"
+                className="w-8 bg-transparent border-none text-center text-[#1A1A1A] text-xs font-semibold focus:ring-0 p-0"
                 type="number"
                 min="0"
                 value={quantities[addon.id]}
@@ -121,7 +121,7 @@ export function AddonsSection() {
               />
               <button
                 onClick={() => updateQuantity(addon.id, 1)}
-                className="px-2 text-white/50 hover:text-white hover:bg-white/5 transition-colors text-sm"
+                className="px-3 text-[#7A7570] hover:text-[#1A1A1A] hover:bg-[#E6DFD5]/40 transition-colors text-sm font-semibold"
               >
                 +
               </button>

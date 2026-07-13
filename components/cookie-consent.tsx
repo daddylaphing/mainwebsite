@@ -106,175 +106,174 @@ export function CookieConsent() {
     setVisible(false);
   }
 
-  if (!visible) return null;
-
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: 80 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 80 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-2xl z-[100] bg-[#141414] border border-white/[0.08] rounded-2xl shadow-[0_-10px_60px_rgba(0,0,0,0.7)] overflow-hidden"
-        role="dialog"
-        aria-label="Cookie consent"
-        aria-modal="true"
-      >
-        {/* Header */}
-        <div className="flex items-start gap-4 p-5 border-b border-white/5">
-          <div className="w-10 h-10 rounded-xl bg-[#E7B52C]/10 flex items-center justify-center shrink-0 mt-0.5">
-            <Cookie className="h-5 w-5 text-[#E7B52C]" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h2
-              className="text-white font-bold text-base mb-1"
-              style={{ fontFamily: "'Manrope', sans-serif" }}
+      {visible && (
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 80 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] max-w-2xl z-[100] bg-[#FAFAF8] border border-[#E6DFD5] rounded-3xl shadow-[0_12px_40px_rgba(26,26,26,0.12)] overflow-hidden"
+          role="dialog"
+          aria-label="Cookie consent"
+          aria-modal="true"
+        >
+          {/* Header */}
+          <div className="flex items-start gap-4 p-5 border-b border-[#E6DFD5]">
+            <div className="w-10 h-10 rounded-xl bg-[#6E1D25]/10 flex items-center justify-center shrink-0 mt-0.5">
+              <Cookie className="h-5 w-5 text-[#6E1D25]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2
+                className="text-[#1A1A1A] font-bold text-base mb-1"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                We value your privacy
+              </h2>
+              <p
+                className="text-[#7A7570] text-sm leading-relaxed"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                We use cookies to personalise your experience, analyse site traffic, and improve our
+                service. You can manage your preferences below.{" "}
+                <a href="/privacy" className="text-[#6E1D25] font-semibold hover:underline">
+                  Privacy Policy
+                </a>
+              </p>
+            </div>
+            <button
+              onClick={rejectNonEssential}
+              className="text-[#A09890] hover:text-[#1A1A1A] transition-colors shrink-0 mt-0.5"
+              aria-label="Dismiss (reject non-essential)"
             >
-              We use cookies
-            </h2>
-            <p
-              className="text-[#C7BFB3] text-sm leading-relaxed"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              We use cookies to personalise your experience, analyse site traffic, and improve our
-              service. You can manage your preferences below.{" "}
-              <a href="/privacy" className="text-[#E7B52C] hover:underline">
-                Privacy Policy
-              </a>
-            </p>
+              <X className="h-4 w-4" />
+            </button>
           </div>
-          <button
-            onClick={rejectNonEssential}
-            className="text-white/30 hover:text-white transition-colors shrink-0 mt-0.5"
-            aria-label="Dismiss (reject non-essential)"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
 
-        {/* Preferences panel */}
-        <AnimatePresence>
-          {showPreferences && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden border-b border-white/5"
-            >
-              <div className="p-4 flex flex-col gap-2">
-                {CATEGORIES.map((cat) => (
-                  <div key={cat.id} className="bg-[#1a1a1a] border border-white/5 rounded-xl overflow-hidden">
-                    <div
-                      className="flex items-center gap-3 px-4 py-3 cursor-pointer"
-                      onClick={() => setExpandedCategory(expandedCategory === cat.id ? null : cat.id)}
-                    >
-                      {/* Toggle */}
-                      <div className="flex-1 flex items-center gap-2 min-w-0">
-                        <p
-                          className="text-sm font-semibold text-white"
-                          style={{ fontFamily: "'Inter', sans-serif" }}
-                        >
-                          {cat.label}
-                        </p>
-                        {cat.required && (
-                          <span className="text-[10px] bg-white/5 text-white/30 px-2 py-0.5 rounded-full uppercase tracking-wider font-medium">
-                            Always on
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {/* Toggle switch */}
-                        <button
-                          role="switch"
-                          aria-checked={cat.required ? true : consent[cat.id]}
-                          aria-label={`${cat.label} cookies`}
-                          disabled={cat.required}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (!cat.required) {
-                              setConsent((prev) => ({ ...prev, [cat.id]: !prev[cat.id] }));
-                            }
-                          }}
-                          className={`relative w-10 h-5 rounded-full transition-colors ${
-                            cat.required || consent[cat.id] ? "bg-[#E7B52C]" : "bg-white/10"
-                          } ${cat.required ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                        >
-                          <span
-                            className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                              cat.required || consent[cat.id] ? "translate-x-5" : "translate-x-0"
-                            }`}
-                          />
-                        </button>
-                        {expandedCategory === cat.id ? (
-                          <ChevronUp className="h-3.5 w-3.5 text-white/30" />
-                        ) : (
-                          <ChevronDown className="h-3.5 w-3.5 text-white/30" />
-                        )}
-                      </div>
-                    </div>
-                    <AnimatePresence>
-                      {expandedCategory === cat.id && (
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: "auto" }}
-                          exit={{ height: 0 }}
-                          className="overflow-hidden"
-                        >
+          {/* Preferences panel */}
+          <AnimatePresence>
+            {showPreferences && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden border-b border-[#E6DFD5] bg-[#F7F3EC]/40"
+              >
+                <div className="p-4 flex flex-col gap-2">
+                  {CATEGORIES.map((cat) => (
+                    <div key={cat.id} className="bg-white border border-[#E6DFD5] rounded-xl overflow-hidden shadow-sm">
+                      <div
+                        className="flex items-center gap-3 px-4 py-3 cursor-pointer"
+                        onClick={() => setExpandedCategory(expandedCategory === cat.id ? null : cat.id)}
+                      >
+                        {/* Toggle */}
+                        <div className="flex-1 flex items-center gap-2 min-w-0">
                           <p
-                            className="px-4 pb-3 text-xs text-white/40 leading-relaxed"
+                            className="text-sm font-semibold text-[#1A1A1A]"
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
+                            {cat.label}
+                          </p>
+                          {cat.required && (
+                            <span className="text-[10px] bg-[#6E1D25]/10 text-[#6E1D25] px-2 py-0.5 rounded-full uppercase tracking-wider font-semibold">
+                              Always on
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {/* Toggle switch */}
+                          <button
+                            role="switch"
+                            aria-checked={cat.required ? true : consent[cat.id]}
+                            aria-label={`${cat.label} cookies`}
+                            disabled={cat.required}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!cat.required) {
+                                setConsent((prev) => ({ ...prev, [cat.id]: !prev[cat.id] }));
+                              }
+                            }}
+                            className={`relative w-10 h-5 rounded-full transition-colors ${
+                              cat.required || consent[cat.id] ? "bg-[#6E1D25]" : "bg-[#E6DFD5]"
+                            } ${cat.required ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                          >
+                            <span
+                              className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                                cat.required || consent[cat.id] ? "translate-x-5" : "translate-x-0"
+                              }`}
+                            />
+                          </button>
+                          {expandedCategory === cat.id ? (
+                            <ChevronUp className="h-3.5 w-3.5 text-[#A09890]" />
+                          ) : (
+                            <ChevronDown className="h-3.5 w-3.5 text-[#A09890]" />
+                          )}
+                        </div>
+                      </div>
+                      <AnimatePresence>
+                        {expandedCategory === cat.id && (
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: "auto" }}
+                            exit={{ height: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="overflow-hidden border-t border-[#E6DFD5] bg-[#FAFAF8] px-4 py-3 text-xs text-[#7A7570] leading-relaxed"
                             style={{ fontFamily: "'Inter', sans-serif" }}
                           >
                             {cat.description}
-                          </p>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap items-center gap-2 p-4 justify-end">
-          <button
-            onClick={() => setShowPreferences((v) => !v)}
-            className="flex items-center gap-1.5 text-white/50 hover:text-white text-sm font-medium transition-colors mr-auto"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            <Shield className="h-3.5 w-3.5" />
-            {showPreferences ? "Hide Preferences" : "Manage Preferences"}
-          </button>
-
-          {showPreferences && (
+          {/* Actions */}
+          <div className="p-4 bg-[#F7F3EC]/30 flex flex-wrap items-center justify-between gap-3">
             <button
-              onClick={savePreferences}
-              className="px-4 py-2 bg-white/5 border border-white/10 text-white/70 hover:text-white text-sm font-semibold rounded-lg transition-colors"
+              onClick={() => setShowPreferences(!showPreferences)}
+              className="text-xs font-bold uppercase tracking-wider text-[#7A7570] hover:text-[#1A1A1A] transition-colors flex items-center gap-1.5"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Save Preferences
+              <Shield className="h-4 w-4" />
+              {showPreferences ? "Hide Settings" : "Customise Settings"}
             </button>
-          )}
 
-          <button
-            onClick={rejectNonEssential}
-            className="px-4 py-2 bg-white/5 border border-white/10 text-white/70 hover:text-white text-sm font-semibold rounded-lg transition-colors"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Reject All
-          </button>
+            <div className="flex items-center gap-2">
+              {showPreferences && (
+                <button
+                  onClick={savePreferences}
+                  className="px-4 py-2 border border-[#E6DFD5] bg-white text-[#1A1A1A] hover:bg-[#F7F3EC] text-sm font-semibold rounded-xl transition-all"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  Save Preferences
+                </button>
+              )}
 
-          <button
-            onClick={acceptAll}
-            className="px-4 py-2 bg-[#E7B52C] text-black text-sm font-semibold rounded-[14px] hover:bg-[#F4C542] transition-colors"
-            style={{ fontFamily: "'Inter', sans-serif", boxShadow: "0 8px 15px rgba(231,181,44,0.15)" }}
-          >
-            Accept All
-          </button>
-        </div>
-      </motion.div>
+              <button
+                onClick={rejectNonEssential}
+                className="px-4 py-2 border border-[#E6DFD5] bg-white text-[#1A1A1A] hover:bg-[#F7F3EC] text-sm font-semibold rounded-xl transition-all"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Reject All
+              </button>
+
+              <button
+                onClick={acceptAll}
+                className="px-5 py-2.5 bg-[#1A1A1A] hover:bg-[#6E1D25] text-white text-sm font-bold rounded-xl transition-all shadow-[0_4px_12px_rgba(26,26,26,0.1)]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Accept All
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 }

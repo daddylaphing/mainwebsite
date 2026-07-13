@@ -11,6 +11,9 @@ import { CartSheet } from "@/components/cart/cart-sheet";
 import { CookieConsent } from "@/components/cookie-consent";
 import { SplashProvider } from "@/components/providers/splash-provider";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
+import { SkipToContent } from "@/components/ui/skip-to-content";
+import { LenisProvider } from "@/components/providers/lenis-provider";
+import { StoreLayoutWrapper } from "@/components/layout/store-layout-wrapper";
 
 
 
@@ -18,29 +21,83 @@ import { ScrollProgress } from "@/components/layout/scroll-progress";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://laphing.in"),
   title: {
-    default: "Laphing Daddy | Authentic Tibetan Laphing Kits",
+    default: "Laphing Daddy | Authentic Tibetan Laphing Kits Delivered Fresh",
     template: "%s | Laphing Daddy",
   },
   description:
-    "Fresh Tibetan Laphing Kits delivered across Delhi, Noida and Gurgaon.",
-  keywords: ["laphing", "tibetan food", "street food", "laphing kit", "authentic laphing", "laphing delivery", "laphing daddy", "delhi laphing", "noida laphing", "gurgaon laphing"],
-  authors: [{ name: "Laphing Daddy" }],
+    "Order authentic Tibetan Laphing kits delivered fresh to your doorstep in Delhi NCR. Premium ingredients, easy 3-minute preparation, traditional flavors. Free delivery above ₹500.",
+  keywords: [
+    "laphing",
+    "tibetan food",
+    "tibetan laphing",
+    "street food",
+    "laphing kit",
+    "authentic laphing",
+    "laphing delivery",
+    "laphing daddy",
+    "delhi laphing",
+    "noida laphing",
+    "gurgaon laphing",
+    "ghaziabad laphing",
+    "fresh laphing",
+    "laphing online",
+    "buy laphing",
+    "tibetan cuisine",
+    "spicy laphing",
+    "mung bean noodles",
+  ],
+  authors: [{ name: "Laphing Daddy", url: "https://laphing.in" }],
+  creator: "Laphing Daddy",
+  publisher: "Laphing Daddy",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://laphing.in",
     siteName: "Laphing Daddy",
-    title: "Laphing Daddy | Authentic Tibetan Laphing Kits",
-    description: "Fresh Tibetan Laphing Kits delivered across Delhi, Noida and Gurgaon.",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Laphing Daddy" }],
+    title: "Laphing Daddy | Authentic Tibetan Laphing Kits Delivered Fresh",
+    description:
+      "Order authentic Tibetan Laphing kits delivered fresh to your doorstep in Delhi NCR. Premium ingredients, easy 3-minute preparation, traditional flavors.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Laphing Daddy - Authentic Tibetan Laphing Kits",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    site: "@laphingdaddy",
+    creator: "@laphingdaddy",
     title: "Laphing Daddy | Authentic Tibetan Laphing Kits",
-    description: "Fresh Tibetan Laphing Kits delivered across Delhi, Noida and Gurgaon.",
+    description:
+      "Order authentic Tibetan Laphing kits delivered fresh to your doorstep in Delhi NCR.",
     images: ["/og-image.jpg"],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+  },
+  alternates: {
+    canonical: "https://laphing.in",
+  },
+  category: "food",
   manifest: "/manifest.json",
 };
 
@@ -58,22 +115,35 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://gyrvdaucaznmastgspvc.supabase.co" />
+        <link
+          rel="preload"
+          href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&display=swap"
+          as="style"
+        />
+      </head>
       <body>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange={false}
+          forcedTheme="light"
         >
           <QueryProvider>
             <AuthProvider>
               <CartProvider>
                 <SplashProvider>
-                  <ScrollProgress />
-                  <Navbar />
-                  <main className="min-h-screen">{children}</main>
-                  <Footer />
-                  <CartSheet />
+                  <LenisProvider>
+                    <SkipToContent />
+                    <ScrollProgress />
+                    <StoreLayoutWrapper>
+                      {children}
+                    </StoreLayoutWrapper>
+                  </LenisProvider>
                   <Toaster
                     position="bottom-right"
                     toastOptions={{
@@ -84,7 +154,6 @@ export default function RootLayout({
                       },
                     }}
                   />
-                  <CookieConsent />
                 </SplashProvider>
               </CartProvider>
             </AuthProvider>

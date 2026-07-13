@@ -3,18 +3,12 @@
 import { motion } from "framer-motion";
 
 const KIT_ITEMS = [
-  { name: "Fresh Laphing Sheet", note: "Handmade & freshly prepared" },
-  { name: "Signature Chilli Oil", note: "Handcrafted house blend" },
-  { name: "Garlic Water", note: "Aromatic essence" },
-  { name: "Wai Wai", note: "Classic crunch topping" },
-  { name: "Soya Granules", note: "Protein-rich texture" },
-  { name: "Vinegar Mix", note: "Tangy finishing touch" },
-  { name: "Spicy Peanut Sauce", note: "Nutty heat in every bite" },
-  { name: "Fork", note: "Ready to eat, right out of the box" },
-  { name: "Tissues", note: "Included for convenience" },
-  { name: "Premium Packaging", note: "Sealed fresh, delivered clean" },
+  { name: "3 Fresh Laphing Sheets", note: "Handmade & freshly prepared daily" },
+  { name: "Signature Chilli Oil", note: "House blend (for 3 portions)" },
+  { name: "Garlic Water", note: "Aromatic essence (for 3 portions)" },
+  { name: "Crispy Soya Chunks", note: "Protein-rich texture topping" },
+  { name: "Wai Wai Crunch", note: "Classic noodle topping" },
   { name: "Preparation Guide", note: "Step-by-step instructions" },
-  { name: "Branding", note: "Laphing Daddy, proudly yours" },
 ];
 
 export function KitIncludesSection() {
@@ -99,7 +93,7 @@ export function KitIncludesSection() {
             className="text-[#C7BFB3] text-[13px] text-center"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            12 items · Premium packaging · Delivered fresh
+            6 items · Premium packaging · Delivered fresh
           </p>
         </div>
       </motion.div>

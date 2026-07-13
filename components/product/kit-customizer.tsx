@@ -88,40 +88,40 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
 
   return (
     <div className="space-y-6">
-      <div className="border-t border-white/10 pt-6">
+      <div className="border-t border-[#E6DFD5] pt-6">
         <h3
-          className="font-bold text-2xl text-white mb-2"
-          style={{ fontFamily: "'Manrope', sans-serif" }}
+          className="font-bold text-2xl text-[#1A1A1A] mb-2"
+          style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Customize Your Kit
         </h3>
-        <p className="text-sm text-[#C7BFB3] mb-6">
-          Every kit includes one of each ingredient. Add extras below.
+        <p className="text-sm text-[#7A7570] mb-6">
+          Every kit includes 3 fresh laphing sheets and materials to make 3 portions: signature chilli oil, garlic water, soya chunks, and crispy wai wai topping. Add extras below.
         </p>
 
         <div className="space-y-4">
           {addons.map((addon) => (
             <div
               key={addon.key}
-              className="flex items-center justify-between p-4 bg-[#141414] border border-white/[0.05] rounded-xl hover:bg-white/[0.02] transition-colors"
+              className="flex items-center justify-between p-4 bg-[#F7F3EC] border border-[#E6DFD5] rounded-xl hover:bg-[#E6DFD5]/20 transition-colors"
             >
               <div className="flex items-center gap-4 flex-1">
                 {addon.image && (
-                  <div className="w-12 h-12 rounded bg-[#111111] border border-white/[0.08] overflow-hidden flex-shrink-0">
+                  <div className="w-12 h-12 rounded bg-white border border-[#E6DFD5] overflow-hidden flex-shrink-0">
                     <Image
                       src={addon.image}
                       alt={addon.name}
                       width={48}
                       height={48}
-                      className="w-full h-full object-cover opacity-80"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 )}
 
                 <div className="flex-1">
-                  <h4 className="font-bold text-[#F8F5EE] text-sm mb-0.5">{addon.name}</h4>
-                  <p className="text-xs text-[#8F857B]">{addon.description}</p>
-                  <p className="text-xs text-[#C7BFB3] font-semibold mt-1">+₹{addon.price} each</p>
+                  <h4 className="font-bold text-[#1A1A1A] text-sm mb-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>{addon.name}</h4>
+                  <p className="text-xs text-[#7A7570]">{addon.description}</p>
+                  <p className="text-xs text-[#6E1D25] font-bold mt-1">+₹{addon.price} each</p>
                 </div>
               </div>
 
@@ -140,28 +140,28 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
 
       {/* Extras Summary */}
       {calculateExtrasCost() > 0 && (
-        <div className="bg-[#1B1B1B] border border-white/[0.08] rounded-xl p-4">
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-[#C7BFB3]">Base Kit × {kitQuantity}</span>
-            <span className="text-[#F8F5EE] font-semibold">
+        <div className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-xl p-4">
+          <div className="flex items-center justify-between text-sm mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <span className="text-[#4A4540]">Base Kit × {kitQuantity}</span>
+            <span className="text-[#1A1A1A] font-semibold">
               ₹{((config?.laphing_kit_price || 50) * kitQuantity).toFixed(2)}
             </span>
           </div>
-          <div className="flex items-center justify-between text-sm mb-2">
-            <span className="text-[#C7BFB3]">Extras</span>
-            <span className="text-[#F8F5EE] font-semibold">₹{calculateExtrasCost().toFixed(2)}</span>
+          <div className="flex items-center justify-between text-sm mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <span className="text-[#4A4540]">Extras</span>
+            <span className="text-[#1A1A1A] font-semibold">₹{calculateExtrasCost().toFixed(2)}</span>
           </div>
-          <div className="border-t border-white/[0.08] pt-2 mt-2">
+          <div className="border-t border-[#E6DFD5] pt-2 mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
             <div className="flex items-center justify-between">
-              <span className="text-[#F8F5EE] font-bold">Subtotal</span>
-              <span className="text-[#E7B52C] font-bold text-lg">
+              <span className="text-[#1A1A1A] font-bold">Subtotal</span>
+              <span className="text-[#6E1D25] font-bold text-lg">
                 ₹
                 {((config?.laphing_kit_price || 50) * kitQuantity + calculateExtrasCost()).toFixed(
                   2
                 )}
               </span>
             </div>
-            <p className="text-xs text-[#8F857B] mt-1">
+            <p className="text-xs text-[#7A7570] mt-1">
               +₹{config?.packaging_charge || 30} packaging charge at checkout
             </p>
           </div>

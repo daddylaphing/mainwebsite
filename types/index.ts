@@ -52,29 +52,25 @@ export interface Product {
   id: string;
   name: string;
   slug: string;
-  description: string | null;
   short_description: string | null;
+  description: string | null;
   price: number;
-  sale_price: number | null;
-  wholesale_price: number | null;
-  stock_quantity: number;
-  low_stock_threshold: number;
-  category_id: string | null;
+  sale_price?: number | null;
+  bulk_price: number | null;
+  minimum_quantity: number;
+  category: string; // 'kit', 'addon', 'wholesale', 'corndog'
+  featured: boolean;
+  active: boolean;
   images: string[];
-  ingredients: string | null;
-  nutrition_info: NutritionInfo | null;
-  is_active: boolean;
-  is_featured: boolean;
-  is_bestseller: boolean;
-  weight_grams: number | null;
-  shelf_life_days: number | null;
-  preparation_time_minutes: number | null;
-  seo_title: string | null;
-  seo_description: string | null;
+  ingredients: string[] | null;
+  preparation: string | null;
+  recipe_available: boolean;
+  inventory: number;
+  low_stock_threshold?: number;
   created_at: string;
   updated_at: string;
-  // Joined
-  category?: Category;
+  // Relations
+  related_products?: Product[];
 }
 
 export interface NutritionInfo {

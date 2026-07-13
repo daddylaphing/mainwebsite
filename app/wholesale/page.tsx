@@ -44,18 +44,27 @@ const PARTNERS = [
 
 export default function WholesalePage() {
   return (
-    <div className="min-h-screen bg-[#090909]">
-      <main className="w-full max-w-[1200px] mx-auto px-4 md:px-8 py-12 md:py-20">
+    <div className="min-h-screen bg-[#FAFAF8] pt-28 md:pt-36 pb-20">
+      <main className="w-full max-w-[1200px] mx-auto px-5 md:px-16">
         {/* Header */}
-        <div className="text-center mb-12 md:mb-16">
+        <div className="text-center mb-16 md:mb-20">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4A843]" />
+            <span className="text-label-caps text-[#D4A843]" style={{ fontFamily: "'Inter', sans-serif" }}>Partnership</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4A843]" />
+          </div>
           <h1
-            className="font-black text-4xl md:text-5xl lg:text-6xl text-white mb-4"
-            style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}
+            className="font-bold text-[#1A1A1A] mb-6 leading-none"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(36px, 5vw, 64px)",
+              letterSpacing: "-0.02em",
+            }}
           >
-            Wholesale & <span className="text-[#E7B52C]">B2B</span>
+            Wholesale & <span className="text-[#D4A843] italic">B2B</span>
           </h1>
           <p
-            className="text-[#C7BFB3] text-base md:text-lg max-w-2xl mx-auto"
+            className="text-[#7A7570] text-base md:text-lg max-w-2xl mx-auto leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Partner with Laphing Daddy to bring authentic Tibetan Laphing to your customers. 
@@ -64,25 +73,25 @@ export default function WholesalePage() {
         </div>
 
         {/* Benefits */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {BENEFITS.map((benefit) => (
             <div
               key={benefit.title}
-              className="bg-[#141414] border border-white/[0.08] rounded-2xl p-6 hover:border-white/20 transition-colors"
+              className="bg-[#FFFFFF] border border-[rgba(26,26,26,0.08)] p-8 transition-all duration-300 hover:border-[rgba(26,26,26,0.2)]"
             >
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#E7B52C]/10 flex items-center justify-center shrink-0">
-                  <benefit.icon className="h-6 w-6 text-[#E7B52C]" />
+              <div className="flex items-start gap-5">
+                <div className="w-12 h-12 bg-[#F7F3EC] flex items-center justify-center shrink-0 border border-[rgba(26,26,26,0.05)]">
+                  <benefit.icon className="h-5 w-5 text-[#D4A843]" />
                 </div>
                 <div className="flex-1">
                   <h3
-                    className="text-white font-bold text-lg mb-2"
-                    style={{ fontFamily: "'Manrope', sans-serif" }}
+                    className="text-[#1A1A1A] font-bold text-lg mb-2"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
                   >
                     {benefit.title}
                   </h3>
                   <p
-                    className="text-[#C7BFB3] text-sm leading-relaxed"
+                    className="text-[#7A7570] text-sm leading-relaxed"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     {benefit.description}
@@ -94,10 +103,10 @@ export default function WholesalePage() {
         </div>
 
         {/* Who We Work With */}
-        <div className="bg-[#1B1B1B] border border-white/[0.08] rounded-2xl p-6 md:p-8 mb-12">
+        <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.06)] p-8 md:p-10 mb-16">
           <h2
-            className="text-white font-bold text-2xl mb-6"
-            style={{ fontFamily: "'Manrope', sans-serif" }}
+            className="text-[#1A1A1A] font-bold text-2xl mb-8"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Who We Work With
           </h2>
@@ -105,10 +114,10 @@ export default function WholesalePage() {
             {PARTNERS.map((partner) => (
               <div
                 key={partner}
-                className="bg-[#141414] border border-white/[0.06] rounded-xl px-4 py-3 text-center"
+                className="bg-[#FFFFFF] border border-[rgba(26,26,26,0.05)] px-4 py-4 text-center"
               >
                 <span
-                  className="text-[#C7BFB3] text-sm font-medium"
+                  className="text-[#1A1A1A] text-sm font-medium"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {partner}
@@ -119,30 +128,30 @@ export default function WholesalePage() {
         </div>
 
         {/* Contact Section */}
-        <div className="bg-gradient-to-br from-[#E7B52C]/10 to-[#F4C542]/5 border border-[#E7B52C]/20 rounded-2xl p-8 md:p-10">
+        <div className="bg-[#FFFFFF] border border-[rgba(26,26,26,0.08)] p-8 md:p-12 text-center max-w-3xl mx-auto">
           <h2
-            className="text-white font-bold text-2xl md:text-3xl mb-4 text-center"
-            style={{ fontFamily: "'Manrope', sans-serif" }}
+            className="text-[#1A1A1A] font-bold text-2xl md:text-3xl mb-4"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Let&apos;s Talk Business
           </h2>
           <p
-            className="text-[#C7BFB3] text-center mb-8 max-w-xl mx-auto"
+            className="text-[#7A7570] mb-8 max-w-xl mx-auto text-sm leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Ready to partner with us? Get in touch to discuss pricing, minimum order quantities, and delivery schedules.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
             <a
               href="tel:9211969977"
-              className="flex items-center justify-center gap-3 bg-[#E7B52C] hover:bg-[#F4C542] text-black font-bold px-6 py-4 rounded-xl transition-colors"
+              className="btn-cream flex items-center justify-center gap-3 py-4"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              <Phone className="h-5 w-5" />
-              <div className="text-left">
-                <div className="text-xs opacity-70">Call Us</div>
-                <div>9211969977</div>
+              <Phone className="h-4 w-4" />
+              <div className="text-left leading-none">
+                <div className="text-[9px] text-[#A09890] uppercase tracking-wider mb-1">Call Us</div>
+                <div className="text-sm font-semibold text-[#1A1A1A]">9211969977</div>
               </div>
             </a>
 
@@ -150,19 +159,19 @@ export default function WholesalePage() {
               href="https://wa.me/919211969977"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 bg-[#141414] hover:bg-[#1B1B1B] border border-white/20 text-white font-bold px-6 py-4 rounded-xl transition-colors"
+              className="btn-ink flex items-center justify-center gap-3 py-4"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              <Mail className="h-5 w-5" />
-              <div className="text-left">
-                <div className="text-xs opacity-70">WhatsApp</div>
-                <div>Message Us</div>
+              <Mail className="h-4 w-4" />
+              <div className="text-left leading-none">
+                <div className="text-[9px] text-white/70 uppercase tracking-wider mb-1">WhatsApp</div>
+                <div className="text-sm font-semibold text-white">Message Us</div>
               </div>
             </a>
           </div>
 
           <p
-            className="text-[#8F857B] text-xs text-center mt-6"
+            className="text-[#A09890] text-xs mt-8"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Business hours: 3:00 PM - 6:00 PM (Mon-Sun)

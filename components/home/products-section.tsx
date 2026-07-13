@@ -1,280 +1,321 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { Phone } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useState, useRef } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Phone, Plus, Minus, ArrowRight } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
-import { SuggestionModal } from "@/components/cart/suggestion-modal";
+import { ProductQuantitySelector } from "@/components/product/product-quantity-selector";
+import { MaskReveal } from "@/components/ui/text-reveal";
 import type { Product } from "@/types";
+
+// Helper
+function getProductImage(product: Product): string {
+  return product.images?.[0] || "/placeholder-product.png";
+}
+
+// Full-width product panel — alternating layouts
+function ProductPanel({
+  product,
+  index,
+  quantity,
+  onQuantityChange,
+  onAddToCart,
+}: {
+  product: Product;
+  index: number;
+  quantity: number;
+  onQuantityChange: (qty: number) => void;
+  onAddToCart: () => void;
+}) {
+  const isEven = index % 2 === 0;
+  const sectionNumber = String(index + 1).padStart(2, "0");
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Parallax Scroll logic for the image
+  const { scrollYProgress } = useScroll({
+    target: panelRef,
+    offset: ["start end", "end start"],
+  });
+  const imageY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.1, 1, 1.1]);
+
+  return (
+    <div ref={panelRef}>
+      <motion.article
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className={`relative min-h-[85vh] flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"} items-stretch border-b border-[rgba(26,26,26,0.08)]`}
+      >
+        {/* Image side — 60% with parallax & link */}
+        <Link 
+          href={`/products/${product.slug}`}
+          className="relative w-full lg:w-[60%] overflow-hidden bg-[#F0EBE0] min-h-[50vh] lg:min-h-0 block group cursor-pointer"
+        >
+          <motion.div
+            style={{ y: imageY, scale: imageScale }}
+            className="absolute inset-0 w-full h-[120%] -top-[10%]"
+          >
+            <Image
+              src={getProductImage(product)}
+              alt={product.name}
+              fill
+              className="object-cover transition-all duration-700 group-hover:brightness-95"
+              sizes="(max-width: 1024px) 100vw, 60vw"
+            />
+          </motion.div>
+
+          {/* Subtle overlay */}
+          <div className={`absolute inset-0 bg-gradient-to-${isEven ? "r" : "l"} from-transparent to-[rgba(26,26,26,0.12)]`} />
+
+          {/* View Details Hover Badge */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/10">
+            <span className="bg-[#FAFAF8] text-[#1A1A1A] font-semibold text-xs tracking-widest uppercase px-6 py-3 shadow-lg rounded-full flex items-center gap-2">
+              View Details <ArrowRight className="h-3 w-3" />
+            </span>
+          </div>
+
+          {/* Section number ghost */}
+          <span
+            className="absolute bottom-4 right-4 font-display text-[120px] font-black text-white/10 leading-none select-none pointer-events-none"
+            style={{ fontFamily: "'Playfair Display', serif" }}
+            aria-hidden
+          >
+            {sectionNumber}
+          </span>
+        </Link>
+
+        {/* Content side — 40% */}
+        <div className={`w-full lg:w-[40%] flex flex-col justify-center px-8 md:px-12 lg:px-16 py-16 lg:py-24 bg-[#FAFAF8]`}>
+
+          {/* Section marker */}
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-px bg-[#D4A843]" />
+            <span
+              className="text-label-caps text-[#D4A843]"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              {product.featured ? "Best Seller" : product.category === "wholesale" ? "Wholesale" : "Product"} — {sectionNumber}
+            </span>
+          </div>
+
+          {/* Product name linked */}
+          <h2
+            className="text-[#1A1A1A] leading-none mb-6 hover:text-[#D4A843] transition-colors"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontWeight: 700,
+              fontSize: "clamp(36px, 4vw, 56px)",
+              letterSpacing: "-0.025em",
+              lineHeight: "1.05",
+            }}
+          >
+            <Link href={`/products/${product.slug}`}>
+              <MaskReveal delay={0.1}>
+                {product.name}
+              </MaskReveal>
+            </Link>
+          </h2>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="text-[#7A7570] text-base leading-relaxed mb-10 max-w-sm"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {product.short_description}
+          </motion.p>
+
+          <hr className="ink-divider mb-8" />
+
+          {/* Price + qty */}
+          <div className="flex items-end justify-between gap-6 mb-8">
+            <div>
+              <p
+                className="text-[10px] text-[#A09890] uppercase tracking-[0.12em] mb-2"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {product.category === "wholesale" ? `Per sheet · min ${product.minimum_quantity}` : "Per kit"}
+              </p>
+              <p
+                className="text-[#1A1A1A] font-bold leading-none"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "clamp(32px, 4vw, 48px)",
+                }}
+              >
+                ₹{product.price}
+              </p>
+              {product.bulk_price && (
+                <p className="text-[#A09890] text-[11px] mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Bulk: <span className="text-[#444748] font-medium">₹{product.bulk_price}/item</span>
+                </p>
+              )}
+            </div>
+            <ProductQuantitySelector
+              quantity={quantity}
+              onChange={onQuantityChange}
+              min={product.minimum_quantity || 1}
+              size="sm"
+            />
+          </div>
+
+          {product.minimum_quantity && product.minimum_quantity > 1 && (
+            <p className="text-[11px] text-[#A09890] -mt-4 mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
+              Minimum order: {product.minimum_quantity} {product.category === "kit" ? "kits" : "items"}
+            </p>
+          )}
+
+          {/* Add to cart */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <motion.button
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              onClick={onAddToCart}
+              disabled={!product}
+              className="btn-ink w-full justify-center text-sm disabled:opacity-50"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Add to Cart
+              <span className="ml-2">→</span>
+            </motion.button>
+            <Link 
+              href={`/products/${product.slug}`}
+              className="btn-outline-ink w-full justify-center text-sm text-center flex items-center"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              View Story
+            </Link>
+          </div>
+        </div>
+      </motion.article>
+    </div>
+  );
+}
 
 export function ProductsSection({ products }: { products: Product[] }) {
   const { addItem, openCart } = useCart();
-  const [kitQty, setKitQty] = useState(2);
-  const [sheetQty, setSheetQty] = useState(5);
-  const [showModal, setShowModal] = useState(false);
 
-  const kitImage = "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/laphingkit.png";
-  const sheetImage = "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/laphingsheet.png";
-  const cornDogImage = "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/cheesecorndog.png";
+  const kitProduct     = products.find((p) => p.category === "kit") || products[0];
+  const sheetProduct   = products.find((p) => p.category === "wholesale") || products[1];
+  const cornDogProduct = products.find((p) => p.category === "corndog") || products[2];
 
-  const finalKitProduct = {
-    ...(products.find((p) => /kit/i.test(p.name)) || {
-      id: "kit-id-fallback",
-      name: "LAPHING KIT",
-      price: 50,
-      description: "Everything you need for authentic Tibetan laphing at home.",
-    }),
-    name: "LAPHING KIT",
-    price: 50,
-    image_url: kitImage,
-    images: [kitImage],
-  };
+  const [kitQty, setKitQty]         = useState(kitProduct?.minimum_quantity || 2);
+  const [sheetQty, setSheetQty]     = useState(sheetProduct?.minimum_quantity || 5);
+  const [cornDogQty, setCornDogQty] = useState(1);
 
-  const finalSheetProduct = {
-    ...(products.find((p) => /sheet/i.test(p.name)) || {
-      id: "sheet-id-fallback",
-      name: "FRESH LAPHING SHEET",
-      price: 20,
-      description: "Freshly prepared laphing sheets. Minimum 5 sheets per order.",
-    }),
-    name: "FRESH LAPHING SHEET",
-    price: 20,
-    image_url: sheetImage,
-    images: [sheetImage],
-  };
+  const handleAddKit     = () => { if (kitProduct)     { addItem(kitProduct, kitQty); openCart(); } };
+  const handleAddSheet   = () => { if (sheetProduct)   { addItem(sheetProduct, sheetQty); openCart(); } };
+  const handleAddCornDog = () => { if (cornDogProduct) { addItem(cornDogProduct, cornDogQty); openCart(); } };
 
-  const finalCornDogProduct = {
-    ...(products.find((p) => /corn.*dog|cheese.*corn/i.test(p.name)) || {
-      id: "corndg-id-fallback",
-      name: "CHEESE CORN DOG",
-      price: 50,
-      description: "Golden crispy corn dog with a gooey cheese pull.",
-    }),
-    name: "CHEESE CORN DOG",
-    price: 50,
-    image_url: cornDogImage,
-    images: [cornDogImage],
-  };
+  const displayProducts = [
+    { product: kitProduct,     qty: kitQty,     setQty: setKitQty,     onAdd: handleAddKit },
+    { product: sheetProduct,   qty: sheetQty,   setQty: setSheetQty,   onAdd: handleAddSheet },
+    { product: cornDogProduct, qty: cornDogQty, setQty: setCornDogQty, onAdd: handleAddCornDog },
+  ];
 
   return (
-    <section className="pt-10 md:pt-20" id="products">
-      {/* Title with small mustard line underneath */}
-      <div className="flex flex-col items-center md:items-start mb-8 md:mb-12">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="font-black text-3xl md:text-[48px] text-[#F8F5EE] leading-[1.2] text-center md:text-left"
-          style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}
-        >
-          OUR PRODUCTS
-        </motion.h2>
-        <motion.div 
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="h-[3px] w-16 bg-[#E7B52C] rounded-full mt-3 origin-left"
-        />
+    <section id="products" className="bg-[#FAFAF8]">
+      {/* Section header */}
+      <div className="max-w-[1440px] mx-auto px-5 md:px-16 pt-20 md:pt-28 pb-16">
+        <div className="flex items-end justify-between">
+          <div>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-6 h-px bg-[#D4A843]" />
+              <span
+                className="text-label-caps text-[#D4A843]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Our Products
+              </span>
+            </div>
+            <h2
+              className="text-[#1A1A1A]"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 700,
+                fontSize: "clamp(40px, 6vw, 80px)",
+                letterSpacing: "-0.03em",
+                lineHeight: "1",
+              }}
+            >
+              The Collection
+            </h2>
+          </div>
+          <p
+            className="hidden md:block text-[#7A7570] text-sm max-w-[240px] text-right leading-relaxed"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Handcrafted laphing kits, fresh sheets, and street-style corn dogs — delivered daily.
+          </p>
+        </div>
       </div>
 
-      {/* 3-column product grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 md:gap-8">
+      {/* Full-width product panels */}
+      <div className="border-t border-[rgba(26,26,26,0.08)]">
+        {displayProducts.map((item, index) =>
+          item.product ? (
+            <ProductPanel
+              key={item.product.id}
+              product={item.product}
+              index={index}
+              quantity={item.qty}
+              onQuantityChange={item.setQty}
+              onAddToCart={item.onAdd}
+            />
+          ) : null
+        )}
+      </div>
 
-        {/* ── Card 1: Laphing Kit ── */}
+      {/* View All Products button */}
+      <div className="flex justify-center py-12 bg-[#FAFAF8] border-b border-[rgba(26,26,26,0.08)]">
+        <Link
+          href="/products"
+          className="bg-[#1A1A1A] hover:bg-[#6E1D25] text-white font-bold text-xs uppercase tracking-widest px-8 py-4.5 rounded-full transition-colors flex items-center gap-2 shadow-sm"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          View All Products <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+
+      {/* Bulk order banner */}
+      <div className="max-w-[1440px] mx-auto px-5 md:px-16 py-16 md:py-20">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="bg-[#141414] border border-white/[0.08] rounded-[20px] overflow-hidden flex flex-col group hover:shadow-[0_20px_40px_rgba(0,0,0,0.65)] hover:-translate-y-1 transition-all duration-300"
+          className="bg-[#1A1A1A] flex flex-col md:flex-row items-center justify-between gap-6 px-10 md:px-16 py-10 md:py-12"
         >
-          {/* Photography occupies around 45% of card (increased image container to breathe) */}
-          <div className="h-[250px] relative overflow-hidden shrink-0">
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url('${kitImage}')`, backgroundColor: "#141414" }}
-            />
-          </div>
-          <div className="p-6 flex flex-col gap-4 flex-1">
-            {/* Best Seller Pill: Mustard background, Black text */}
-            <div className="inline-block px-3 py-1 bg-[#E7B52C] rounded-full text-[10px] font-bold text-black uppercase tracking-wider w-fit">
-              Best Seller
-            </div>
-            <div className="flex-1">
-              <h3 className="font-bold text-[20px] text-[#F8F5EE] leading-[1.3] tracking-tight" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                {finalKitProduct.name}
-              </h3>
-              <p className="text-[#C7BFB3] mt-2 text-[14px] leading-[1.5]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {finalKitProduct.description}
-              </p>
-            </div>
-            <div className="pt-4 border-t border-white/[0.08] flex items-end justify-between gap-2">
-              <div>
-                <p className="text-[11px] text-[#8F857B] mb-0.5 uppercase tracking-wider font-semibold">Per kit</p>
-                <p className="font-bold text-[24px] text-[#E7B52C]" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                  ₹{finalKitProduct.price}
-                </p>
-              </div>
-              {/* Stepper with dark surface, thin border, mustard active states */}
-              <div className="flex items-center bg-[#1B1B1B] border border-white/[0.08] rounded-[10px] p-1 gap-1 h-9">
-                <button
-                  onClick={() => setKitQty(Math.max(2, kitQty - 1))}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white/50 hover:text-[#E7B52C] hover:bg-white/[0.03] transition-all cursor-pointer font-bold text-sm"
-                >−</button>
-                <span className="w-7 text-center text-[#F8F5EE] text-sm font-semibold font-mono">{kitQty}</span>
-                <button
-                  onClick={() => setKitQty(kitQty + 1)}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white/50 hover:text-[#E7B52C] hover:bg-white/[0.03] transition-all cursor-pointer font-bold text-sm"
-                >+</button>
-              </div>
-            </div>
-            <p className="text-[11px] text-[#8F857B] -mt-2">Min. 2 kits</p>
-            <button
-              onClick={() => { addItem(finalKitProduct as Product, kitQty); openCart(); }}
-              className="w-full bg-[#E7B52C] text-black font-bold py-3 rounded-[14px] hover:bg-[#F4C542] hover:shadow-[0_8px_20px_rgba(231,181,44,0.25)] transition-all duration-200 cursor-pointer text-[14px]"
+          <div>
+            <p
+              className="text-[#FAFAF8] text-2xl md:text-3xl font-bold mb-2"
+              style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Add to Cart
-            </button>
-          </div>
-        </motion.div>
-
-        {/* ── Card 2: Fresh Laphing Sheet ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          className="bg-[#141414] border border-white/[0.08] rounded-[20px] overflow-hidden flex flex-col group hover:shadow-[0_20px_40px_rgba(0,0,0,0.65)] hover:-translate-y-1 transition-all duration-300"
-        >
-          {/* Photography occupies around 45% of card */}
-          <div className="h-[250px] relative overflow-hidden shrink-0">
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url('${sheetImage}')`, backgroundColor: "#141414" }}
-            />
-          </div>
-          <div className="p-6 flex flex-col gap-4 flex-1">
-            {/* Wholesale Pill: Dark Maroon background, Muted yellow text */}
-            <div className="inline-block px-3 py-1 bg-[#6E1D25] rounded-full text-[10px] font-bold text-[#E7B52C] uppercase tracking-wider w-fit">
-              Wholesale
-            </div>
-            <div className="flex-1">
-              <h3 className="font-bold text-[20px] text-[#F8F5EE] leading-[1.3] tracking-tight" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                {finalSheetProduct.name}
-              </h3>
-              <p className="text-[#C7BFB3] mt-2 text-[14px] leading-[1.5]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {finalSheetProduct.description}
-              </p>
-            </div>
-            <div className="pt-4 border-t border-white/[0.08] flex items-end justify-between gap-2">
-              <div>
-                <p className="text-[11px] text-[#8F857B] mb-0.5 uppercase tracking-wider font-semibold">Per sheet · min 5</p>
-                <p className="font-bold text-[24px] text-[#E7B52C]" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                  ₹{finalSheetProduct.price}
-                </p>
-                <p className="text-[11px] text-[#8F857B] mt-0.5">Bulk rate: <span className="text-[#F8F5EE] font-semibold">₹15/sheet</span></p>
-              </div>
-              {/* Stepper with dark surface, thin border, mustard active states */}
-              <div className="flex items-center bg-[#1B1B1B] border border-white/[0.08] rounded-[10px] p-1 gap-1 h-9">
-                <button
-                  onClick={() => setSheetQty(Math.max(5, sheetQty - 1))}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white/50 hover:text-[#E7B52C] hover:bg-white/[0.03] transition-all cursor-pointer font-bold text-sm"
-                >−</button>
-                <span className="w-7 text-center text-[#F8F5EE] text-sm font-semibold font-mono">{sheetQty}</span>
-                <button
-                  onClick={() => setSheetQty(sheetQty + 1)}
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-white/50 hover:text-[#E7B52C] hover:bg-white/[0.03] transition-all cursor-pointer font-bold text-sm"
-                >+</button>
-              </div>
-            </div>
-            <p className="text-[11px] text-[#8F857B] -mt-2">Min. 5 sheets</p>
-            <button
-              onClick={() => { addItem(finalSheetProduct as Product, sheetQty); openCart(); }}
-              className="w-full bg-[#E7B52C] text-black font-bold py-3 rounded-[14px] hover:bg-[#F4C542] hover:shadow-[0_8px_20px_rgba(231,181,44,0.25)] transition-all duration-200 cursor-pointer text-[14px]"
+              Need bulk quantities?
+            </p>
+            <p
+              className="text-[#7A7570] text-[14px]"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Add to Cart
-            </button>
+              Contact us directly for wholesale pricing on any item.
+            </p>
           </div>
-        </motion.div>
-
-        {/* ── Card 3: Cheese Corn Dog ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          className="bg-[#141414] border border-white/[0.08] rounded-[20px] overflow-hidden flex flex-col group hover:shadow-[0_20px_40px_rgba(0,0,0,0.65)] hover:-translate-y-1 transition-all duration-300"
-        >
-          {/* Photography occupies around 45% of card */}
-          <div className="h-[250px] relative overflow-hidden shrink-0">
-            <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-              style={{ backgroundImage: `url('${cornDogImage}')`, backgroundColor: "#141414" }}
-            />
-          </div>
-          <div className="p-6 flex flex-col gap-4 flex-1">
-            <div className="flex-1">
-              <h3 className="font-bold text-[20px] text-[#F8F5EE] leading-[1.3] tracking-tight" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                {finalCornDogProduct.name}
-              </h3>
-              <p className="text-[#C7BFB3] mt-2 text-[14px] leading-[1.5]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                {finalCornDogProduct.description}
-              </p>
-            </div>
-            <div className="pt-4 border-t border-white/[0.08]">
-              <p className="font-bold text-[24px] text-[#E7B52C]" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                ₹{finalCornDogProduct.price}
-              </p>
-            </div>
-            <div className="mt-auto pt-2" />
-            <button
-              onClick={() => { addItem(finalCornDogProduct as Product, 1); openCart(); }}
-              className="w-full bg-[#E7B52C] text-black font-bold py-3 rounded-[14px] hover:bg-[#F4C542] hover:shadow-[0_8px_20px_rgba(231,181,44,0.25)] transition-all duration-200 cursor-pointer text-[14px]"
-            >
-              Add to Cart
-            </button>
-          </div>
+          <a
+            href="tel:9211969977"
+            className="btn-cream flex items-center gap-3 shrink-0"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            <Phone className="h-4 w-4" />
+            Call: 9211969977
+          </a>
         </motion.div>
       </div>
-
-      {/* ── Bulk Order Banner (below cards) ── */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-        className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#141414] border border-white/[0.08] rounded-[20px] px-6 py-5 shadow-lg"
-      >
-        <div>
-          <p className="text-[#F8F5EE] font-bold text-[16px]" style={{ fontFamily: "'Manrope', sans-serif" }}>
-            Need bulk quantities?
-          </p>
-          <p className="text-[#C7BFB3] text-[13px] mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Contact us directly for wholesale pricing on any item.
-          </p>
-        </div>
-        <a
-          href="tel:9211969977"
-          className="flex items-center gap-2 border border-[#E7B52C] text-[#E7B52C] font-bold px-5 py-2.5 rounded-[14px] hover:bg-[#E7B52C] hover:text-black transition-all whitespace-nowrap text-[14px] shrink-0 hover:shadow-[0_4px_15px_rgba(231,181,44,0.15)]"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          <Phone className="h-4 w-4 shrink-0" />
-          Contact for Bulk Orders — 9211969977
-        </a>
-      </motion.div>
-
-      {/* Suggestion Modal */}
-      <SuggestionModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={() => {
-          addItem(finalKitProduct as Product, Math.max(2, kitQty));
-          setShowModal(false);
-          openCart();
-        }}
-      />
     </section>
   );
 }

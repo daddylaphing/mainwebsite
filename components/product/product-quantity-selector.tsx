@@ -59,7 +59,7 @@ export function ProductQuantitySelector({
   return (
     <div
       className={cn(
-        "flex items-center bg-[#1B1B1B] border border-white/[0.08] rounded-[10px] overflow-hidden",
+        "flex items-center bg-[#F7F3EC] border border-[rgba(26,26,26,0.15)] overflow-hidden",
         sizeClasses[size]
       )}
     >
@@ -67,7 +67,7 @@ export function ProductQuantitySelector({
         onClick={handleDecrement}
         disabled={disabled || quantity <= min}
         className={cn(
-          "text-white/50 hover:text-[#E7B52C] hover:bg-white/[0.03] transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
+          "text-[#7A7570] hover:text-[#1A1A1A] hover:bg-[rgba(26,26,26,0.05)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
           buttonSizeClasses[size]
         )}
         aria-label="Decrease quantity"
@@ -83,7 +83,7 @@ export function ProductQuantitySelector({
         min={min}
         max={max}
         className={cn(
-          "bg-transparent border-none text-center text-[#F8F5EE] focus:ring-0 focus:outline-none p-0 disabled:opacity-50 font-mono font-bold",
+          "bg-transparent border-none text-center text-[#1A1A1A] focus:ring-0 focus:outline-none p-0 disabled:opacity-50 font-mono font-bold",
           inputSizeClasses[size]
         )}
       />
@@ -92,7 +92,7 @@ export function ProductQuantitySelector({
         onClick={handleIncrement}
         disabled={disabled || quantity >= max}
         className={cn(
-          "text-white/50 hover:text-[#E7B52C] hover:bg-white/[0.03] transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
+          "text-[#7A7570] hover:text-[#1A1A1A] hover:bg-[rgba(26,26,26,0.05)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed",
           buttonSizeClasses[size]
         )}
         aria-label="Increase quantity"

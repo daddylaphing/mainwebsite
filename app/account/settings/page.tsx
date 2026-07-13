@@ -60,8 +60,8 @@ export default function AccountSettingsPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#090909] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#E7B52C] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#6E1D25] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -71,7 +71,7 @@ export default function AccountSettingsPage() {
   const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#090909] pt-28 pb-20">
+    <div className="min-h-screen bg-[#FAFAF8] pt-28 pb-20">
       <div className="max-w-4xl mx-auto px-5 md:px-10">
         {/* Header */}
         <motion.div
@@ -80,21 +80,21 @@ export default function AccountSettingsPage() {
           transition={{ duration: 0.6 }}
           className="flex items-center gap-5 mb-10"
         >
-          <div className="w-16 h-16 rounded-full bg-[#E7B52C]/20 border border-[#E7B52C]/30 flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-16 h-16 rounded-full bg-[#D4A843]/15 border border-[#D4A843]/30 flex items-center justify-center overflow-hidden shrink-0">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-[#E7B52C] font-black text-xl" style={{ fontFamily: "'Manrope', sans-serif" }}>
+              <span className="text-[#D4A843] font-black text-xl" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {initials}
               </span>
             )}
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white" style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}>
+            <h1 className="text-2xl font-black text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', serif", letterSpacing: "-0.01em" }}>
               Account Settings
             </h1>
-            <p className="text-white/40 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>{user.email}</p>
+            <p className="text-[#7A7570] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>{user.email}</p>
           </div>
         </motion.div>
 
@@ -114,22 +114,22 @@ export default function AccountSettingsPage() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   item.active
-                    ? "bg-[#E7B52C]/10 border border-[#E7B52C]/20 text-[#E7B52C]"
-                    : "bg-[#141414] border border-white/5 text-white/60 hover:text-white hover:bg-white/5"
+                    ? "bg-[#6E1D25]/10 border border-[#6E1D25]/20 text-[#6E1D25]"
+                    : "bg-[#F7F3EC] border border-[#E6DFD5] text-[#4A4540] hover:text-[#1A1A1A] hover:bg-[#E6DFD5]/40"
                 }`}
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
-                <ChevronRight className="h-4 w-4 ml-auto opacity-40" />
+                <ChevronRight className="h-4 w-4 ml-auto opacity-60" />
               </Link>
             ))}
 
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-[#141414] border border-white/5 text-white/40 hover:text-[#6E1D25] hover:border-[#6E1D25]/20 transition-colors mt-2"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold bg-[#F7F3EC] border border-[#E6DFD5] text-[#7A7570] hover:text-[#6E1D25] hover:border-[#6E1D25]/30 hover:bg-[#6E1D25]/5 transition-colors mt-2"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               <LogOut className="h-4 w-4" />
@@ -144,8 +144,8 @@ export default function AccountSettingsPage() {
             transition={{ duration: 0.6, delay: 0.15 }}
             className="md:col-span-2"
           >
-            <div className="bg-[#141414] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-6" style={{ fontFamily: "'Manrope', sans-serif" }}>
+            <div className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-2xl p-6">
+              <h2 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Personal Information
               </h2>
 
@@ -153,7 +153,7 @@ export default function AccountSettingsPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   {/* Full Name */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="settings-name" className="text-xs font-semibold text-white/40 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <label htmlFor="settings-name" className="text-xs font-bold text-[#7A7570] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
                       Full Name
                     </label>
                     <input
@@ -162,14 +162,14 @@ export default function AccountSettingsPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your full name"
-                      className="bg-[#1B1B1B] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#E7B52C]/60 transition-colors"
+                      className="bg-white border border-[#E6DFD5] rounded-xl px-4 py-3 text-[#1A1A1A] text-sm placeholder-[#7A7570]/30 focus:outline-none focus:border-[#6E1D25] transition-colors"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     />
                   </div>
 
                   {/* Phone */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="settings-phone" className="text-xs font-semibold text-white/40 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <label htmlFor="settings-phone" className="text-xs font-bold text-[#7A7570] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
                       Phone
                     </label>
                     <input
@@ -178,7 +178,7 @@ export default function AccountSettingsPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="bg-[#1B1B1B] border border-white/[0.08] rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#E7B52C]/60 transition-colors"
+                      className="bg-white border border-[#E6DFD5] rounded-xl px-4 py-3 text-[#1A1A1A] text-sm placeholder-[#7A7570]/30 focus:outline-none focus:border-[#6E1D25] transition-colors"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     />
                   </div>
@@ -186,17 +186,17 @@ export default function AccountSettingsPage() {
 
                 {/* Email (read-only) */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-white/40 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <label className="text-xs font-bold text-[#7A7570] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
                     Email
                   </label>
                   <input
                     type="email"
                     value={user.email ?? ""}
                     readOnly
-                    className="bg-[#111] border border-white/5 rounded-xl px-4 py-3 text-white/30 text-sm cursor-not-allowed"
+                    className="bg-[#FAFAF8] border border-[#E6DFD5]/70 rounded-xl px-4 py-3 text-[#7A7570]/50 text-sm cursor-not-allowed"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   />
-                  <p className="text-white/20 text-xs" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <p className="text-[#7A7570]/60 text-xs" style={{ fontFamily: "'Inter', sans-serif" }}>
                     Email cannot be changed
                   </p>
                 </div>
@@ -214,8 +214,8 @@ export default function AccountSettingsPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex items-center justify-center gap-2 w-full sm:w-auto sm:self-start bg-[#E7B52C] text-black font-bold text-sm px-8 py-3 rounded-[14px] hover:bg-[#F4C542] transition-colors disabled:opacity-60"
-                  style={{ fontFamily: "'Inter', sans-serif", boxShadow: "0 8px 20px rgba(231,181,44,0.15)" }}
+                  className="flex items-center justify-center gap-2 w-full sm:w-auto sm:self-start bg-[#1A1A1A] text-white font-bold text-xs uppercase tracking-widest px-8 py-3.5 rounded-[14px] hover:bg-[#6E1D25] transition-colors disabled:opacity-60"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {saving ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

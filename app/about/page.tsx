@@ -15,21 +15,25 @@ const VALUES = [
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#090909] pt-24 md:pt-32 px-4 md:px-20 pb-20">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#FAFAF8] pt-28 md:pt-36 pb-20">
+      <div className="max-w-4xl mx-auto px-5 md:px-8">
         {/* Hero */}
-        <div className="mb-16">
-          <div className="inline-block px-3 py-1 bg-[#6E1D25]/10 border border-[#6E1D25]/30 rounded-full text-[10px] font-bold text-[#E7B52C] uppercase tracking-wider mb-6">
+        <div className="mb-16 text-center">
+          <div className="inline-block bg-[#D4A843] text-white text-[9px] font-bold px-3 py-1.5 uppercase tracking-wider mb-6">
             Our Story
           </div>
           <h1
-            className="font-black text-4xl md:text-[64px] text-[#F8F5EE] mb-6 leading-[1.1]"
-            style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.03em" }}
+            className="font-bold text-[#1A1A1A] mb-6 leading-none"
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "clamp(36px, 6vw, 64px)",
+              letterSpacing: "-0.02em",
+            }}
           >
-            LAPHING <span className="text-[#E7B52C]">DADDY</span>
+            LAPHING <span className="text-[#D4A843] italic">DADDY</span>
           </h1>
           <p
-            className="text-[#C7BFB3] text-lg md:text-xl leading-relaxed max-w-2xl"
+            className="text-[#7A7570] text-base md:text-lg leading-relaxed max-w-2xl mx-auto"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Born in the misty lanes of Darjeeling, Laphing Daddy started as a simple obsession:
@@ -39,14 +43,14 @@ export default function AboutPage() {
         </div>
 
         {/* Story section */}
-        <div className="bg-[#141414] border border-white/[0.08] rounded-2xl p-6 md:p-10 mb-8">
+        <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.06)] p-8 md:p-12 mb-12">
           <h2
-            className="font-bold text-2xl text-[#F8F5EE] mb-4"
-            style={{ fontFamily: "'Manrope', sans-serif" }}
+            className="font-bold text-2xl text-[#1A1A1A] mb-6"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             How It Started
           </h2>
-          <div className="space-y-4 text-[#C7BFB3] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+          <div className="space-y-5 text-[#7A7570] text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
             <p>
               Our founder grew up watching his grandmother make laphing from scratch — kneading the
               starch sheets by hand at dawn, slow-cooking the chilli oil for hours, balancing each
@@ -63,20 +67,20 @@ export default function AboutPage() {
         </div>
 
         {/* Values */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {VALUES.map((v) => (
             <div
               key={v.title}
-              className="bg-[#141414] border border-white/[0.08] rounded-2xl p-6 hover:border-[#E7B52C]/20 transition-colors"
+              className="bg-white border border-[rgba(26,26,26,0.08)] p-6 transition-all hover:border-[rgba(26,26,26,0.2)]"
             >
-              <div className="w-8 h-1 bg-[#E7B52C] rounded-full mb-4" />
+              <div className="w-8 h-[2px] bg-[#D4A843] mb-4" />
               <h3
-                className="text-white font-bold text-lg mb-2"
-                style={{ fontFamily: "'Manrope', sans-serif" }}
+                className="text-[#1A1A1A] font-bold text-lg mb-2"
+                style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {v.title}
               </h3>
-              <p className="text-[#C7BFB3] text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-[#7A7570] text-xs leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
                 {v.desc}
               </p>
             </div>
@@ -84,30 +88,26 @@ export default function AboutPage() {
         </div>
 
         {/* CTA */}
-        <div
-          className="rounded-2xl p-8 md:p-10 border border-white/[0.08] relative overflow-hidden"
-          style={{ background: "#1B1B1B" }}
-        >
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[#E7B52C]/5 rounded-full blur-3xl" />
+        <div className="bg-[#FFFFFF] border border-[rgba(26,26,26,0.08)] p-8 md:p-12 text-center relative overflow-hidden">
           <h2
-            className="font-black text-2xl md:text-3xl text-white mb-2 relative"
-            style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}
+            className="font-bold text-2xl md:text-3xl text-[#1A1A1A] mb-2"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Ready to taste the real thing?
           </h2>
-          <p className="text-[#C7BFB3]/70 text-sm mb-6 relative" style={{ fontFamily: "'Inter', sans-serif" }}>
+          <p className="text-[#7A7570] text-sm mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>
             Order your Laphing Kit today and experience authentic Darjeeling street flavour at home.
           </p>
-          <div className="flex flex-wrap gap-3 relative">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/#products"
-              className="inline-flex items-center bg-[#E7B52C] text-black font-bold text-sm px-6 py-3 rounded-[14px] hover:bg-[#F4C542] hover:shadow-[0_8px_20px_rgba(231,181,44,0.25)] transition-all"
+              className="btn-ink px-8 py-3.5 text-xs font-bold uppercase tracking-wider rounded-full"
             >
               Shop Now
             </Link>
             <Link
               href="/#contact"
-              className="inline-flex items-center border border-white/10 text-[#C7BFB3] font-bold text-sm px-6 py-3 rounded-[14px] hover:bg-white/5 hover:text-white transition-colors"
+              className="btn-outline-ink px-8 py-3.5 text-xs font-bold uppercase tracking-wider rounded-full border border-[rgba(26,26,26,0.15)]"
             >
               Contact Us
             </Link>

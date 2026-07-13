@@ -1,87 +1,113 @@
-"use client";
+  "use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 
 const FAQS = [
-  {
-    q: "What is Laphing?",
-    a: "Laphing is a popular Tibetan/Nepalese street food made from starchy mung bean or potato starch sheets, served with a spicy chilli oil, garlic water, and special sauce.",
-  },
-  {
-    q: "Where do you deliver?",
-    a: "We deliver to Delhi, Noida, Gurugram (Gurgaon), and Ghaziabad only.",
-  },
-  {
-    q: "How does delivery work?",
-    a: "Delivery is arranged by you (the customer) through apps like Uber, Rapido, or Porter. Our top recommendation and preferred partner is Uncle Delivery for the best rates and handling.",
-  },
-  {
-    q: "When can I place an order?",
-    a: "Customers can book orders between 3:00 PM and 6:00 PM only.",
-  },
-  {
-    q: "What is the refund policy?",
-    a: "All orders are strictly non-refundable once placed.",
-  },
-  {
-    q: "What is the minimum order?",
-    a: "Laphing Kit: minimum 2 kits per order (₹50 each). Fresh Laphing Sheet: minimum 5 sheets (₹20 each). Cheese Corn Dog: no minimum. Packaging charge of ₹30 applies per order (₹50 for bulk orders above 10 kits).",
-  },
-  {
-    q: "Are the sheets made fresh?",
-    a: "Yes! All laphing sheets are made fresh to order every morning. We do not use any preservatives. Consume within 2 days of delivery.",
-  },
+  { q: "What is Laphing?", a: "Laphing is a popular Tibetan/Nepalese street food made from starchy mung bean or potato starch sheets, served with a spicy chilli oil, garlic water, and special sauce." },
+  { q: "Where do you deliver?", a: "We deliver to Delhi, Noida, Gurugram (Gurgaon), and Ghaziabad only." },
+  { q: "How does delivery work?", a: "Delivery is arranged by you (the customer) through apps like Uber, Rapido, or Porter. Our top recommendation and preferred partner is Uncle Delivery for the best rates and handling." },
+  { q: "When can I place an order?", a: "Customers can book orders between 3:00 PM and 6:00 PM only." },
+  { q: "What is the refund policy?", a: "All orders are strictly non-refundable once placed." },
+  { q: "What is the minimum order?", a: "Laphing Kit: minimum 2 kits per order (₹50 each). Fresh Laphing Sheet: minimum 5 sheets (₹20 each). Cheese Corn Dog: no minimum. Packaging charge of ₹30 applies per order (₹50 for bulk orders above 10 kits)." },
+  { q: "Are the sheets made fresh?", a: "Yes. All laphing sheets are made fresh to order every morning. We do not use any preservatives. Consume within 2 days of delivery." },
 ];
 
 export function FAQSection() {
-  const [open, setOpen] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section id="faq" className="bg-transparent py-16">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="mb-10 flex flex-col items-center md:items-start"
-        >
-          <h2 className="font-black text-3xl md:text-4xl text-[#F8F5EE]" style={{ fontFamily: "'Manrope', sans-serif" }}>
-            Frequently Asked Questions
-          </h2>
-          <div className="h-[3px] w-12 bg-[#E7B52C] rounded-full mt-3" />
-        </motion.div>
+    <section id="faq" className="bg-[#FAFAF8]">
+      <div className="max-w-[1440px] mx-auto px-5 md:px-16 py-24 md:py-32">
 
-        <div className="max-w-2xl space-y-2 mx-auto md:mx-0">
+        {/* Header */}
+        <div className="flex flex-col items-center text-center gap-4 mb-16 md:mb-20">
+          <div className="flex flex-col items-center">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-6 h-px bg-[#D4A843]" />
+              <span
+                className="text-label-caps text-[#D4A843]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Questions — 06
+              </span>
+              <div className="w-6 h-px bg-[#D4A843]" />
+            </div>
+            <h2
+              className="text-[#1A1A1A] text-center"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 700,
+                fontSize: "clamp(36px, 5vw, 64px)",
+                letterSpacing: "-0.03em",
+                lineHeight: "1.1",
+              }}
+            >
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <p
+            className="text-[#7A7570] text-sm max-w-lg leading-relaxed text-center"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            Everything you need to know before ordering your first Laphing Daddy kit.
+          </p>
+        </div>
+
+        {/* Accordion */}
+        <div className="max-w-3xl mx-auto">
           {FAQS.map((faq, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-[#141414] border border-white/[0.08] rounded-xl overflow-hidden"
+              transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              className="border-b border-[rgba(26,26,26,0.1)]"
             >
               <button
                 onClick={() => setOpen(open === i ? null : i)}
-                className="w-full flex items-center justify-between px-5 py-4 text-left group"
+                className="w-full flex items-center justify-between py-6 text-left group"
                 aria-expanded={open === i}
               >
-                <span className="text-[#F8F5EE] font-medium pr-4 transition-colors group-hover:text-[#E7B52C]">{faq.q}</span>
-                <ChevronDown
-                  className={`h-4 w-4 shrink-0 transition-transform duration-200 ${open === i ? "rotate-180 text-[#E7B52C]" : "text-white/40"}`}
-                />
+                <div className="flex items-center gap-6 pr-6">
+                  <span
+                    className="text-label-caps text-[rgba(26,26,26,0.25)] shrink-0 group-hover:text-[#D4A843] transition-colors duration-200"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={`text-base md:text-lg font-medium transition-colors duration-200 ${open === i ? "text-[#1A1A1A]" : "text-[#444748] group-hover:text-[#1A1A1A]"}`}
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {faq.q}
+                  </span>
+                </div>
+                <motion.div
+                  animate={{ rotate: open === i ? 45 : 0 }}
+                  transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                  className={`shrink-0 w-8 h-8 border flex items-center justify-center transition-colors duration-200 ${open === i ? "border-[#1A1A1A] bg-[#1A1A1A] text-[#FAFAF8]" : "border-[rgba(26,26,26,0.2)] text-[#7A7570]"}`}
+                >
+                  <Plus className="h-4 w-4" />
+                </motion.div>
               </button>
+
               <AnimatePresence initial={false}>
                 {open === i && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden"
                   >
-                    <p className="px-5 pb-4 text-[#C7BFB3] text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p
+                      className="pl-14 pr-12 pb-7 text-[#7A7570] text-sm md:text-base leading-relaxed"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
                       {faq.a}
                     </p>
                   </motion.div>

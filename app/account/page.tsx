@@ -10,13 +10,13 @@ import { useAuth } from "@/components/providers/auth-provider";
 import type { Order } from "@/types";
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
-  confirmed: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  preparing: "bg-orange-500/10 text-orange-400 border-orange-500/20",
-  packed: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  out_for_delivery: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-  delivered: "bg-green-500/10 text-green-400 border-green-500/20",
-  cancelled: "bg-red-500/10 text-red-400 border-red-500/20",
+  pending: "bg-yellow-500/10 text-yellow-800 border-yellow-500/20",
+  confirmed: "bg-blue-500/10 text-blue-800 border-blue-500/20",
+  preparing: "bg-orange-500/10 text-orange-800 border-orange-500/20",
+  packed: "bg-purple-500/10 text-purple-800 border-purple-500/20",
+  out_for_delivery: "bg-cyan-500/10 text-cyan-800 border-cyan-500/20",
+  delivered: "bg-green-500/10 text-green-800 border-green-500/20",
+  cancelled: "bg-red-500/10 text-red-800 border-red-500/20",
 };
 
 export default function AccountPage() {
@@ -54,8 +54,8 @@ export default function AccountPage() {
 
   if (loading || !user) {
     return (
-      <div className="min-h-screen bg-[#090909] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#E7B52C] border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#6E1D25] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function AccountPage() {
   const initials = displayName.slice(0, 2).toUpperCase();
 
   return (
-    <div className="min-h-screen bg-[#090909] pt-28 pb-20">
+    <div className="min-h-screen bg-[#FAFAF8] pt-28 pb-20">
       <div className="max-w-4xl mx-auto px-5 md:px-10">
         {/* Header */}
         <motion.div
@@ -75,21 +75,21 @@ export default function AccountPage() {
           className="flex items-center gap-5 mb-10"
         >
           {/* Avatar */}
-          <div className="w-16 h-16 rounded-full bg-[#E7B52C]/20 border border-[#E7B52C]/30 flex items-center justify-center overflow-hidden shrink-0">
+          <div className="w-16 h-16 rounded-full bg-[#D4A843]/15 border border-[#D4A843]/30 flex items-center justify-center overflow-hidden shrink-0">
             {avatarUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-[#E7B52C] font-black text-xl" style={{ fontFamily: "'Manrope', sans-serif" }}>
+              <span className="text-[#D4A843] font-black text-xl" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {initials}
               </span>
             )}
           </div>
           <div>
-            <h1 className="text-2xl font-black text-white" style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}>
+            <h1 className="text-2xl font-black text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', serif", letterSpacing: "-0.01em" }}>
               {displayName}
             </h1>
-            <p className="text-white/40 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>{user.email}</p>
+            <p className="text-[#7A7570] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>{user.email}</p>
           </div>
         </motion.div>
 
@@ -109,22 +109,22 @@ export default function AccountPage() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                   item.active
-                    ? "bg-[#E7B52C]/10 border border-[#E7B52C]/20 text-[#E7B52C]"
-                    : "bg-[#141414] border border-white/5 text-white/60 hover:text-white hover:bg-white/5"
+                    ? "bg-[#6E1D25]/10 border border-[#6E1D25]/20 text-[#6E1D25]"
+                    : "bg-[#F7F3EC] border border-[#E6DFD5] text-[#4A4540] hover:text-[#1A1A1A] hover:bg-[#E6DFD5]/40"
                 }`}
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
-                <ChevronRight className="h-4 w-4 ml-auto opacity-40" />
+                <ChevronRight className="h-4 w-4 ml-auto opacity-60" />
               </Link>
             ))}
 
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium bg-[#141414] border border-white/5 text-white/40 hover:text-[#6E1D25] hover:border-[#6E1D25]/20 transition-colors mt-2"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold bg-[#F7F3EC] border border-[#E6DFD5] text-[#7A7570] hover:text-[#6E1D25] hover:border-[#6E1D25]/30 hover:bg-[#6E1D25]/5 transition-colors mt-2"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
               <LogOut className="h-4 w-4" />
@@ -140,31 +140,31 @@ export default function AccountPage() {
             className="md:col-span-2 flex flex-col gap-6"
           >
             {/* Profile card */}
-            <div className="bg-[#141414] border border-white/8 rounded-2xl p-6">
+            <div className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-sm font-bold text-white uppercase tracking-wider" style={{ fontFamily: "'Manrope', sans-serif" }}>
-                  Profile
+                <h2 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Profile Information
                 </h2>
-                <Link href="/account/settings" className="text-xs text-[#E7B52C] hover:underline font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Edit
+                <Link href="/account/settings" className="text-xs text-[#D4A843] hover:underline font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Edit Settings
                 </Link>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
                 <div>
-                  <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Name</p>
-                  <p className="text-white font-medium">{displayName}</p>
+                  <p className="text-[#7A7570] text-xs uppercase tracking-wider mb-1">Name</p>
+                  <p className="text-[#1A1A1A] font-semibold">{displayName}</p>
                 </div>
                 <div>
-                  <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Email</p>
-                  <p className="text-white font-medium truncate">{user.email}</p>
+                  <p className="text-[#7A7570] text-xs uppercase tracking-wider mb-1">Email</p>
+                  <p className="text-[#1A1A1A] font-semibold truncate">{user.email}</p>
                 </div>
                 <div>
-                  <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Phone</p>
-                  <p className="text-white font-medium">{profile?.phone ?? "—"}</p>
+                  <p className="text-[#7A7570] text-xs uppercase tracking-wider mb-1">Phone</p>
+                  <p className="text-[#1A1A1A] font-semibold">{profile?.phone ?? "—"}</p>
                 </div>
                 <div>
-                  <p className="text-white/30 text-xs uppercase tracking-wider mb-1">Member Since</p>
-                  <p className="text-white font-medium">
+                  <p className="text-[#7A7570] text-xs uppercase tracking-wider mb-1">Member Since</p>
+                  <p className="text-[#1A1A1A] font-semibold">
                     {new Date(user.created_at).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}
                   </p>
                 </div>
@@ -172,34 +172,34 @@ export default function AccountPage() {
             </div>
 
             {/* Orders */}
-            <div id="orders" className="bg-[#141414] border border-white/8 rounded-2xl p-6">
-              <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4" style={{ fontFamily: "'Manrope', sans-serif" }}>
+            <div id="orders" className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-2xl p-6">
+              <h2 className="text-xs font-bold text-[#1A1A1A] uppercase tracking-widest mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Recent Orders
               </h2>
 
               {ordersLoading ? (
                 <div className="flex justify-center py-8">
-                  <div className="w-6 h-6 border-2 border-[#E7B52C] border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-[#6E1D25] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : orders.length === 0 ? (
                 <div className="flex flex-col items-center py-10 gap-3">
-                  <ShoppingBag className="h-10 w-10 text-white/10" />
-                  <p className="text-white/30 text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>No orders yet</p>
-                  <Link href="/#products" className="text-[#E7B52C] text-sm font-semibold hover:underline">
+                  <ShoppingBag className="h-10 w-10 text-[#7A7570]/30" />
+                  <p className="text-[#7A7570] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>No orders yet</p>
+                  <Link href="/#products" className="text-[#D4A843] text-sm font-semibold hover:underline">
                     Start Shopping →
                   </Link>
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
                   {orders.map((order) => (
-                    <div key={order.id} className="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-xl border border-white/5">
+                    <div key={order.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-[#E6DFD5]">
                       <div style={{ fontFamily: "'Inter', sans-serif" }}>
-                        <p className="text-white font-semibold text-sm">#{order.order_number}</p>
-                        <p className="text-white/40 text-xs mt-0.5">
+                        <p className="text-[#1A1A1A] font-bold text-sm">#{order.order_number}</p>
+                        <p className="text-[#7A7570] text-xs mt-0.5">
                           {new Date(order.created_at).toLocaleDateString("en-IN")} · ₹{order.total}
                         </p>
                       </div>
-                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${STATUS_COLORS[order.status] ?? "bg-white/5 text-white/40 border-white/10"}`}>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${STATUS_COLORS[order.status] ?? "bg-[#1A1A1A]/5 text-[#1A1A1A]/40 border-[#1A1A1A]/10"}`}>
                         {order.status.replace("_", " ")}
                       </span>
                     </div>

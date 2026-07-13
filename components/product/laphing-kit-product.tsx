@@ -10,9 +10,10 @@ import { useSiteConfig } from "@/lib/hooks/use-site-config";
 import { useCartRecommendation } from "@/lib/hooks/use-cart-recommendation";
 import { useCart } from "../providers/cart-provider";
 import { Button } from "../ui/button";
-import { Check, Package } from "lucide-react";
+import { Check, Package, Sparkles, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { MaskReveal, WordReveal } from "@/components/ui/text-reveal";
 
 interface LaphingKitProductProps {
   product: Product | null;
@@ -20,7 +21,7 @@ interface LaphingKitProductProps {
 
 export function LaphingKitProduct({ product }: LaphingKitProductProps) {
   const { data: config } = useSiteConfig();
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const [quantity, setQuantity] = useState(config?.min_kit_qty || 2);
   const [extras, setExtras] = useState<KitExtras>({
     extra_sheets: 0,
@@ -55,10 +56,8 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
     
     setIsAdding(true);
     try {
-      // 1. Add main kit product
       addItem(product, quantity);
 
-      // 2. Add extra addon items if selected
       if (extras.extra_sheets > 0) {
         addItem({
           id: "addon-sheet",
@@ -66,7 +65,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
           price: 20,
           images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/laphingsheet.png"],
           is_active: true,
-        } as Product, extras.extra_sheets);
+        } as unknown as Product, extras.extra_sheets);
       }
 
       if (extras.extra_chilli_oil > 0) {
@@ -76,7 +75,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
           price: 15,
           images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/signaturechillioil.png"],
           is_active: true,
-        } as Product, extras.extra_chilli_oil);
+        } as unknown as Product, extras.extra_chilli_oil);
       }
 
       if (extras.extra_garlic_water > 0) {
@@ -86,10 +85,11 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
           price: 10,
           images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/garlicwater.png"],
           is_active: true,
-        } as Product, extras.extra_garlic_water);
+        } as unknown as Product, extras.extra_garlic_water);
       }
 
       toast.success("Added to cart successfully!");
+      openCart();
     } catch (error) {
       toast.error("Failed to add to cart");
       console.error(error);
@@ -104,19 +104,19 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
   };
 
   const kitIncludes = [
-    { name: "Fresh Laphing Sheet", icon: Package },
-    { name: "Signature Chilli Oil", icon: Package },
-    { name: "Garlic Water", icon: Package },
-    { name: "Laphing Sauce", icon: Package },
-    { name: "Seasoning Mix", icon: Package },
+    { name: "3 Fresh Laphing Sheets", icon: Package },
+    { name: "Signature Chilli Oil (3 Portions)", icon: Package },
+    { name: "Garlic Water (3 Portions)", icon: Package },
+    { name: "Soya Chunks", icon: Package },
+    { name: "Wai Wai Crispy Topping", icon: Package },
     { name: "Step-by-Step Guide", icon: Package },
   ];
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
         {/* Product Image */}
-        <div className="rounded-2xl overflow-hidden bg-[#141414] border border-white/[0.08]">
+        <div className="overflow-hidden bg-[#F0EBE0] border border-[rgba(26,26,26,0.08)]">
           <div className="aspect-square relative">
             {config?.product_images.laphing_kit ? (
               <Image
@@ -127,55 +127,63 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
                 priority
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a1a1a] to-[#0f0f0f]">
-                <Package className="h-32 w-32 text-white/20" />
+              <div className="w-full h-full flex items-center justify-center bg-[#F0EBE0]">
+                <Package className="h-32 w-32 text-[#7A7570]/30" />
               </div>
             )}
           </div>
         </div>
 
         {/* Product Details */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div>
-            <div className="inline-block px-3 py-1 bg-[#E7B52C] rounded-full text-[10px] font-bold text-black uppercase tracking-wider mb-3">
+            <div className="inline-block bg-[#D4A843] text-[#1A1A1A] text-[9px] font-bold px-3 py-1.5 uppercase tracking-wider mb-4">
+              <Sparkles className="h-3.5 w-3.5 inline mr-1" />
               Best Seller
             </div>
             <h1
-              className="font-black text-4xl md:text-5xl text-[#F8F5EE] mb-4 leading-[1.1]"
-              style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}
+              className="text-[#1A1A1A] mb-4 leading-none"
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontWeight: 700,
+                fontSize: "clamp(38px, 5vw, 56px)",
+                letterSpacing: "-0.025em",
+              }}
             >
-              LAPHING KIT
+              <MaskReveal delay={0.1}>
+                LAPHING KIT
+              </MaskReveal>
             </h1>
-            <p className="text-lg text-[#C7BFB3] leading-relaxed">
+            <p className="text-[#7A7570] text-base leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
               The complete artisanal experience. Everything you need to prepare authentic servings at
               home in minutes.
             </p>
           </div>
 
           {/* Price */}
-          <div className="bg-[#141414] border border-white/[0.08] rounded-xl p-6">
+          <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.08)] p-6">
             <div className="flex items-baseline gap-2 mb-2">
               <span
-                className="text-4xl font-black text-[#E7B52C]"
-                style={{ fontFamily: "'Manrope', sans-serif" }}
+                className="text-4xl font-bold text-[#1A1A1A]"
+                style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 ₹{kitPrice}
               </span>
-              <span className="text-[#8F857B]">per kit</span>
+              <span className="text-[#A09890] text-xs uppercase tracking-wider">per kit</span>
             </div>
-            <p className="text-sm text-[#8F857B]">
-              Minimum order: {minQty} kits • Serves 4 per kit
+            <p className="text-xs text-[#7A7570]" style={{ fontFamily: "'Inter', sans-serif" }}>
+              Minimum order: {minQty} kits • Serves 3 per kit
             </p>
           </div>
 
           {/* What's Included */}
-          <div className="bg-[#141414] border border-white/[0.08] rounded-xl p-6">
-            <h3 className="font-bold text-lg text-[#F8F5EE] mb-4">What&apos;s Included</h3>
+          <div className="bg-white border border-[rgba(26,26,26,0.08)] p-6">
+            <h3 className="font-bold text-base text-[#1A1A1A] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>What&#39;s Included</h3>
             <div className="grid grid-cols-2 gap-3">
               {kitIncludes.map((item, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-[#E7B52C]" />
-                  <span className="text-sm text-[#C7BFB3]">{item.name}</span>
+                  <Check className="h-4 w-4 text-[#D4A843]" />
+                  <span className="text-sm text-[#7A7570]" style={{ fontFamily: "'Inter', sans-serif" }}>{item.name}</span>
                 </div>
               ))}
             </div>
@@ -183,7 +191,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
 
           {/* Quantity Selector */}
           <div>
-            <label className="block text-sm font-semibold text-[#F8F5EE] mb-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#1A1A1A] mb-3" style={{ fontFamily: "'Inter', sans-serif" }}>
               Number of Kits
             </label>
             <ProductQuantitySelector
@@ -209,24 +217,27 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
 
           {/* Add to Cart */}
           <div className="space-y-4">
-            <div className="bg-[#1B1B1B] border border-white/[0.08] rounded-xl p-4">
+            <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.08)] p-5">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[#C7BFB3]">Subtotal</span>
-                <span className="text-[#E7B52C] font-bold text-xl">₹{calculateTotal().toFixed(2)}</span>
+                <span className="text-[#7A7570] text-sm">Subtotal</span>
+                <span className="text-[#1A1A1A] font-bold text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  ₹{calculateTotal().toFixed(2)}
+                </span>
               </div>
-              <p className="text-xs text-[#8F857B]">
+              <p className="text-[11px] text-[#A09890]" style={{ fontFamily: "'Inter', sans-serif" }}>
                 +₹{packagingCharge} packaging charge at checkout
               </p>
             </div>
 
-            <Button
+            <button
               onClick={handleAddToCart}
               disabled={!meetsMinimum || isAdding}
-              className="w-full bg-[#E7B52C] hover:bg-[#F4C542] text-black font-bold py-6 text-lg disabled:opacity-50 disabled:cursor-not-allowed rounded-[14px] hover:shadow-[0_8px_25px_rgba(231,181,44,0.25)] transition-all duration-200"
-              style={{ boxShadow: meetsMinimum ? "0 0 20px rgba(231,181,44,0.15)" : "none" }}
+              className="btn-ink w-full justify-center text-sm"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             >
+              <ShoppingBag className="h-4 w-4 mr-2" />
               {isAdding ? "Adding..." : "Add to Cart"}
-            </Button>
+            </button>
           </div>
         </div>
       </div>

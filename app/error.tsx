@@ -18,9 +18,9 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-[#090909] flex flex-col items-center justify-center px-4 text-center">
+    <div className="min-h-screen bg-[#FAFAF8] flex flex-col items-center justify-center px-4 text-center">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#6E1D25]/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-[#6E1D25]/5 rounded-full blur-[100px]" />
       </div>
 
       <motion.div
@@ -29,18 +29,18 @@ export default function Error({
         transition={{ duration: 0.6 }}
         className="relative z-10 max-w-md"
       >
-        <div className="w-16 h-16 rounded-full bg-[#6E1D25]/20 border border-[#6E1D25]/40 flex items-center justify-center mx-auto mb-6">
-          <AlertTriangle className="h-8 w-8 text-[#E7B52C]" />
+        <div className="w-16 h-16 rounded-full bg-[#6E1D25]/10 border border-[#6E1D25]/20 flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle className="h-8 w-8 text-[#6E1D25]" />
         </div>
 
         <h1
-          className="text-3xl font-black text-white mb-3"
-          style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}
+          className="text-3xl font-black text-[#1A1A1A] mb-3"
+          style={{ fontFamily: "'Playfair Display', serif", letterSpacing: "-0.01em" }}
         >
           Something went wrong
         </h1>
         <p
-          className="text-[#C7BFB3] text-sm mb-8 leading-relaxed"
+          className="text-[#7A7570] text-sm mb-8 leading-relaxed"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           We encountered an unexpected error. Our team has been notified. You can try again or return home.
@@ -49,15 +49,15 @@ export default function Error({
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={reset}
-            className="inline-flex items-center justify-center gap-2 bg-[#6E1D25] text-white font-bold px-6 py-3 rounded-[14px] hover:bg-[#8B252E] transition-colors"
-            style={{ fontFamily: "'Inter', sans-serif", boxShadow: "0 8px 20px rgba(110,29,37,0.15)" }}
+            className="inline-flex items-center justify-center gap-2 bg-[#6E1D25] hover:bg-[#1A1A1A] text-white font-bold text-xs uppercase tracking-widest px-6 py-3.5 rounded-full transition-all"
+            style={{ fontFamily: "'Inter', sans-serif" }}
           >
             <RefreshCw className="h-4 w-4" />
             Try Again
           </button>
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 border border-white/10 text-[#C7BFB3] font-bold px-6 py-3 rounded-[14px] hover:bg-white/5 hover:text-white transition-colors"
+            className="inline-flex items-center justify-center gap-2 border border-[#E6DFD5] text-[#4A4540] hover:text-[#1A1A1A] hover:bg-[#F7F3EC] font-bold text-xs uppercase tracking-widest px-6 py-3.5 rounded-full transition-all"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Back to Home

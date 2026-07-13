@@ -32,53 +32,51 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#090909] flex items-center justify-center px-4 py-20">
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#E7B52C]/5 rounded-full blur-[120px] pointer-events-none" />
-
+    <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center px-5 py-24 md:py-32">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-md"
+        className="relative w-full max-w-md z-10"
       >
         <Link href="/" className="block text-center mb-8">
-          <span className="font-black text-3xl text-white tracking-tighter" style={{ fontFamily: "'Manrope', sans-serif" }}>
-            Laphing <span className="text-[#E7B52C]">Daddy</span>
+          <span className="font-bold text-2xl text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Laphing <span className="text-[#D4A843] italic">Daddy</span>
           </span>
         </Link>
 
-        <div className="bg-[#141414] border border-white/[0.08] rounded-2xl p-8 shadow-[0_40px_80px_rgba(0,0,0,0.6)]">
+        <div className="bg-white border border-[rgba(26,26,26,0.08)] p-8 md:p-10 shadow-[0_12px_40px_rgba(26,26,26,0.03)]">
           {sent ? (
             <div className="text-center">
-              <div className="w-14 h-14 rounded-full bg-[#E7B52C]/10 flex items-center justify-center mx-auto mb-5">
-                <Mail className="h-7 w-7 text-[#E7B52C]" />
+              <div className="w-14 h-14 rounded-full bg-[#F7F3EC] flex items-center justify-center mx-auto mb-6 border border-[rgba(26,26,26,0.05)]">
+                <Mail className="h-6 w-6 text-[#D4A843]" />
               </div>
-              <h1 className="text-xl font-black text-white mb-2" style={{ fontFamily: "'Manrope', sans-serif" }}>
+              <h1 className="text-xl font-bold text-[#1A1A1A] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Check your email
               </h1>
-              <p className="text-[#C7BFB3] text-sm mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
-                We&apos;ve sent a password reset link to <span className="text-white">{email}</span>. The link expires in 1 hour.
+              <p className="text-[#7A7570] text-xs leading-relaxed mb-6" style={{ fontFamily: "'Inter', sans-serif" }}>
+                We&apos;ve sent a password reset link to <span className="text-[#1A1A1A] font-semibold">{email}</span>. The link expires in 1 hour.
               </p>
-              <Link href="/login" className="text-[#E7B52C] text-sm font-semibold hover:underline">
+              <Link href="/login" className="text-[#D4A843] hover:text-[#6E1D25] text-xs font-bold uppercase tracking-wider">
                 ← Back to Login
               </Link>
             </div>
           ) : (
             <>
-              <h1 className="text-2xl font-black text-[#F8F5EE] mb-1" style={{ fontFamily: "'Manrope', sans-serif", letterSpacing: "-0.02em" }}>
+              <h1 className="text-2xl font-bold text-[#1A1A1A] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Forgot password?
               </h1>
-              <p className="text-[#C7BFB3] text-sm mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <p className="text-[#7A7570] text-xs mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Enter your email and we&apos;ll send you a reset link.
               </p>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="reset-email" className="text-xs font-semibold text-white/40 uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  <label htmlFor="reset-email" className="text-[10px] font-bold text-[#A09890] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
                     Email
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A09890]" />
                     <input
                       id="reset-email"
                       type="email"
@@ -86,13 +84,13 @@ export default function ForgotPasswordPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="w-full bg-[#1B1B1B] border border-white/[0.08] rounded-xl pl-10 pr-4 py-3 text-[#F8F5EE] text-sm placeholder-white/20 focus:outline-none focus:border-[#E7B52C]/60 transition-colors"
+                      className="w-full bg-white border border-[rgba(26,26,26,0.08)] rounded-none pl-10 pr-4 py-3.5 text-[#1A1A1A] text-sm placeholder-[#A09890]/50 focus:outline-none focus:border-[#D4A843] transition-colors"
                     />
                   </div>
                 </div>
 
                 {error && (
-                  <p className="text-white text-xs bg-[#6E1D25] border border-[#6E1D25]/20 rounded-lg px-3 py-2">
+                  <p className="text-white text-xs bg-[#6E1D25] border border-[#6E1D25]/10 rounded-none px-3 py-2.5">
                     {error}
                   </p>
                 )}
@@ -100,7 +98,7 @@ export default function ForgotPasswordPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 bg-[#E7B52C] text-black font-bold text-sm py-3.5 rounded-[14px] hover:bg-[#F4C542] transition-colors disabled:opacity-60 hover:shadow-[0_8px_20px_rgba(231,181,44,0.25)]"
+                  className="btn-ink w-full py-4 text-xs font-bold uppercase tracking-wider"
                 >
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send Reset Link"}
                 </button>
@@ -108,7 +106,7 @@ export default function ForgotPasswordPage() {
 
               <Link
                 href="/login"
-                className="flex items-center justify-center gap-1.5 mt-6 text-white/30 hover:text-white text-sm transition-colors"
+                className="flex items-center justify-center gap-1.5 mt-6 text-[#A09890] hover:text-[#1A1A1A] text-xs font-semibold uppercase tracking-wider"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
