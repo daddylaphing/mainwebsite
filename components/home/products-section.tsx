@@ -8,11 +8,12 @@ import { Phone, Plus, Minus, ArrowRight } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
 import { ProductQuantitySelector } from "@/components/product/product-quantity-selector";
 import { MaskReveal } from "@/components/ui/text-reveal";
+import { getProxiedImageUrl } from "@/lib/image-proxy";
 import type { Product } from "@/types";
 
 // Helper
 function getProductImage(product: Product): string {
-  return product.images?.[0] || "/placeholder-product.png";
+  return getProxiedImageUrl(product.images?.[0]) || "/placeholder-product.png";
 }
 
 // Full-width product panel — alternating layouts

@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/providers/cart-provider";
 import { SuggestionModal } from "@/components/cart/suggestion-modal";
+import { getProxiedImageUrl } from "@/lib/image-proxy";
 import type { Product } from "@/types";
 
 // ─── Addons definition ────────────────────────────────────────────────────────
@@ -209,9 +210,8 @@ export function CartSheet() {
                         {/* Image */}
                         <div className="w-16 h-16 rounded-md bg-white overflow-hidden shrink-0 border border-[#E6DFD5]">
                           {item.product.images?.[0] ? (
-                            // eslint-disable-next-line @next/next/no-img-element
                             <img
-                              src={item.product.images[0]}
+                              src={getProxiedImageUrl(item.product.images[0])}
                               alt={item.product.name}
                               className="w-full h-full object-cover"
                             />

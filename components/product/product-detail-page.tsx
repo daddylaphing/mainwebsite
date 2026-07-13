@@ -16,6 +16,7 @@ import {
 import { useCart } from "@/components/providers/cart-provider";
 import { ProductQuantitySelector } from "./product-quantity-selector";
 import { MinOrderWarning } from "./min-order-warning";
+import { getProxiedImageUrl } from "@/lib/image-proxy";
 import type { Product } from "@/types";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
@@ -80,7 +81,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
               className="relative aspect-square overflow-hidden bg-[#F0EBE0] border border-[rgba(26,26,26,0.08)]"
             >
               <Image
-                src={product.images[selectedImage] || "/placeholder-product.png"}
+                src={getProxiedImageUrl(product.images[selectedImage]) || "/placeholder-product.png"}
                 alt={product.name}
                 fill
                 className="object-cover"
@@ -108,7 +109,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
                     }`}
                   >
                     <Image
-                      src={image}
+                      src={getProxiedImageUrl(image)}
                       alt={`${product.name} ${idx + 1}`}
                       fill
                       className="object-cover"
@@ -330,7 +331,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
                     <div className="bg-[#FFFFFF] border border-[rgba(26,26,26,0.08)] group-hover:border-[rgba(26,26,26,0.2)] transition-all duration-300">
                       <div className="relative aspect-square overflow-hidden">
                         <Image
-                          src={related.images[0] || "/placeholder-product.png"}
+                          src={getProxiedImageUrl(related.images[0]) || "/placeholder-product.png"}
                           alt={related.name}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-500"
