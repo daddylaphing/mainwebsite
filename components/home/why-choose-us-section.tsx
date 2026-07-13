@@ -27,6 +27,23 @@ export function WhyChooseUsSection() {
     setTiltY(0);
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const touch = e.touches[0];
+    const x = touch.clientX - rect.left - rect.width / 2;
+    const y = touch.clientY - rect.top - rect.height / 2;
+    setTiltX(-y / (rect.height / 2) * 15);
+    setTiltY(x / (rect.width / 2) * 15);
+  };
+
+  const handleTouchEnd = () => {
+    setTiltX(0);
+    setTiltY(0);
+  };
+
+
   return (
     <section id="story" className="bg-[#F7F3EC] overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-5 md:px-16 py-24 md:py-32">
@@ -148,11 +165,16 @@ export function WhyChooseUsSection() {
             ref={containerRef}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
             className="relative cursor-pointer"
             style={{ perspective: "1000px" }}
           >
             {/* Offset block decoration */}
-            <div className="absolute -top-6 -right-6 w-full h-full bg-[#D4A843]/15 z-0" />
+            <div 
+              className="absolute -top-6 -right-6 w-full h-full bg-[#D4A843]/15 z-0" 
+              style={{ transform: "translateZ(-20px)" }}
+            />
             <motion.div
               style={{
                 rotateX: tiltX,
@@ -168,6 +190,7 @@ export function WhyChooseUsSection() {
                 fill
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
+                style={{ transform: "translateZ(30px) scale(1.05)" }}
               />
             </motion.div>
 
@@ -177,7 +200,8 @@ export function WhyChooseUsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.4 }}
-              className="absolute -bottom-6 -left-6 bg-[#FAFAF8] border border-[rgba(26,26,26,0.1)] px-5 py-4 z-20"
+              className="absolute -bottom-6 -left-6 bg-[#FAFAF8] border border-[rgba(26,26,26,0.1)] px-5 py-4 z-20 shadow-lg"
+              style={{ transform: "translateZ(60px)" }}
             >
               <p className="text-[#1A1A1A] text-sm font-semibold" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Fresh Tibetan Laphing

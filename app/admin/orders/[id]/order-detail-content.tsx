@@ -22,10 +22,11 @@ interface OrderDetailContentProps {
 
 const STATUS_STEPS = [
   { value: "pending", label: "Pending", description: "Customer placed order" },
-  { value: "accepted", label: "Accepted", description: "Order confirmed by staff" },
+  { value: "confirmed", label: "Confirmed", description: "Order confirmed by staff" },
   { value: "preparing", label: "Preparing", description: "Preparing fresh laphing sheets" },
-  { value: "ready", label: "Ready", description: "Packed & ready for dispatch" },
-  { value: "completed", label: "Completed", description: "Successfully delivered" },
+  { value: "packed", label: "Packed", description: "Packed & ready for dispatch" },
+  { value: "out_for_delivery", label: "Out for Delivery", description: "Out with delivery agent" },
+  { value: "delivered", label: "Delivered", description: "Successfully delivered" },
 ];
 
 export function OrderDetailContent({ order: initialOrder }: OrderDetailContentProps) {
@@ -33,7 +34,6 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
   const [order, setOrder] = useState(initialOrder);
   const [status, setStatus] = useState(order.status);
   const [note, setNote] = useState("");
-  const [adminNotes, setAdminNotes] = useState(order.admin_notes || "");
   const [updating, setUpdating] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
 
@@ -47,13 +47,12 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
           order_id: order.id,
           status,
           note: note || undefined,
-          admin_notes: adminNotes || undefined,
         }),
       });
 
       const data = await response.json();
       if (response.ok) {
-        setOrder({ ...order, status, admin_notes: adminNotes });
+        setOrder({ ...order, status });
         setNote("");
         alert("Order status updated successfully!");
         router.refresh();
@@ -66,6 +65,7 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
       setUpdating(false);
     }
   };
+
 
   const toggleItemCheck = (itemId: string) => {
     setCheckedItems(prev => ({
@@ -246,10 +246,11 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
               className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-3 py-2.5 text-[#1A1A1A] text-sm focus:outline-none focus:border-[#6E1D25] font-semibold"
             >
               <option value="pending">Pending Review</option>
-              <option value="accepted">Accept Order</option>
+              <option value="confirmed">Confirm Order</option>
               <option value="preparing">Start Preparing</option>
-              <option value="ready">Ready for Pickup/Delivery</option>
-              <option value="completed">Complete & Deliver</option>
+              <option value="packed">Packed</option>
+              <option value="out_for_delivery">Out for Delivery</option>
+              <option value="delivered">Complete & Deliver</option>
               <option value="cancelled">Cancel Order</option>
             </select>
           </div>
@@ -263,19 +264,6 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Reason for cancellation or delivery note to customer..."
-              className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-3 py-2 text-[#1A1A1A] text-xs focus:outline-none focus:border-[#6E1D25] resize-none"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-bold text-[#7A7570] uppercase tracking-wider">
-              Internal Admin Notes
-            </label>
-            <textarea
-              rows={3}
-              value={adminNotes}
-              onChange={(e) => setAdminNotes(e.target.value)}
-              placeholder="E.g. Verified payment screenshot. Custom packaging requested."
               className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-3 py-2 text-[#1A1A1A] text-xs focus:outline-none focus:border-[#6E1D25] resize-none"
             />
           </div>
@@ -339,14 +327,14 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
             </div>
 
             {/* Notes */}
-            {order.notes && (
+            {(order.delivery_notes || order.notes) && (
               <div className="p-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl space-y-1">
                 <div className="flex items-center gap-1.5">
                   <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                   <span className="font-bold text-[10px] uppercase tracking-wider">Customer Delivery Notes</span>
                 </div>
                 <p className="text-xs font-semibold leading-relaxed">
-                  "{order.notes}"
+                  "{order.delivery_notes || order.notes}"
                 </p>
               </div>
             )}

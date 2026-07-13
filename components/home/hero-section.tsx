@@ -231,6 +231,16 @@ export function HeroSection() {
   };
   const handleMouseLeave = () => { mouseX.set(0); mouseY.set(0); };
 
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const el = containerRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const touch = e.touches[0];
+    mouseX.set((touch.clientX - rect.left) / rect.width - 0.5);
+    mouseY.set((touch.clientY - rect.top) / rect.height - 0.5);
+  };
+  const handleTouchEnd = () => { mouseX.set(0); mouseY.set(0); };
+
   const scrollToProducts = () => {
     const el = document.getElementById("products");
     if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 90, behavior: "smooth" });
@@ -241,6 +251,8 @@ export function HeroSection() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className="relative w-full min-h-screen lg:h-screen flex items-center justify-center overflow-hidden py-12 lg:py-0"
       style={{ background: "#F7F3EC", perspective: "1400px" }}
     >
@@ -248,6 +260,7 @@ export function HeroSection() {
       <div className="absolute inset-0 z-0">
         <Image
           src="/bg.png"
+
           alt="Warm backdrop with wooden log table"
           fill priority quality={100}
           className="object-cover"
@@ -454,9 +467,14 @@ export function HeroSection() {
 
             {/* Floating bowl */}
             <motion.div
-              animate={{ y: [0, -14, 4, 0] }}
+              animate={{ 
+                y: [0, -14, 4, 0],
+                rotateX: [0, 4, -4, 0],
+                rotateY: [0, -6, 6, 0]
+              }}
               transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}
               className="relative w-full h-full flex items-center justify-center z-10"
+              style={{ transformStyle: "preserve-3d" }}
             >
               <div className="w-full h-full flex items-center justify-center select-none pointer-events-none">
                 <Image

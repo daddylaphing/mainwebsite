@@ -16,6 +16,10 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { getFeaturedProducts } from "@/lib/products";
 import { getFeaturedReviews } from "@/lib/reviews";
 import { CurvedLoopDivider } from "@/components/home/curved-loop-divider";
+import { FloatingSpiceFlakes } from "@/components/ui/floating-spice-flakes";
+import { PreparationScrollStack } from "@/components/home/preparation-scroll-stack";
+
+
 
 export const metadata: Metadata = {
   title: "Laphing Daddy | Authentic Tibetan Laphing Kits",
@@ -64,7 +68,8 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAF8]">
+    <div className="min-h-screen bg-[#FAFAF8] relative">
+      <FloatingSpiceFlakes />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }}
@@ -151,6 +156,11 @@ export default async function HomePage() {
         {/* Ingredients — 03 */}
         <ErrorBoundary>
           <IngredientsSection />
+        </ErrorBoundary>
+
+        {/* Preparation Guide — 3D Stack */}
+        <ErrorBoundary>
+          <PreparationScrollStack />
         </ErrorBoundary>
 
         {/* Founder — 04 */}

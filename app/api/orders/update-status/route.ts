@@ -33,13 +33,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Order ID and status are required" }, { status: 400 });
     }
 
-    // Update order status
     const success = await orderService.updateOrderStatus({
       order_id: body.order_id,
       status: body.status,
       note: body.note,
-      admin_notes: body.admin_notes,
     });
+
 
     if (!success) {
       return NextResponse.json(

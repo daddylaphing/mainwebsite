@@ -3,8 +3,10 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { getProxiedImageUrl } from "@/lib/image-proxy";
+import { TiltCard } from "@/components/ui/tilt-card";
 
 const INGREDIENTS = [
+
   {
     name: "Chilli Oil",
     desc: "Slow-cooked, handcrafted with whole spices. The soul of laphing.",
@@ -86,60 +88,62 @@ export function IngredientsSection() {
               whileInView={{ opacity: 1, y: 0, scale: 1 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.9, delay: ing.delay, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center text-center group"
+              className="flex"
             >
-              {/* Floating ingredient image with 3D Rotation */}
-              <motion.div 
-                animate={{
-                  y: ing.yRange,
-                  rotateY: ing.rotateRange,
-                  rotateX: ing.yRange.map(val => val * 0.3),
-                }}
-                transition={{
-                  duration: 8 + i * 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                whileHover={{ scale: 1.08, rotateY: 15 }}
-                className="w-32 h-32 md:w-44 md:h-44 relative mb-6 cursor-pointer rounded-full overflow-hidden"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <div className="absolute inset-0 bg-[#F7F3EC] rounded-full transition-colors duration-300 group-hover:bg-[#EAE4D8]" />
-                <Image
-                  src={getProxiedImageUrl(ing.imageUrl)}
-                  alt={ing.name}
-                  fill
-                  unoptimized
-                  className="object-cover rounded-full drop-shadow-[0_12px_24px_rgba(26,26,26,0.08)]"
-                  sizes="(max-width: 768px) 128px, 176px"
-                />
-                {/* Subtle shadow */}
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-20 h-4 bg-[rgba(26,26,26,0.06)] rounded-full blur-sm" />
-              </motion.div>
+              <TiltCard className="flex flex-col items-center text-center group cursor-pointer w-full bg-[#FAFAF8]/50 border border-[rgba(26,26,26,0.05)] rounded-2xl p-6 hover:bg-[#F7F3EC]/40 transition-colors duration-300">
+                {/* Floating ingredient image with 3D Rotation */}
+                <motion.div 
+                  animate={{
+                    y: ing.yRange,
+                    rotateY: ing.rotateRange,
+                    rotateX: ing.yRange.map(val => val * 0.3),
+                  }}
+                  transition={{
+                    duration: 8 + i * 1.5,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                  whileHover={{ scale: 1.08, rotateY: 15 }}
+                  className="w-24 h-24 md:w-32 md:h-32 relative mb-6 cursor-pointer rounded-full overflow-hidden"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  <div className="absolute inset-0 bg-[#F7F3EC] rounded-full transition-colors duration-300 group-hover:bg-[#EAE4D8]" />
+                  <Image
+                    src={getProxiedImageUrl(ing.imageUrl)}
+                    alt={ing.name}
+                    fill
+                    unoptimized
+                    className="object-cover rounded-full drop-shadow-[0_12px_24px_rgba(26,26,26,0.08)]"
+                    sizes="(max-width: 768px) 96px, 128px"
+                  />
+                  {/* Subtle shadow */}
+                  <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-20 h-4 bg-[rgba(26,26,26,0.06)] rounded-full blur-sm" />
+                </motion.div>
 
-              {/* Number */}
-              <span
-                className="text-label-caps text-[#D4A843] mb-2"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                0{i + 1}
-              </span>
+                {/* Number */}
+                <span
+                  className="text-label-caps text-[#D4A843] mb-2"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  0{i + 1}
+                </span>
 
-              {/* Name */}
-              <h3
-                className="text-[#1A1A1A] text-lg md:text-xl font-bold mb-2 group-hover:text-[#D4A843] transition-colors"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                {ing.name}
-              </h3>
+                {/* Name */}
+                <h3
+                  className="text-[#1A1A1A] text-lg font-bold mb-2 group-hover:text-[#D4A843] transition-colors"
+                  style={{ fontFamily: "'Playfair Display', serif" }}
+                >
+                  {ing.name}
+                </h3>
 
-              {/* Description */}
-              <p
-                className="text-[#7A7570] text-[13px] leading-relaxed max-w-[200px]"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {ing.desc}
-              </p>
+                {/* Description */}
+                <p
+                  className="text-[#7A7570] text-[13px] leading-relaxed max-w-[200px]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {ing.desc}
+                </p>
+              </TiltCard>
             </motion.div>
           ))}
         </div>

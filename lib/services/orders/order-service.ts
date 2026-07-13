@@ -1,22 +1,29 @@
 /**
  * Order Service
- * 
- * Comprehensive order management with payment, delivery, and WhatsApp integration
+ *
+ * Order management scoped to the actual database schema.
+ * Orders table columns: order_number, user_id, status, subtotal, tax,
+ * shipping_charge, packaging_charge, discount, total, coupon_code,
+ * payment_status, payment_id, payment_method, shipping_address (JSONB),
+ * delivery_notes
  */
 
 import { createClient } from "@/lib/supabase/server";
-import { createBrowserClient } from "@/lib/supabase/client";
 import { razorpayService } from "../payment/razorpay";
-import { whatsappService } from "../whatsapp/whatsapp-service";
-import { deliveryService } from "../delivery/delivery-provider";
 
-type OrderStatus = "pending" | "accepted" | "preparing" | "ready" | "completed" | "cancelled";
-type PaymentStatus = "pending" | "processing" | "paid" | "failed" | "refunded";
+type OrderStatus =
+  | "pending"
+  | "confirmed"
+  | "preparing"
+  | "packed"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled";
 
 export interface CreateOrderData {
   user_id: string;
   items: Array<{
-    product_id: string;
+    product_id: string | null;
     name: string;
     price: number;
     quantity: number;
@@ -46,7 +53,6 @@ export interface UpdateOrderStatusData {
   order_id: string;
   status: OrderStatus;
   note?: string;
-  admin_notes?: string;
 }
 
 class OrderService {
@@ -61,18 +67,21 @@ class OrderService {
 
   /**
    * Create new order
+   * Returns orderId, orderNumber, and razorpayOrderId (if Razorpay is configured)
    */
-  async createOrder(data: CreateOrderData): Promise<{ orderId: string; orderNumber: string; razorpayOrderId?: string }> {
+  async createOrder(
+    data: CreateOrderData
+  ): Promise<{ orderId: string; orderNumber: string; razorpayOrderId?: string }> {
     const supabase = await createClient();
     const orderNumber = this.generateOrderNumber();
 
     // Create Razorpay order if configured
     let razorpayOrderId: string | undefined;
-    
+
     if (razorpayService.isConfigured()) {
       try {
         const razorpayOrder = await razorpayService.createOrder({
-          amount: Math.round(data.total * 100), // Convert to paise
+          amount: Math.round(data.total * 100), // convert ₹ → paise
           currency: "INR",
           receipt: orderNumber,
           notes: {
@@ -83,17 +92,19 @@ class OrderService {
         razorpayOrderId = razorpayOrder.id;
       } catch (error) {
         console.error("Failed to create Razorpay order:", error);
+        // Don't throw — order can still be created without Razorpay
       }
     }
 
-    // Insert order
+    // Insert order using only real schema columns
     const { data: order, error: orderError } = await supabase
       .from("orders")
       .insert({
         order_number: orderNumber,
         user_id: data.user_id,
-        status: "pending",
+        status: "pending" as OrderStatus,
         payment_status: "pending",
+        payment_method: "razorpay",
         subtotal: data.subtotal,
         tax: data.tax,
         shipping_charge: data.shipping_charge,
@@ -101,9 +112,8 @@ class OrderService {
         discount: data.discount,
         total: data.total,
         shipping_address: data.shipping_address,
-        delivery_notes: data.delivery_notes,
-        coupon_code: data.coupon_code,
-        razorpay_order_id: razorpayOrderId,
+        delivery_notes: data.delivery_notes ?? null,
+        coupon_code: data.coupon_code ?? null,
       })
       .select()
       .single();
@@ -113,12 +123,12 @@ class OrderService {
     // Insert order items
     const orderItems = data.items.map((item) => ({
       order_id: order.id,
-      product_id: item.product_id,
+      product_id: item.product_id || null,
       name: item.name,
       price: item.price,
       quantity: item.quantity,
-      image_url: item.image_url,
-      kit_config: item.kit_config,
+      image_url: item.image_url ?? null,
+      kit_config: item.kit_config ?? null,
     }));
 
     const { error: itemsError } = await supabase
@@ -126,35 +136,6 @@ class OrderService {
       .insert(orderItems);
 
     if (itemsError) throw itemsError;
-
-    // Send WhatsApp notification if configured
-    try {
-      if (whatsappService.isConfigured()) {
-        await whatsappService.notifyOrderPlaced(
-          data.shipping_address.phone,
-          data.shipping_address.full_name,
-          orderNumber,
-          data.total.toString()
-        );
-
-        // Log WhatsApp notification
-        await supabase
-          .from("orders")
-          .update({
-            whatsapp_sent: true,
-            whatsapp_log: [
-              {
-                type: "order_placed",
-                timestamp: new Date().toISOString(),
-                success: true,
-              },
-            ],
-          })
-          .eq("id", order.id);
-      }
-    } catch (error) {
-      console.error("Failed to send WhatsApp notification:", error);
-    }
 
     return {
       orderId: order.id,
@@ -164,7 +145,8 @@ class OrderService {
   }
 
   /**
-   * Update payment status after Razorpay verification
+   * Verify Razorpay payment signature and mark order as paid.
+   * Returns true on success, false if signature is invalid.
    */
   async updatePaymentStatus(
     orderId: string,
@@ -174,7 +156,7 @@ class OrderService {
   ): Promise<boolean> {
     const supabase = await createClient();
 
-    // Verify signature
+    // Verify HMAC-SHA256 signature
     const isValid = razorpayService.verifySignature({
       razorpay_order_id: razorpayOrderId,
       razorpay_payment_id: razorpayPaymentId,
@@ -189,14 +171,13 @@ class OrderService {
       return false;
     }
 
-    // Update order
+    // Mark as paid — use only real schema columns
     const { error } = await supabase
       .from("orders")
       .update({
         payment_status: "paid",
-        razorpay_payment_id: razorpayPaymentId,
-        razorpay_signature: razorpaySignature,
         payment_id: razorpayPaymentId,
+        status: "confirmed" as OrderStatus,
       })
       .eq("id", orderId);
 
@@ -209,174 +190,37 @@ class OrderService {
   async updateOrderStatus(data: UpdateOrderStatusData): Promise<boolean> {
     const supabase = await createClient();
 
-    // Get order details
-    const { data: order } = await supabase
-      .from("orders")
-      .select("*, shipping_address")
-      .eq("id", data.order_id)
-      .single();
-
-    if (!order) return false;
-
-    // Update status
-    const updates: any = {
-      status: data.status,
-    };
-
-    if (data.admin_notes) {
-      updates.admin_notes = data.admin_notes;
-    }
-
     const { error } = await supabase
       .from("orders")
-      .update(updates)
+      .update({ status: data.status })
       .eq("id", data.order_id);
 
-    if (error) return false;
-
-    // Send WhatsApp notification based on status
-    try {
-      if (whatsappService.isConfigured() && order.shipping_address?.phone) {
-        const customerName = order.shipping_address.full_name;
-        const phone = order.shipping_address.phone;
-
-        let whatsappResponse;
-        switch (data.status) {
-          case "accepted":
-            whatsappResponse = await whatsappService.notifyOrderAccepted(
-              phone,
-              customerName,
-              order.order_number
-            );
-            break;
-          case "ready":
-            whatsappResponse = await whatsappService.notifyOrderReady(
-              phone,
-              customerName,
-              order.order_number
-            );
-            break;
-          case "completed":
-            whatsappResponse = await whatsappService.notifyOrderCompleted(
-              phone,
-              customerName,
-              order.order_number
-            );
-            break;
-          case "cancelled":
-            whatsappResponse = await whatsappService.notifyOrderCancelled(
-              phone,
-              customerName,
-              order.order_number,
-              data.note || "No reason provided"
-            );
-            break;
-        }
-
-        // Log WhatsApp notification
-        if (whatsappResponse) {
-          const currentLog = order.whatsapp_log || [];
-          await supabase
-            .from("orders")
-            .update({
-              whatsapp_log: [
-                ...currentLog,
-                {
-                  type: `status_${data.status}`,
-                  timestamp: new Date().toISOString(),
-                  success: whatsappResponse.success,
-                  message_id: whatsappResponse.messageId,
-                },
-              ],
-            })
-            .eq("id", data.order_id);
-        }
-      }
-    } catch (error) {
-      console.error("Failed to send WhatsApp notification:", error);
-    }
-
-    // Create delivery if order is accepted
-    if (data.status === "accepted" && !order.delivery_tracking_id) {
-      try {
-        const deliveryResponse = await deliveryService.createDelivery({
-          orderId: order.id,
-          orderNumber: order.order_number,
-          customer: order.shipping_address,
-          merchant: {
-            name: "Laphing Daddy",
-            phone: "9873052538",
-            line1: "Shop Address",
-            city: "Delhi",
-            state: "Delhi",
-            pincode: "110001",
-          },
-          items: [], // Would populate from order_items
-          totalAmount: order.total,
-          paymentMode: order.payment_status === "paid" ? "prepaid" : "cod",
-          notes: order.delivery_notes,
-        });
-
-        if (deliveryResponse.success) {
-          await supabase
-            .from("orders")
-            .update({
-              delivery_tracking_id: deliveryResponse.trackingId,
-              delivery_provider: "self", // Or actual provider name
-            })
-            .eq("id", data.order_id);
-        }
-      } catch (error) {
-        console.error("Failed to create delivery:", error);
-      }
-    }
-
-    return true;
+    return !error;
   }
 
   /**
    * Cancel order
    */
-  async cancelOrder(
-    orderId: string,
-    reason: string,
-    initiatedBy?: string
-  ): Promise<boolean> {
+  async cancelOrder(orderId: string): Promise<boolean> {
     const supabase = await createClient();
 
     const { error } = await supabase
       .from("orders")
-      .update({
-        status: "cancelled",
-        cancellation_reason: reason,
-        cancelled_at: new Date().toISOString(),
-      })
+      .update({ status: "cancelled" as OrderStatus })
       .eq("id", orderId);
 
-    if (error) return false;
-
-    // Update status history
-    await this.updateOrderStatus({
-      order_id: orderId,
-      status: "cancelled",
-      note: reason,
-    });
-
-    return true;
+    return !error;
   }
 
   /**
-   * Get order details
+   * Get a single order with its items
    */
   async getOrder(orderId: string) {
     const supabase = await createClient();
 
     const { data: order } = await supabase
       .from("orders")
-      .select(`
-        *,
-        order_items (*)
-      `)
+      .select(`*, order_items (*)`)
       .eq("id", orderId)
       .single();
 
@@ -384,17 +228,14 @@ class OrderService {
   }
 
   /**
-   * Get user orders
+   * Get all orders for a user
    */
   async getUserOrders(userId: string) {
     const supabase = await createClient();
 
     const { data: orders } = await supabase
       .from("orders")
-      .select(`
-        *,
-        order_items (*)
-      `)
+      .select(`*, order_items (*)`)
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
@@ -406,7 +247,7 @@ class OrderService {
    */
   async getAllOrders(filters?: {
     status?: OrderStatus;
-    payment_status?: PaymentStatus;
+    payment_status?: string;
     limit?: number;
     offset?: number;
   }) {
@@ -414,10 +255,7 @@ class OrderService {
 
     let query = supabase
       .from("orders")
-      .select(`
-        *,
-        order_items (*)
-      `, { count: "exact" })
+      .select(`*, order_items (*)`, { count: "exact" })
       .order("created_at", { ascending: false });
 
     if (filters?.status) {
@@ -433,44 +271,15 @@ class OrderService {
     }
 
     if (filters?.offset) {
-      query = query.range(filters.offset, filters.offset + (filters.limit || 10) - 1);
+      query = query.range(
+        filters.offset,
+        filters.offset + (filters.limit || 10) - 1
+      );
     }
 
     const { data: orders, count } = await query;
 
     return { orders: orders || [], total: count || 0 };
-  }
-
-  /**
-   * Initiate refund
-   */
-  async initiateRefund(orderId: string, amount?: number): Promise<boolean> {
-    const supabase = await createClient();
-
-    const { data: order } = await supabase
-      .from("orders")
-      .select("razorpay_payment_id, total")
-      .eq("id", orderId)
-      .single();
-
-    if (!order || !order.razorpay_payment_id) return false;
-
-    try {
-      await razorpayService.createRefund(
-        order.razorpay_payment_id,
-        amount ? Math.round(amount * 100) : undefined
-      );
-
-      await supabase
-        .from("orders")
-        .update({ payment_status: "refunded" })
-        .eq("id", orderId);
-
-      return true;
-    } catch (error) {
-      console.error("Refund failed:", error);
-      return false;
-    }
   }
 }
 

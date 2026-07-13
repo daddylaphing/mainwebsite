@@ -25,13 +25,15 @@ interface OrdersManagementTableProps {
 }
 
 const STATUS_OPTIONS = [
-  { value: "pending", label: "Pending", color: "bg-yellow-500/10 text-yellow-800 border-yellow-200" },
-  { value: "accepted", label: "Accepted", color: "bg-blue-500/10 text-blue-800 border-blue-200" },
-  { value: "preparing", label: "Preparing", color: "bg-orange-500/10 text-orange-800 border-orange-200" },
-  { value: "ready", label: "Ready", color: "bg-purple-500/10 text-purple-800 border-purple-200" },
-  { value: "completed", label: "Completed", color: "bg-green-500/10 text-green-800 border-green-200" },
-  { value: "cancelled", label: "Cancelled", color: "bg-red-500/10 text-red-800 border-red-200" },
+  { value: "pending",          label: "Pending",          color: "bg-yellow-500/10 text-yellow-800 border-yellow-200" },
+  { value: "confirmed",        label: "Confirmed",        color: "bg-blue-500/10 text-blue-800 border-blue-200" },
+  { value: "preparing",        label: "Preparing",        color: "bg-orange-500/10 text-orange-800 border-orange-200" },
+  { value: "packed",           label: "Packed",           color: "bg-purple-500/10 text-purple-800 border-purple-200" },
+  { value: "out_for_delivery", label: "Out for Delivery", color: "bg-indigo-500/10 text-indigo-800 border-indigo-200" },
+  { value: "delivered",        label: "Delivered",        color: "bg-green-500/10 text-green-800 border-green-200" },
+  { value: "cancelled",        label: "Cancelled",        color: "bg-red-500/10 text-red-800 border-red-200" },
 ];
+
 
 export function OrdersManagementTable({ orders: initialOrders }: OrdersManagementTableProps) {
   const router = useRouter();
@@ -178,7 +180,7 @@ export function OrdersManagementTable({ orders: initialOrders }: OrdersManagemen
                     <select
                       value={order.status}
                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      disabled={isUpdating === order.id || order.status === 'completed' || order.status === 'cancelled'}
+                      disabled={isUpdating === order.id || order.status === 'delivered' || order.status === 'cancelled'}
                       className={`px-3 py-1.5 rounded-lg text-xs font-bold capitalize ${getStatusColor(order.status)} border border-[#E6DFD5] bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-1 focus:ring-[#6E1D25]`}
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
