@@ -7,9 +7,12 @@ import { sendWelcomeEmail } from "@/lib/emails";
  * This route handles: Google OAuth, Magic Link, Email verification
  */
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
+
+  // Always use production domain for redirects (handles custom domain properly)
+  const productionDomain = "https://laphingdaddy.com";
 
   if (code) {
     const supabase = await createClient();
@@ -33,11 +36,11 @@ export async function GET(request: Request) {
         }
       }
 
-      // Redirect to intended destination or home
-      return NextResponse.redirect(`${origin}${next}`);
+      // Redirect to intended destination on custom domain
+      return NextResponse.redirect(`${productionDomain}${next}`);
     }
   }
 
-  // Auth error — redirect to error page
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);
+  // Auth error — redirect to error page on custom domain
+  return NextResponse.redirect(`${productionDomain}/login?error=auth_callback_failed`);
 }
