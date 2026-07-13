@@ -47,7 +47,7 @@ export default async function HomePage() {
     "@type": "FoodEstablishment",
     name: "Laphing Daddy",
     description: "Authentic Tibetan Laphing delivered to your doorstep.",
-    image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png",
+    image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshsheet.png",
     "@id": "https://laphing.in",
     url: "https://laphing.in",
     telephone: ["+919873052538", "+919354775439"],

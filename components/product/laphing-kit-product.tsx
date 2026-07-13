@@ -22,7 +22,7 @@ interface LaphingKitProductProps {
 export function LaphingKitProduct({ product }: LaphingKitProductProps) {
   const { data: config } = useSiteConfig();
   const { addItem, openCart } = useCart();
-  const [quantity, setQuantity] = useState(config?.min_kit_qty || 2);
+  const [quantity, setQuantity] = useState(config?.min_kit_qty || 3);
   const [extras, setExtras] = useState<KitExtras>({
     extra_sheets: 0,
     extra_chilli_oil: 0,
@@ -37,7 +37,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
     extras.extra_sheets
   );
 
-  const minQty = config?.min_kit_qty || 2;
+  const minQty = config?.min_kit_qty || 3;
   const kitPrice = config?.laphing_kit_price || 50;
   const packagingCharge = config?.packaging_charge || 30;
   const meetsMinimum = quantity >= minQty;
@@ -63,7 +63,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
           id: "addon-sheet",
           name: "Extra Laphing Sheet",
           price: 20,
-          images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/laphingsheet.png"],
+          images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/products/sheet.png"],
           is_active: true,
         } as unknown as Product, extras.extra_sheets);
       }

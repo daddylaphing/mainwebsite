@@ -205,7 +205,7 @@ export function ProductsSection({ products }: { products: Product[] }) {
   const sheetProduct   = products.find((p) => p.category === "wholesale") || products[1];
   const cornDogProduct = products.find((p) => p.category === "corndog") || products[2];
 
-  const [kitQty, setKitQty]         = useState(kitProduct?.minimum_quantity || 2);
+  const [kitQty, setKitQty]         = useState(kitProduct?.minimum_quantity || 3);
   const [sheetQty, setSheetQty]     = useState(sheetProduct?.minimum_quantity || 5);
   const [cornDogQty, setCornDogQty] = useState(1);
 

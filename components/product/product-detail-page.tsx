@@ -169,51 +169,72 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
               </div>
             </div>
 
-            {/* Quantity Selector */}
-            <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.08)] p-6 space-y-4">
-              <div className="flex items-center justify-between">
-                <label className="text-[#1A1A1A] font-semibold text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>Quantity</label>
-                <ProductQuantitySelector
-                  quantity={quantity}
-                  onChange={setQuantity}
-                  min={product.minimum_quantity || 1}
-                  size="md"
-                />
+            {/* Quantity Selector or Bulk Notice */}
+            {product.slug === "wholesale-momos" ? (
+              <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.08)] p-6 space-y-3">
+                <div className="text-sm font-bold text-[#6E1D25] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Bulk Purchase Only
+                </div>
+                <p className="text-xs text-[#7A7570] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  This product is manufactured exclusively for wholesale partners, restaurants, and catering services. Standard retail checkout is unavailable.
+                </p>
               </div>
+            ) : (
+              <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.08)] p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="text-[#1A1A1A] font-semibold text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>Quantity</label>
+                  <ProductQuantitySelector
+                    quantity={quantity}
+                    onChange={setQuantity}
+                    min={product.minimum_quantity || 1}
+                    size="md"
+                  />
+                </div>
 
-              {!meetsMinimum && (
-                <MinOrderWarning
-                  current={quantity}
-                  minimum={product.minimum_quantity || 1}
-                  productName={product.name}
-                />
-              )}
+                {!meetsMinimum && (
+                  <MinOrderWarning
+                    current={quantity}
+                    minimum={product.minimum_quantity || 1}
+                    productName={product.name}
+                  />
+                )}
 
-              <div className="flex items-center justify-between text-base pt-4 border-t border-[rgba(26,26,26,0.08)]">
-                <span className="text-[#7A7570] text-sm">Total Price</span>
-                <span
-                  className="text-2xl font-bold text-[#1A1A1A]"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
-                >
-                  ₹{totalPrice}
-                </span>
+                <div className="flex items-center justify-between text-base pt-4 border-t border-[rgba(26,26,26,0.08)]">
+                  <span className="text-[#7A7570] text-sm">Total Price</span>
+                  <span
+                    className="text-2xl font-bold text-[#1A1A1A]"
+                    style={{ fontFamily: "'Playfair Display', serif" }}
+                  >
+                    ₹{totalPrice}
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Add to Cart Button */}
-            <button
-              onClick={handleAddToCart}
-              disabled={isAdding || !meetsMinimum || product.inventory === 0}
-              className="btn-ink w-full justify-center text-sm"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              {product.inventory === 0
-                ? "Out of Stock"
-                : isAdding
-                ? "Adding..."
-                : "Add to Cart"}
-            </button>
+            {/* Add to Cart or Contact Button */}
+            {product.slug === "wholesale-momos" ? (
+              <Link
+                href="/#contact"
+                className="btn-ink w-full justify-center text-sm inline-flex items-center"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Inquire for Bulk Order
+              </Link>
+            ) : (
+              <button
+                onClick={handleAddToCart}
+                disabled={isAdding || !meetsMinimum || product.inventory === 0}
+                className="btn-ink w-full justify-center text-sm"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                {product.inventory === 0
+                  ? "Out of Stock"
+                  : isAdding
+                  ? "Adding..."
+                  : "Add to Cart"}
+              </button>
+            )}
 
             {/* Product Info Cards */}
             <div className="grid grid-cols-2 gap-4">

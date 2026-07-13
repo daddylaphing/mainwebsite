@@ -43,10 +43,10 @@ Experience authentic Tibetan street food in the comfort of your home. Our Laphin
 - **Complete Setup**: Fork, cutlery, and premium packaging included
 - **Recipe Guide**: Step-by-step instructions with photos
 
-Perfect for 1-2 servings. Best consumed fresh. Minimum order: 2 kits.',
+Perfect for 1-2 servings. Best consumed fresh. Minimum order: 3 kits.',
   49,
   NULL,
-  2,
+  3,
   'kit',
   true,
   true,

@@ -58,7 +58,7 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
   laphing_kit_price: 50,
   laphing_sheet_price: 20,
   min_wholesale_qty: 5,
-  min_kit_qty: 2,
+  min_kit_qty: 3,
   packaging_charge: 30,
   extra_sheet_price: 20,
   extra_chilli_oil_price: 15,
