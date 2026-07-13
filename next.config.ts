@@ -45,6 +45,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   images: {
+    // Completely disable Next.js image optimization - use our proxy instead
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -55,11 +57,8 @@ const nextConfig: NextConfig = {
         hostname: "ui-avatars.com",
       },
     ],
-    // Disable Next.js Image Optimization for Supabase URLs
-    // We use our own proxy instead
-    unoptimized: false,
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 86400, // 24 hours
+    minimumCacheTTL: 86400,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
