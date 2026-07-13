@@ -105,11 +105,12 @@ export default async function HomePage() {
             text="Crafted with Love ✦ Ancient Tibetan Recipe ✦ Made Fresh Every Day ✦ Delivered to Your Door ✦ "
             bg="#FFFFFF"
             fill="#6E1D25"
-            speed={1.2}
-            curveAmount={280}
+            speed={0.7}
+            curveAmount={90}
             direction="left"
-            height={220}
-            fontSize="1.8rem"
+            height={200}
+            fontSize="2.2rem"
+            viewBoxWidth={400}
           />
         </div>
 
@@ -121,16 +122,31 @@ export default async function HomePage() {
         </ErrorBoundary>
 
         {/* CurvedLoop — dark ink band after Products / before Ingredients */}
-        <CurvedLoopDivider
-          text="Pure Authentic Spices ✦ Traditional Blend ✦ Freshest Ingredients ✦ Zero Compromise ✦ "
-          bg="#FFFFFF"
-          fill="#D4A843"
-          speed={2}
-          curveAmount={-160}
-          direction="right"
-          height={180}
-          fontSize="2.2rem"
-        />
+        <div className="hidden md:block">
+          <CurvedLoopDivider
+            text="Pure Authentic Spices ✦ Traditional Blend ✦ Freshest Ingredients ✦ Zero Compromise ✦ "
+            bg="#FFFFFF"
+            fill="#D4A843"
+            speed={2}
+            curveAmount={-160}
+            direction="right"
+            height={180}
+            fontSize="2.2rem"
+          />
+        </div>
+        <div className="block md:hidden">
+          <CurvedLoopDivider
+            text="Pure Authentic Spices ✦ Traditional Blend ✦ Freshest Ingredients ✦ Zero Compromise ✦ "
+            bg="#FFFFFF"
+            fill="#D4A843"
+            speed={0.9}
+            curveAmount={-90}
+            direction="right"
+            height={200}
+            fontSize="2.2rem"
+            viewBoxWidth={400}
+          />
+        </div>
 
         {/* Ingredients — 03 */}
         <ErrorBoundary>

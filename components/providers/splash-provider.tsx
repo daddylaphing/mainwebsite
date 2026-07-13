@@ -1,7 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ─── Context so any component can know when splash has fully exited ────────────
+interface SplashContextType {
+  splashDone: boolean;
+}
+export const SplashContext = createContext<SplashContextType>({ splashDone: false });
+export const useSplash = () => useContext(SplashContext);
+
 
 const CULINARY_STEPS = [
   "Preheating the traditional steamers...",
@@ -16,6 +24,8 @@ export function SplashProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [stepIndex, setStepIndex] = useState(0);
 
+  const [splashDone, setSplashDone] = useState(false);
+
   // Cycle through culinary steps for restaurant pacing (every 1.5s)
   useEffect(() => {
     if (!loading) return;
@@ -29,6 +39,8 @@ export function SplashProvider({ children }: { children: React.ReactNode }) {
     // Premium initial brand linger delay (2.8s) to show the elegant story-loader
     const timer = setTimeout(() => {
       setLoading(false);
+      // Mark splash fully done after exit animation (0.8s) completes
+      setTimeout(() => setSplashDone(true), 800);
     }, 2800);
     return () => clearTimeout(timer);
   }, []);
@@ -236,11 +248,13 @@ export function SplashProvider({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       {/* Main Page Content - only visible/interactive when loader completes */}
-      <div 
-        className={loading ? "opacity-0 invisible overflow-hidden h-screen" : "opacity-100 transition-opacity duration-700 ease-out"}
-      >
-        {children}
-      </div>
+      <SplashContext.Provider value={{ splashDone }}>
+        <div
+          className={loading ? "opacity-0 invisible overflow-hidden h-screen" : "opacity-100 transition-opacity duration-700 ease-out"}
+        >
+          {children}
+        </div>
+      </SplashContext.Provider>
     </>
   );
 }

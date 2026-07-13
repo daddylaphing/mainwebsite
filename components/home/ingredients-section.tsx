@@ -2,12 +2,13 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { getProxiedImageUrl } from "@/lib/image-proxy";
 
 const INGREDIENTS = [
   {
     name: "Chilli Oil",
     desc: "Slow-cooked, handcrafted with whole spices. The soul of laphing.",
-    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLvBuRYxFMqCo4-l1h0AX9jYFUUcDpq5EKOjIwbpJEK7HWxgzy0wW_hNdJM43i8KePHovpHSv-k5ugua0pYTXyhYq6kNKLOlQqOkkEW8vHW3dbu4Zwj4HyN0Ti7uGPN1se8_CPCb-ImGGGeGPuVqn-fUV5D63ceUERr0FIR7lM0lXhpOlCaT6eSDdM7KbCgVu_kzGxfYq-lwmSLRNpJA57vTmICENK7gDt93Aldtetl_8oMffkkB0u3w290",
+    imageUrl: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/signaturechillioil.png",
     delay: 0,
     rotateRange: [0, 8, -4, 0],
     yRange: [0, -18, 12, 0],
@@ -15,7 +16,7 @@ const INGREDIENTS = [
   {
     name: "Garlic Water",
     desc: "Aromatic and bright. Builds the delicate base flavor of every sheet.",
-    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLub7DjxWevkd0HyPBF-WWmTexGnYACDC6J378IdZM_NaUc4PwG5wmOw7vcFOP1R0U8VWMmsGYAn_6noBZ7XtMB8M13EtTtkqnIOUeuSgAwkJx_zPdvq9Q3An62saqKQuZf_49H0mul2COV-25V1oNV9QQoKyPbXEHND7Mi9mVhgPKdU4rfdAS7JgB5bousAZf3yH-MKkJ_-PnXQWT7kFTOYkE900mAs6LWhh2oLxUFNwh0SGGrh7GPP8_M",
+    imageUrl: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/garlicwater.png",
     delay: 0.1,
     rotateRange: [0, -6, 8, 0],
     yRange: [0, 14, -14, 0],
@@ -23,7 +24,7 @@ const INGREDIENTS = [
   {
     name: "Laphing Sheet",
     desc: "Made fresh from mung bean starch. Silky, chewy, and handset every morning.",
-    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLs1dRNSwRoNwzz6lIT2B61o0jtNxVh_H5nZVImv2JlnYBpPqmJe3hW_MSxGbB1my_6jv-0TpvOjQcwwr-RhzCEfzL33EvK94c61qbWFrelKc0YiuXgqtGIono9Rvv1uHWMefDhdIH5vgFUdhMs74PQL9UKwpi0LqYMqA08ZCJdD6d-g5qcVDxeZlSqIHh5nq0JZ7Mo97IuFtwrKRMBl26FIYwNlaBf6qjLkVuN6KcvMuyupGLezWquQ17c",
+    imageUrl: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/freshlaphingsheet.png",
     delay: 0.2,
     rotateRange: [0, 4, -8, 0],
     yRange: [0, -22, 10, 0],
@@ -31,7 +32,7 @@ const INGREDIENTS = [
   {
     name: "Spice Mix",
     desc: "A secret proprietary blend. Ties together heat, umami and warmth.",
-    imageUrl: "https://lh3.googleusercontent.com/aida/AP1WRLsAq-flFff5_tFKm3lw3RQLcPR6pICuavMOQJy8gj-Tu0kiTvc1VLSdbkb3Mr0o_aOkJP_ZWX-hGvHWW2fixK1-PXds4HQ1pbP_MWzdQKlgUCEXXNrVSkqvlVs4nfB1z3dIFapuUn_WW00mBKbAKwPHK-HMVu8APBFFPFfKFgH9A063zaoKAxV2hPGZQBzgiSxzRdcadkt1xOX1IQqzZoBKN7AbB7oIV6-GCdrN8KGB9vH6CnEpTCwQDx8",
+    imageUrl: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/seasoningmix.png",
     delay: 0.3,
     rotateRange: [0, -8, 6, 0],
     yRange: [0, -12, 16, 0],
@@ -100,16 +101,16 @@ export function IngredientsSection() {
                   ease: "easeInOut"
                 }}
                 whileHover={{ scale: 1.08, rotateY: 15 }}
-                className="w-32 h-32 md:w-44 md:h-44 relative mb-6 cursor-pointer"
+                className="w-32 h-32 md:w-44 md:h-44 relative mb-6 cursor-pointer rounded-full overflow-hidden"
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <div className="absolute inset-0 bg-[#F7F3EC] rounded-full transition-colors duration-300 group-hover:bg-[#EAE4D8]" />
                 <Image
-                  src={ing.imageUrl}
+                  src={getProxiedImageUrl(ing.imageUrl)}
                   alt={ing.name}
                   fill
                   unoptimized
-                  className="object-contain p-4 drop-shadow-[0_12px_24px_rgba(26,26,26,0.08)]"
+                  className="object-cover rounded-full drop-shadow-[0_12px_24px_rgba(26,26,26,0.08)]"
                   sizes="(max-width: 768px) 128px, 176px"
                 />
                 {/* Subtle shadow */}

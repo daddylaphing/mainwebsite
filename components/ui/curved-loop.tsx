@@ -29,6 +29,12 @@ interface CurvedLoopProps {
   interactive?: boolean;
   /** Override the outer container div className (controls height, bg, etc.) */
   containerClassName?: string;
+  /**
+   * Width of the SVG viewBox (default 1440).
+   * Use a smaller value (e.g. 400) on mobile so the path and text
+   * scale properly instead of being squished to ~26% of their size.
+   */
+  viewBoxWidth?: number;
 }
 
 const CurvedLoop: FC<CurvedLoopProps> = ({
@@ -41,6 +47,7 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   direction = "left",
   interactive = true,
   containerClassName,
+  viewBoxWidth = 1440,
 }) => {
   const text = useMemo(() => {
     const hasTrailing = /\s|\u00A0$/.test(marqueeText);
@@ -56,10 +63,16 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   const uid = useId();
   const pathId = `curve-${uid}`;
 
+  // Scale the path coordinates proportionally to viewBoxWidth
+  const scale = viewBoxWidth / 1440;
+  const startX = -100 * scale;
+  const controlX = 500 * scale;
+  const endX = 1540 * scale;
+
   const startY = curveAmount < 0 ? Math.abs(curveAmount) + 40 : 40;
   const controlY = startY + curveAmount;
   const endY = startY;
-  const pathD = `M-100,${startY} Q500,${controlY} 1540,${endY}`;
+  const pathD = `M${startX},${startY} Q${controlX},${controlY} ${endX},${endY}`;
 
   const viewBoxHeight = Math.max(120, curveAmount < 0 ? startY + 40 : controlY + 40);
 
@@ -68,8 +81,9 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
   const dirRef = useRef<"left" | "right">(direction);
   const velRef = useRef(0);
 
+  // Fill enough text copies to cover the viewBoxWidth
   const totalText = spacing
-    ? Array(Math.ceil(1800 / spacing) + 2).fill(text).join("")
+    ? Array(Math.ceil((viewBoxWidth * 1.3) / spacing) + 2).fill(text).join("")
     : text;
   const ready = spacing > 0;
 
@@ -151,14 +165,14 @@ const CurvedLoop: FC<CurvedLoopProps> = ({
       <svg
         className="select-none w-full overflow-visible block"
         style={{
-          aspectRatio: `1440 / ${viewBoxHeight}`,
+          aspectRatio: `${viewBoxWidth} / ${viewBoxHeight}`,
           fontSize,
           fontWeight: 700,
           textTransform: "uppercase",
           lineHeight: 1,
           userSelect: "none",
         }}
-        viewBox={`0 0 1440 ${viewBoxHeight}`}
+        viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
       >
         {/* Hidden measurement text */}
         <text

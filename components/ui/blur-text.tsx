@@ -16,6 +16,12 @@ type BlurTextProps = {
   easing?: Easing | Easing[];
   onAnimationComplete?: () => void;
   stepDuration?: number;
+  /**
+   * When provided, bypasses the IntersectionObserver and uses this boolean
+   * as the trigger instead. Animation starts as soon as trigger becomes true.
+   * Ideal for coordinating with a splash/loading screen.
+   */
+  trigger?: boolean;
 };
 
 const buildKeyframes = (
@@ -23,7 +29,6 @@ const buildKeyframes = (
   steps: Array<Record<string, string | number>>
 ): Record<string, Array<string | number>> => {
   const keys = new Set<string>([...Object.keys(from), ...steps.flatMap(s => Object.keys(s))]);
-
   const keyframes: Record<string, Array<string | number>> = {};
   keys.forEach(k => {
     keyframes[k] = [from[k], ...steps.map(s => s[k])];
@@ -43,13 +48,19 @@ export const BlurText: React.FC<BlurTextProps> = ({
   animationTo,
   easing = (t: number) => t,
   onAnimationComplete,
-  stepDuration = 0.35
+  stepDuration = 0.35,
+  trigger,
 }) => {
   const elements = animateBy === 'words' ? text.split(' ') : text.split('');
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLParagraphElement>(null);
 
+  // If a manual trigger is provided, use it directly instead of IntersectionObserver
   useEffect(() => {
+    if (trigger !== undefined) {
+      if (trigger) setInView(true);
+      return;
+    }
     if (!ref.current) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -62,11 +73,13 @@ export const BlurText: React.FC<BlurTextProps> = ({
     );
     observer.observe(ref.current);
     return () => observer.disconnect();
-  }, [threshold, rootMargin]);
+  }, [threshold, rootMargin, trigger]);
 
   const defaultFrom = useMemo(
     () =>
-      direction === 'top' ? { filter: 'blur(10px)', opacity: 0, y: -50 } : { filter: 'blur(10px)', opacity: 0, y: 50 },
+      direction === 'top'
+        ? { filter: 'blur(10px)', opacity: 0, y: -50 }
+        : { filter: 'blur(10px)', opacity: 0, y: 50 },
     [direction]
   );
 
@@ -75,9 +88,9 @@ export const BlurText: React.FC<BlurTextProps> = ({
       {
         filter: 'blur(5px)',
         opacity: 0.5,
-        y: direction === 'top' ? 5 : -5
+        y: direction === 'top' ? 5 : -5,
       },
-      { filter: 'blur(0px)', opacity: 1, y: 0 }
+      { filter: 'blur(0px)', opacity: 1, y: 0 },
     ],
     [direction]
   );
@@ -87,7 +100,9 @@ export const BlurText: React.FC<BlurTextProps> = ({
 
   const stepCount = toSnapshots.length + 1;
   const totalDuration = stepDuration * (stepCount - 1);
-  const times = Array.from({ length: stepCount }, (_, i) => (stepCount === 1 ? 0 : i / (stepCount - 1)));
+  const times = Array.from({ length: stepCount }, (_, i) =>
+    stepCount === 1 ? 0 : i / (stepCount - 1)
+  );
 
   return (
     <span ref={ref} className={`blur-text ${className} flex flex-wrap inline-flex`}>
@@ -98,7 +113,7 @@ export const BlurText: React.FC<BlurTextProps> = ({
           duration: totalDuration,
           times,
           delay: (index * delay) / 1000,
-          ease: easing
+          ease: easing,
         };
 
         return (
@@ -107,10 +122,12 @@ export const BlurText: React.FC<BlurTextProps> = ({
             initial={fromSnapshot}
             animate={inView ? animateKeyframes : fromSnapshot}
             transition={spanTransition}
-            onAnimationComplete={index === elements.length - 1 ? onAnimationComplete : undefined}
+            onAnimationComplete={
+              index === elements.length - 1 ? onAnimationComplete : undefined
+            }
             style={{
               display: 'inline-block',
-              willChange: 'transform, filter, opacity'
+              willChange: 'transform, filter, opacity',
             }}
           >
             {segment === ' ' ? '\u00A0' : segment}

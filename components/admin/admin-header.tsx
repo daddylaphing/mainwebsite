@@ -5,7 +5,11 @@ import { LogOut, Menu } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 import { useState } from "react";
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  onMenuClick?: () => void;
+}
+
+export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -17,37 +21,41 @@ export function AdminHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-[#FAFAF8] border-b border-[#E6DFD5] z-50">
+    <header className="fixed top-0 left-0 right-0 h-16 bg-[#1E1E2E] border-b border-white/10 z-50 shadow-md">
       <div className="h-full flex items-center justify-between px-4 md:px-6">
-        {/* Left: Logo */}
-        <div className="flex items-center gap-4">
-          <button className="md:hidden text-[#7A7570] hover:text-[#1A1A1A]">
-            <Menu className="h-6 w-6" />
+        {/* Left: Hamburger + Logo */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onMenuClick}
+            className="md:hidden text-white/70 hover:text-white transition-colors p-1"
+            aria-label="Toggle menu"
+          >
+            <Menu className="h-5 w-5" />
           </button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <div
-              className="font-bold text-xl text-[#1A1A1A]"
+              className="font-bold text-lg text-white tracking-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Laphing <span className="text-[#6E1D25] italic">Daddy</span>
+              Laphing <span className="text-[#D4A843] italic">Daddy</span>
             </div>
-            <span className="px-2.5 py-0.5 bg-[#6E1D25]/10 border border-[#6E1D25]/20 rounded-full text-[9px] font-bold text-[#6E1D25] uppercase tracking-wider">
+            <span className="px-2 py-0.5 bg-[#6E1D25] text-[9px] font-bold text-white uppercase tracking-widest rounded">
               Admin
             </span>
           </div>
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="flex items-center gap-2 px-4 py-2 bg-[#F7F3EC] border border-[#E6DFD5] hover:bg-[#E6DFD5]/40 text-[#7A7570] hover:text-[#6E1D25] rounded-xl transition-all text-xs font-semibold uppercase tracking-wider disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white rounded text-xs font-semibold uppercase tracking-wider transition-all disabled:opacity-50 border border-white/10"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">
-              {isLoggingOut ? "Logging out..." : "Logout"}
+              {isLoggingOut ? "Logging out…" : "Logout"}
             </span>
           </button>
         </div>

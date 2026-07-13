@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import BlurText from "@/components/ui/blur-text";
+import { useSplash } from "@/components/providers/splash-provider";
 
 // ─── Framer Motion variants ───────────────────────────────────────────────────
 
@@ -140,8 +141,10 @@ function DrawUnderline() {
 
 // ─── Main HeroSection ─────────────────────────────────────────────────────────
 export function HeroSection() {
+  const { splashDone } = useSplash();
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
 
   // Mouse tracking
   const mouseX = useMotionValue(0);
@@ -341,6 +344,7 @@ export function HeroSection() {
                 animateBy="letters"
                 direction="bottom"
                 className="text-[#1A1A1A] font-black inline-flex"
+                trigger={splashDone}
               />
               <br />
               <BlurText
@@ -349,6 +353,7 @@ export function HeroSection() {
                 animateBy="letters"
                 direction="bottom"
                 className="text-[#1A1A1A] font-black inline-flex"
+                trigger={splashDone}
               />
             </h1>
 

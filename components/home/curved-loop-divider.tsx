@@ -14,6 +14,12 @@ interface CurvedLoopDividerProps {
   fontSize?: string;
   curveAmount?: number;
   direction?: "left" | "right";
+  /**
+   * Width of the internal SVG viewBox (default 1440).
+   * Pass a smaller value (e.g. 400) for mobile so the path & text
+   * scale properly on narrow screens.
+   */
+  viewBoxWidth?: number;
 }
 
 export function CurvedLoopDivider({
@@ -25,6 +31,7 @@ export function CurvedLoopDivider({
   fontSize = "2rem",
   curveAmount = 200,
   direction = "left",
+  viewBoxWidth = 1440,
 }: CurvedLoopDividerProps) {
   return (
     <div
@@ -38,6 +45,7 @@ export function CurvedLoopDivider({
         direction={direction}
         fill={fill}
         fontSize={fontSize}
+        viewBoxWidth={viewBoxWidth}
         interactive
         containerClassName="w-full h-full flex items-center justify-center"
       />

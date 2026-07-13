@@ -1,12 +1,12 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
-import { 
-  ShoppingBag, 
-  Package, 
-  Star, 
-  Users, 
+import {
+  ShoppingBag,
+  Package,
+  Star,
+  Users,
   TrendingUp,
-  AlertCircle 
+  AlertCircle,
 } from "lucide-react";
 
 export default async function AdminDashboard() {
@@ -14,7 +14,6 @@ export default async function AdminDashboard() {
 
   const supabase = await createClient();
 
-  // Fetch dashboard stats
   const [
     { count: totalOrders },
     { count: totalProducts },
@@ -46,68 +45,73 @@ export default async function AdminDashboard() {
       label: "Total Orders",
       value: totalOrders || 0,
       icon: ShoppingBag,
-      color: "bg-[#6E1D25]/10 text-[#6E1D25]",
+      iconBg: "bg-[#6E1D25]/10",
+      iconColor: "text-[#6E1D25]",
+      border: "border-l-[#6E1D25]",
     },
     {
       label: "Products",
       value: totalProducts || 0,
       icon: Package,
-      color: "bg-[#D4A843]/10 text-[#D4A843]",
+      iconBg: "bg-[#D4A843]/10",
+      iconColor: "text-[#D4A843]",
+      border: "border-l-[#D4A843]",
     },
     {
       label: "Reviews",
       value: totalReviews || 0,
       icon: Star,
-      color: "bg-[#E8763A]/10 text-[#E8763A]",
+      iconBg: "bg-[#E8763A]/10",
+      iconColor: "text-[#E8763A]",
+      border: "border-l-[#E8763A]",
     },
     {
       label: "Users",
       value: totalUsers || 0,
       icon: Users,
-      color: "bg-[#B5451B]/10 text-[#B5451B]",
+      iconBg: "bg-[#3B82F6]/10",
+      iconColor: "text-[#3B82F6]",
+      border: "border-l-[#3B82F6]",
     },
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Page Header */}
-      <div className="border-b border-[#E6DFD5] pb-6">
+      <div className="border-b border-gray-200 pb-4">
         <h1
-          className="text-3xl md:text-4xl font-bold text-[#1A1A1A]"
-          style={{ fontFamily: "'Playfair Display', serif" }}
+          className="text-2xl md:text-3xl font-bold text-gray-900"
+          style={{ fontFamily: "'Inter', sans-serif" }}
         >
           Dashboard
         </h1>
-        <p
-          className="text-[#7A7570] mt-2"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
+        <p className="text-gray-500 text-sm mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>
           Welcome to Laphing Daddy Admin Panel
         </p>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
             <div
               key={stat.label}
-              className="bg-white border border-[#E6DFD5] rounded-2xl p-6 hover:border-[#6E1D25]/30 transition-colors shadow-sm"
+              className={`bg-white border border-gray-200 border-l-4 ${stat.border} rounded p-4 shadow-sm`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${stat.color}`}>
-                  <Icon className="h-6 w-6" />
+              <div className="flex items-center justify-between mb-3">
+                <div className={`w-9 h-9 rounded flex items-center justify-center ${stat.iconBg}`}>
+                  <Icon className={`h-4 w-4 ${stat.iconColor}`} />
                 </div>
               </div>
               <div
-                className="text-3xl font-bold text-[#1A1A1A] mb-1"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                className="text-2xl font-bold text-gray-900 mb-0.5"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {stat.value}
               </div>
               <div
-                className="text-sm text-[#7A7570] font-semibold"
+                className="text-xs text-gray-500 font-medium uppercase tracking-wide"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {stat.label}
@@ -117,51 +121,51 @@ export default async function AdminDashboard() {
         })}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         {/* Recent Orders */}
-        <div className="bg-white border border-[#E6DFD5] rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-white border border-gray-200 rounded shadow-sm">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2
-              className="text-xl font-bold text-[#1A1A1A]"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-sm font-bold text-gray-800 uppercase tracking-wide"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             >
               Recent Orders
             </h2>
-            <TrendingUp className="h-5 w-5 text-[#6E1D25]" />
+            <TrendingUp className="h-4 w-4 text-[#6E1D25]" />
           </div>
-          <div className="space-y-3">
+          <div className="divide-y divide-gray-50">
             {recentOrders && recentOrders.length > 0 ? (
               recentOrders.map((order) => (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between p-4 bg-[#F7F3EC]/50 border border-[#E6DFD5]/40 rounded-xl"
+                  className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors"
                 >
                   <div>
                     <div
-                      className="font-bold text-[#1A1A1A] text-sm"
+                      className="font-semibold text-gray-800 text-sm"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       {order.order_number}
                     </div>
-                    <div className="text-xs text-[#7A7570] font-medium mt-0.5">
+                    <div className="text-xs text-gray-400 mt-0.5">
                       {new Date(order.created_at).toLocaleDateString()}
                     </div>
                   </div>
                   <div className="text-right">
                     <div
-                      className="font-bold text-[#6E1D25]"
-                      style={{ fontFamily: "'Playfair Display', serif" }}
+                      className="font-bold text-[#6E1D25] text-sm"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
                     >
                       ₹{order.total}
                     </div>
-                    <div className="text-[10px] text-[#7A7570] uppercase tracking-wider font-bold mt-0.5">
+                    <div className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-0.5">
                       {order.status.replace("_", " ")}
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-[#7A7570] text-sm">
+              <div className="text-center py-10 text-gray-400 text-sm">
                 No orders yet
               </div>
             )}
@@ -169,36 +173,36 @@ export default async function AdminDashboard() {
         </div>
 
         {/* Low Stock Alert */}
-        <div className="bg-white border border-[#E6DFD5] rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-white border border-gray-200 rounded shadow-sm">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <h2
-              className="text-xl font-bold text-[#1A1A1A]"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              className="text-sm font-bold text-gray-800 uppercase tracking-wide"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             >
               Low Stock Alert
             </h2>
-            <AlertCircle className="h-5 w-5 text-[#E8763A]" />
+            <AlertCircle className="h-4 w-4 text-[#E8763A]" />
           </div>
-          <div className="space-y-3">
+          <div className="divide-y divide-gray-50">
             {lowStockProducts && lowStockProducts.length > 0 ? (
               lowStockProducts.map((product) => (
                 <div
                   key={product.id}
-                  className="flex items-center justify-between p-4 bg-[#F7F3EC]/50 border border-[#E8763A]/20 rounded-xl"
+                  className="flex items-center justify-between px-5 py-3 hover:bg-gray-50 transition-colors"
                 >
                   <div
-                    className="font-bold text-[#1A1A1A] text-sm"
+                    className="font-semibold text-gray-800 text-sm"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     {product.name}
                   </div>
-                  <div className="px-2.5 py-1 bg-[#E8763A]/10 rounded-full text-xs font-bold text-[#E8763A] border border-[#E8763A]/20">
+                  <span className="px-2 py-0.5 bg-orange-50 border border-orange-200 text-orange-600 text-xs font-bold rounded uppercase tracking-wide">
                     {product.inventory} left
-                  </div>
+                  </span>
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-[#7A7570] text-sm">
+              <div className="text-center py-10 text-gray-400 text-sm">
                 All products well stocked
               </div>
             )}
