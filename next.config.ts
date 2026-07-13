@@ -32,7 +32,7 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://accounts.google.com",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com data:",
-      "img-src 'self' data: blob: https://gyrvdaucaznmastgspvc.supabase.co https://lh3.googleusercontent.com https://www.google-analytics.com",
+      "img-src 'self' data: blob: https://gyrvdaucaznmastgspvc.supabase.co https://lh3.googleusercontent.com https://www.google-analytics.com https://*.supabase.co",
       "connect-src 'self' https://gyrvdaucaznmastgspvc.supabase.co wss://gyrvdaucaznmastgspvc.supabase.co https://www.google-analytics.com https://analytics.google.com",
       "frame-src 'self' https://accounts.google.com",
       "object-src 'none'",

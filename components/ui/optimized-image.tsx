@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { getProxiedImageUrl } from "@/lib/image-proxy";
 
 interface OptimizedImageProps {
   src: string;
@@ -31,6 +32,9 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+
+  // Automatically proxy Supabase storage URLs
+  const proxiedSrc = getProxiedImageUrl(src);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -77,7 +81,7 @@ export function OptimizedImage({
         <div className="absolute inset-0 bg-[#0a0a0a] animate-pulse" />
       )}
       <Image
-        src={src}
+        src={proxiedSrc}
         alt={alt}
         width={width}
         height={height}
