@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Clock } from "lucide-react";
 import { useState } from "react";
 import { RecipeModal } from "@/components/modals/recipe-modal";
+import { useProxiedUrl } from "@/lib/hooks/use-proxied-url";
 
 const STEPS = [
   { step: "01", title: "Prepare the Sheet", description: "Remove the fresh laphing sheet from its vacuum-sealed packaging and lay it flat on a clean plate or cutting board.", time: "30s" },
@@ -17,6 +18,10 @@ const STEPS = [
 export function RecipeGuideSection() {
   const [activeStep, setActiveStep] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  const guideImageUrl = useProxiedUrl(
+    "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/guide.png"
+  );
 
   return (
     <>
@@ -117,7 +122,7 @@ export function RecipeGuideSection() {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src="https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/guide.png"
+                  src={guideImageUrl}
                   alt="Step by Step Preparation Guide"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

@@ -35,6 +35,7 @@ export function OptimizedImage({
 
   // Automatically proxy Supabase storage URLs
   const proxiedSrc = getProxiedImageUrl(src);
+  const isSupabaseUrl = src.includes("supabase.co/storage/");
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -86,6 +87,7 @@ export function OptimizedImage({
         width={width}
         height={height}
         fill={fill}
+        unoptimized={isSupabaseUrl}
         className={cn(
           "transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",

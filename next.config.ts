@@ -48,11 +48,6 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "gyrvdaucaznmastgspvc.supabase.co",
-        pathname: "/storage/v1/object/public/**",
-      },
-      {
-        protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
       {
@@ -60,6 +55,9 @@ const nextConfig: NextConfig = {
         hostname: "ui-avatars.com",
       },
     ],
+    // Disable Next.js Image Optimization for Supabase URLs
+    // We use our own proxy instead
+    unoptimized: false,
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 86400, // 24 hours
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
