@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/admin/auth";
-import { BookOpen, AlertCircle, ArrowRight } from "lucide-react";
+import { BookOpen, AlertCircle } from "lucide-react";
 
 export default async function AdminRecipeGuidesPage() {
   await requireAdmin();

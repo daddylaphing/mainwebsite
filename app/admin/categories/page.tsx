@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
-import { ShoppingBag, Star, LayoutGrid, CheckCircle } from "lucide-react";
+import { LayoutGrid, CheckCircle } from "lucide-react";
 
 export default async function AdminCategoriesPage() {
   await requireAdmin();

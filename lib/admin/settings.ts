@@ -3,7 +3,7 @@ import { createBrowserClient } from "@/lib/supabase/client";
 /**
  * CLIENT-SIDE: Get a specific setting by key
  */
-export async function getSettingClient(key: string): Promise<any | null> {
+export async function getSettingClient(key: string): Promise<unknown> {
   const supabase = createBrowserClient();
 
   const { data, error } = await supabase
@@ -23,7 +23,7 @@ export async function getSettingClient(key: string): Promise<any | null> {
 /**
  * CLIENT-SIDE: Update a setting
  */
-export async function updateSetting(key: string, value: any): Promise<boolean> {
+export async function updateSetting(key: string, value: unknown): Promise<boolean> {
   const supabase = createBrowserClient();
 
   const { error } = await supabase

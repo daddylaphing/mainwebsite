@@ -20,7 +20,10 @@ import { Separator } from "@/components/ui/separator";
 // Extend window type for Razorpay
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay: new (options: Record<string, unknown>) => {
+      open(): void;
+      on(event: string, handler: (response: Record<string, unknown>) => void): void;
+    };
   }
 }
 
@@ -231,9 +234,9 @@ export default function CheckoutPage() {
               router.push("/account");
               router.refresh();
             }, 3000);
-          } catch (err: any) {
+          } catch (err: unknown) {
             setErrorMessage(
-              err.message || "Payment verification failed. Please contact support."
+              (err instanceof Error ? err.message : null) || "Payment verification failed. Please contact support."
             );
           } finally {
             setIsProcessing(false);
@@ -252,17 +255,17 @@ export default function CheckoutPage() {
 
       const rzp = new window.Razorpay(options);
 
-      rzp.on("payment.failed", (response: any) => {
+      rzp.on("payment.failed", (response: Record<string, unknown>) => {
         setIsProcessing(false);
         setErrorMessage(
-          `Payment failed: ${response.error?.description || "Unknown error"}. Please try again.`
+          `Payment failed: ${(response.error as { description?: string } | undefined)?.description || "Unknown error"}. Please try again.`
         );
       });
 
       rzp.open();
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsProcessing(false);
-      setErrorMessage(err.message || "An unexpected error occurred.");
+      setErrorMessage((err instanceof Error ? err.message : null) || "An unexpected error occurred.");
     }
   };
 
@@ -486,7 +489,7 @@ export default function CheckoutPage() {
                     className="text-xs text-[#7A7570] leading-relaxed"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    After clicking below, Razorpay's secure payment modal will
+                    After clicking below, Razorpay&apos;s secure payment modal will
                     open. You can pay using UPI, Card, Net Banking, or Wallets.
                   </p>
                   <div className="flex flex-wrap gap-2 pt-1">

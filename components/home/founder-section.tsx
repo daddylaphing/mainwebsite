@@ -35,7 +35,7 @@ export function FounderSection() {
               style={{ fontFamily: "'Playfair Display', serif" }}
               aria-hidden
             >
-              "
+              {'“'}
             </p>
             <blockquote
               className="text-[#1A1A1A]"

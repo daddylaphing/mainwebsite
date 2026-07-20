@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, Plus, X } from "lucide-react";
+import { Loader2, ArrowLeft, X } from "lucide-react";
 import Link from "next/link";
 import { createBrowserClient } from "@/lib/supabase/client";
 import type { Product } from "@/types";

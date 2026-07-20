@@ -5,8 +5,18 @@ import { useRouter } from "next/navigation";
 import { Loader2, Save } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 
+interface FounderInfo {
+  name?: string;
+  role?: string;
+  image?: string;
+  story?: string;
+  phone?: string;
+  whatsapp?: string;
+  instagram?: string;
+}
+
 interface FounderEditorProps {
-  initialFounder: any;
+  initialFounder: FounderInfo;
   settingId?: string;
 }
 

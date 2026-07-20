@@ -6,9 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ShoppingCart,
-  CheckCircle2,
   Package,
-  Clock,
   ChefHat,
   ArrowLeft,
   Sparkles,
@@ -20,7 +18,7 @@ import { getProxiedImageUrl } from "@/lib/image-proxy";
 import type { Product } from "@/types";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
-import { MaskReveal, WordReveal } from "@/components/ui/text-reveal";
+import { MaskReveal } from "@/components/ui/text-reveal";
 
 interface ProductDetailPageProps {
   product: Product;
@@ -51,7 +49,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
     try {
       addItem(product, quantity);
       toast.success("Added to cart!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to add to cart");
     } finally {
       setIsAdding(false);

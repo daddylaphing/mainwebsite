@@ -58,7 +58,11 @@ export const BlurText: React.FC<BlurTextProps> = ({
   // If a manual trigger is provided, use it directly instead of IntersectionObserver
   useEffect(() => {
     if (trigger !== undefined) {
-      if (trigger) setInView(true);
+      // Schedule into the next microtask to avoid synchronous setState in effect
+      if (trigger) {
+        const id = setTimeout(() => setInView(true), 0);
+        return () => clearTimeout(id);
+      }
       return;
     }
     if (!ref.current) return;

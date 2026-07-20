@@ -103,7 +103,7 @@ export function ReviewsManagementTable({ reviews: initialReviews }: ReviewsManag
                 </td>
                 <td className="p-4">
                   <div className="text-sm text-[#7A7570] line-clamp-2 max-w-md" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    "{review.quote}"
+                    {'"'}{review.quote}{'"'}
                   </div>
                 </td>
                 <td className="p-4">

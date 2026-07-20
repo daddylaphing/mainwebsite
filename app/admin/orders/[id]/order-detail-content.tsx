@@ -8,7 +8,6 @@ import {
   MapPin, 
   Calendar, 
   CreditCard, 
-  ShoppingBag, 
   CheckCircle2, 
   Clock, 
   Loader2, 
@@ -16,8 +15,14 @@ import {
   AlertTriangle
 } from "lucide-react";
 
+import type { Order, OrderItem } from "@/types";
+
 interface OrderDetailContentProps {
-  order: any;
+  order: Order & {
+    order_items?: OrderItem[];
+    payment_method?: string;
+    notes?: string;
+  };
 }
 
 const STATUS_STEPS = [
@@ -59,7 +64,7 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
       } else {
         alert(data.error || "Failed to update order status");
       }
-    } catch (error) {
+    } catch {
       alert("Error updating order status");
     } finally {
       setUpdating(false);
@@ -122,7 +127,6 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
             <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
               {STATUS_STEPS.map((step, idx) => {
                 const isCompleted = idx <= currentStepIndex;
-                const isCurrent = idx === currentStepIndex;
 
                 return (
                   <div key={step.value} className="flex md:flex-col items-center md:text-center flex-1 gap-3 relative z-10 w-full">
@@ -166,7 +170,7 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
           </div>
 
           <div className="divide-y divide-[#E6DFD5]/40">
-            {order.order_items && order.order_items.map((item: any) => (
+            {order.order_items && order.order_items.map((item: OrderItem) => (
               <div 
                 key={item.id} 
                 className={`py-4 flex items-center justify-between gap-4 transition-colors ${
@@ -242,7 +246,7 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
             </label>
             <select
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onChange={(e) => setStatus(e.target.value as "pending" | "confirmed" | "preparing" | "packed" | "out_for_delivery" | "delivered" | "cancelled")}
               className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-3 py-2.5 text-[#1A1A1A] text-sm focus:outline-none focus:border-[#6E1D25] font-semibold"
             >
               <option value="pending">Pending Review</option>
@@ -334,7 +338,7 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
                   <span className="font-bold text-[10px] uppercase tracking-wider">Customer Delivery Notes</span>
                 </div>
                 <p className="text-xs font-semibold leading-relaxed">
-                  "{order.delivery_notes || order.notes}"
+                  &ldquo;{order.delivery_notes || order.notes}&rdquo;
                 </p>
               </div>
             )}

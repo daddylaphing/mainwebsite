@@ -1,11 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { TrendingUp, ShoppingBag, Award, BarChart3, HelpCircle } from "lucide-react";
+import { TrendingUp, ShoppingBag, Award, BarChart3 } from "lucide-react";
+import type { Product } from "@/types";
+
+interface AnalyticsOrder {
+  id: string;
+  total: number;
+  subtotal: number;
+  status: string;
+  created_at: string;
+  order_items?: { id: string; name: string; quantity: number; price: number }[];
+}
+
+type AnalyticsProduct = Pick<Product, "name" | "slug" | "category">;
 
 interface AnalyticsDashboardProps {
-  orders: any[];
-  products: any[];
+  orders: AnalyticsOrder[];
+  products: AnalyticsProduct[];
 }
 
 export function AnalyticsDashboard({ orders, products }: AnalyticsDashboardProps) {
@@ -35,7 +47,7 @@ export function AnalyticsDashboard({ orders, products }: AnalyticsDashboardProps
 
     let totalItemsSold = 0;
     activeOrders.forEach(o => {
-      o.order_items?.forEach((item: any) => {
+      o.order_items?.forEach((item) => {
         totalItemsSold += item.quantity || 0;
       });
     });
@@ -55,7 +67,7 @@ export function AnalyticsDashboard({ orders, products }: AnalyticsDashboardProps
     filteredOrders.forEach(order => {
       if (order.status === "cancelled") return;
 
-      order.order_items?.forEach((item: any) => {
+      order.order_items?.forEach((item) => {
         const name = item.name;
         if (!salesMap[name]) {
           salesMap[name] = { name, quantity: 0, revenue: 0 };
@@ -86,7 +98,7 @@ export function AnalyticsDashboard({ orders, products }: AnalyticsDashboardProps
     filteredOrders.forEach(order => {
       if (order.status === "cancelled") return;
 
-      order.order_items?.forEach((item: any) => {
+      order.order_items?.forEach((item) => {
         const category = productCategoryMap[item.name] || "general";
         if (categoryMap[category]) {
           categoryMap[category].quantity += item.quantity || 0;
@@ -148,7 +160,7 @@ export function AnalyticsDashboard({ orders, products }: AnalyticsDashboardProps
           ].map((tab) => (
             <button
               key={tab.value}
-              onClick={() => setTimeRange(tab.value as any)}
+              onClick={() => setTimeRange(tab.value as "7days" | "30days" | "all")}
               className={`px-4 py-2 rounded-lg transition-all ${
                 timeRange === tab.value
                   ? "bg-[#6E1D25] text-white shadow-sm"

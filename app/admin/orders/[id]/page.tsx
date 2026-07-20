@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, MessageSquare } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { OrderDetailContent } from "./order-detail-content";
 
 interface OrderDetailPageProps {

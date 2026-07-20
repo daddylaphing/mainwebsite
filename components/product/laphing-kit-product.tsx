@@ -9,12 +9,11 @@ import { RecommendationPopup } from "../modals/recommendation-popup";
 import { useSiteConfig } from "@/lib/hooks/use-site-config";
 import { useCartRecommendation } from "@/lib/hooks/use-cart-recommendation";
 import { useCart } from "../providers/cart-provider";
-import { Button } from "../ui/button";
 import { Check, Package, Sparkles, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { getProxiedImageUrl } from "@/lib/image-proxy";
-import { MaskReveal, WordReveal } from "@/components/ui/text-reveal";
+import { MaskReveal } from "@/components/ui/text-reveal";
 
 interface LaphingKitProductProps {
   product: Product | null;

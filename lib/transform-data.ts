@@ -10,19 +10,19 @@ export type Product = {
   name: string;
   images: string[];
   // ... other fields
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type Review = {
   id: string;
   thumbnail_url: string | null;
   // ... other fields
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 export type SiteSetting = {
   key: string;
-  value: any;
+  value: unknown;
 };
 
 /**
@@ -62,24 +62,24 @@ export function transformReview<T extends { thumbnail_url?: string | null }>(
  */
 export function transformSiteSettings(settings: SiteSetting[]): SiteSetting[] {
   return settings.map((setting) => {
-    if (setting.key === "hero_section" && setting.value?.background_image) {
+    const val = setting.value as Record<string, unknown> | null | undefined;
+
+    if (setting.key === "hero_section" && val?.background_image) {
       return {
         ...setting,
         value: {
-          ...setting.value,
-          background_image: getProxiedImageUrl(
-            setting.value.background_image
-          ),
+          ...val,
+          background_image: getProxiedImageUrl(val.background_image as string),
         },
       };
     }
 
-    if (setting.key === "founder_section" && setting.value?.image) {
+    if (setting.key === "founder_section" && val?.image) {
       return {
         ...setting,
         value: {
-          ...setting.value,
-          image: getProxiedImageUrl(setting.value.image),
+          ...val,
+          image: getProxiedImageUrl(val.image as string),
         },
       };
     }
@@ -91,7 +91,7 @@ export function transformSiteSettings(settings: SiteSetting[]): SiteSetting[] {
 /**
  * Transform any object with image URLs
  */
-export function transformImageUrls<T extends Record<string, any>>(
+export function transformImageUrls<T extends Record<string, unknown>>(
   obj: T,
   imageFields: (keyof T)[]
 ): T {
@@ -103,7 +103,7 @@ export function transformImageUrls<T extends Record<string, any>>(
     if (typeof value === "string") {
       transformed[field] = getProxiedImageUrl(value) as T[keyof T];
     } else if (Array.isArray(value)) {
-      transformed[field] = value.map((item: any) =>
+      transformed[field] = value.map((item: unknown) =>
         typeof item === "string" ? getProxiedImageUrl(item) : item
       ) as T[keyof T];
     }

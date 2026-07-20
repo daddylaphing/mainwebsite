@@ -210,6 +210,7 @@ export function CartSheet() {
                         {/* Image */}
                         <div className="w-16 h-16 rounded-md bg-white overflow-hidden shrink-0 border border-[#E6DFD5]">
                           {item.product.images?.[0] ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={getProxiedImageUrl(item.product.images[0])}
                               alt={item.product.name}

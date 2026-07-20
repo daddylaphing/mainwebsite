@@ -81,9 +81,9 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     .order("sort_order");
 
   if (relations && relations.length > 0) {
-    product.related_products = relations
-      .map((r: any) => r.related)
-      .filter(Boolean);
+    product.related_products = (relations as Array<{ related: unknown }>)
+      .map((r) => r.related)
+      .filter(Boolean) as Product[];
   }
 
   return product as Product;
@@ -277,9 +277,9 @@ export async function getProductBySlugClient(slug: string): Promise<Product | nu
     .order("sort_order");
 
   if (relations && relations.length > 0) {
-    product.related_products = relations
-      .map((r: any) => r.related)
-      .filter(Boolean);
+    product.related_products = (relations as Array<{ related: unknown }>)
+      .map((r) => r.related)
+      .filter(Boolean) as Product[];
   }
 
   return product as Product;

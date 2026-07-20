@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 export interface SiteSetting {
   id: string;
   key: string;
-  value: any;
+  value: unknown;
   description: string | null;
   updated_at: string;
   updated_by: string | null;
@@ -12,7 +12,7 @@ export interface SiteSetting {
 /**
  * SERVER-SIDE: Get a specific setting by key
  */
-export async function getSetting(key: string): Promise<any | null> {
+export async function getSetting(key: string): Promise<unknown> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -32,7 +32,7 @@ export async function getSetting(key: string): Promise<any | null> {
 /**
  * SERVER-SIDE: Get all settings
  */
-export async function getAllSettings(): Promise<Record<string, any>> {
+export async function getAllSettings(): Promise<Record<string, unknown>> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -47,14 +47,14 @@ export async function getAllSettings(): Promise<Record<string, any>> {
   return data.reduce((acc, setting) => {
     acc[setting.key] = setting.value;
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, unknown>);
 }
 
 /**
  * Check if store is accepting online orders
  */
 export async function isOnlineOrdersEnabled(): Promise<boolean> {
-  const setting = await getSetting("online_orders");
+  const setting = await getSetting("online_orders") as { enabled?: boolean } | null;
   return setting?.enabled ?? true;
 }
 
@@ -62,7 +62,7 @@ export async function isOnlineOrdersEnabled(): Promise<boolean> {
  * Check if store is open
  */
 export async function isStoreOpen(): Promise<boolean> {
-  const setting = await getSetting("store_status");
+  const setting = await getSetting("store_status") as { is_open?: boolean } | null;
   return setting?.is_open ?? true;
 }
 
@@ -70,6 +70,6 @@ export async function isStoreOpen(): Promise<boolean> {
  * Check if delivery is enabled
  */
 export async function isDeliveryEnabled(): Promise<boolean> {
-  const setting = await getSetting("delivery");
+  const setting = await getSetting("delivery") as { enabled?: boolean } | null;
   return setting?.enabled ?? true;
 }

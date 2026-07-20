@@ -11,7 +11,14 @@ interface Order {
   payment_status: string;
   total: number;
   created_at: string;
-  shipping_address: any;
+  shipping_address: {
+    full_name: string;
+    phone: string;
+    line1: string;
+    city: string;
+    state: string;
+    pincode: string;
+  };
   order_items: Array<{
     id: string;
     name: string;
@@ -61,7 +68,7 @@ export function OrdersManagementTable({ orders: initialOrders }: OrdersManagemen
       } else {
         alert("Failed to update order status");
       }
-    } catch (error) {
+    } catch {
       alert("Error updating order status");
     } finally {
       setIsUpdating(null);

@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/admin/auth";
 import { createClient } from "@/lib/supabase/server";
-import { BarChart3, TrendingUp, Users, ShoppingBag, PieChart, Star } from "lucide-react";
+
 import { AnalyticsDashboard } from "./analytics-dashboard";
 
 export default async function AnalyticsPage() {

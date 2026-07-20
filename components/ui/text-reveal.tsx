@@ -377,7 +377,7 @@ export function Typewriter({
       observer.disconnect();
       clearTimeout(timeoutId);
     };
-  }, [text, speed, delay, loop, pauseOnDone]);
+  }, [text, speed, delay, loop, pauseOnDone, onComplete]);
 
   return (
     <span ref={ref} className={`inline ${className}`} aria-label={text}>

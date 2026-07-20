@@ -89,7 +89,7 @@ export function ReviewsSection() {
               className="text-[#C7BFB3] text-base leading-relaxed flex-1"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              "{review.review}"
+              {'"'}{review.review}{'"'}
             </p>
 
             {/* Author Info */}

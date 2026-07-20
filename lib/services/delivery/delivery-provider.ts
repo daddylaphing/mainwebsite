@@ -36,7 +36,7 @@ export interface DeliveryResponse {
   trackingId?: string;
   estimatedDeliveryTime?: string;
   error?: string;
-  providerData?: any;
+  providerData?: Record<string, unknown>;
 }
 
 export interface TrackingInfo {
@@ -132,8 +132,8 @@ export class PlaceholderDeliveryProvider extends DeliveryProvider {
     };
   }
 
-  async cancelDelivery(trackingId: string, reason?: string): Promise<DeliveryResponse> {
-    console.log("[Delivery] Would cancel:", trackingId, reason);
+  async cancelDelivery(_trackingId: string, _reason?: string): Promise<DeliveryResponse> {
+    console.log("[Delivery] Would cancel:", _trackingId, _reason);
     
     return {
       success: true,
@@ -141,10 +141,10 @@ export class PlaceholderDeliveryProvider extends DeliveryProvider {
   }
 
   async getQuote(
-    pickup: DeliveryAddress,
-    delivery: DeliveryAddress
+    _pickup: DeliveryAddress,
+    _delivery: DeliveryAddress
   ): Promise<{ amount: number; estimatedTime?: string }> {
-    console.log("[Delivery] Would get quote for:", { pickup, delivery });
+    console.log("[Delivery] Would get quote for:", { _pickup, _delivery });
     
     return {
       amount: 50,
@@ -192,7 +192,7 @@ export class SelfDeliveryProvider extends DeliveryProvider {
     };
   }
 
-  async cancelDelivery(trackingId: string, reason?: string): Promise<DeliveryResponse> {
+  async cancelDelivery(_trackingId: string, _reason?: string): Promise<DeliveryResponse> {
     // Handle internal cancellation
     
     return {
@@ -201,8 +201,8 @@ export class SelfDeliveryProvider extends DeliveryProvider {
   }
 
   async getQuote(
-    pickup: DeliveryAddress,
-    delivery: DeliveryAddress
+    _pickup: DeliveryAddress,
+    _delivery: DeliveryAddress
   ): Promise<{ amount: number; estimatedTime?: string }> {
     return {
       amount: 40,

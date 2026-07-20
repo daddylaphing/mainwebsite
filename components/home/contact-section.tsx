@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { Phone, Send, Camera, MessageCircle, Loader2, Check, Clock, Globe } from "lucide-react";
 import { toast } from "sonner";
@@ -32,7 +31,6 @@ export function ContactSection() {
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to send message");
-    } finally {
       setLoading(false);
       setTimeout(() => setSent(false), 4000);
     }

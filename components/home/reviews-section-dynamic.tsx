@@ -202,7 +202,7 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
           initial={{ scale: 0.9, opacity: 0, y: 24 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 24 }}
-          transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] as any }}
+          transition={{ duration: 0.38, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
           onClick={(e) => e.stopPropagation()}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}

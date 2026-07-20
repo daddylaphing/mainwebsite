@@ -5,8 +5,16 @@ import { useRouter } from "next/navigation";
 import { Loader2, Save } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
 
+interface HeroInfo {
+  title?: string;
+  subtitle?: string;
+  cta_text?: string;
+  cta_link?: string;
+  background_image?: string;
+}
+
 interface HomepageEditorProps {
-  initialHero: any;
+  initialHero: HeroInfo;
   settingId?: string;
 }
 

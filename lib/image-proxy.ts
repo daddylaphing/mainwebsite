@@ -3,8 +3,6 @@
  * Converts Supabase storage URLs to proxied URLs to bypass India's block
  */
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-
 /**
  * Convert a Supabase storage URL to a proxied URL
  * @param url - The original Supabase storage URL

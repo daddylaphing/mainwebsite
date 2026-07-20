@@ -18,46 +18,8 @@ import { useSplash } from "@/components/providers/splash-provider";
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.72, delay, ease: [0.16, 1, 0.3, 1] as any },
+  transition: { duration: 0.72, delay, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 });
-
-// Character-split stagger group
-const charContainer = (delay = 0) => ({
-  initial: "hidden",
-  animate: "show" as "show" | "hidden",
-  variants: {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.038, delayChildren: delay } },
-  },
-});
-
-const charVariant = {
-  hidden: { y: "135%", opacity: 0 },
-  show: {
-    y: 0,
-    opacity: 1,
-    transition: { duration: 0.72, ease: [0.16, 1, 0.3, 1] as any },
-  },
-};
-
-// ─── Split-text character animator ───────────────────────────────────────────
-function SplitChars({ text, delay = 0 }: { text: string; delay?: number }) {
-  return (
-    <motion.span
-      {...charContainer(delay)}
-      style={{ display: "inline-block", whiteSpace: "nowrap" }}
-      aria-hidden
-    >
-      {text.split("").map((ch, i) => (
-        <span key={i} style={{ display: "inline-block", overflow: "hidden" }}>
-          <motion.span variants={charVariant} style={{ display: "inline-block" }}>
-            {ch === " " ? "\u00A0" : ch}
-          </motion.span>
-        </span>
-      ))}
-    </motion.span>
-  );
-}
 
 // ─── Inline Typewriter — pure setTimeout, no observer ────────────────────────
 function Typewriter({
@@ -165,7 +127,6 @@ export function HeroSection() {
   const plateScrollY = useTransform(scrollY, [0, 600], [0, 60]);
   const contentOpacity = useTransform(scrollY, [0, 280], [1, 0]);
   const contentY = useTransform(scrollY, [0, 280], [0, -40]);
-  const bowlScrollRotate = useTransform(scrollY, [0, 1000], [0, 360]);
 
   // Steam canvas
   useEffect(() => {
@@ -287,7 +248,6 @@ export function HeroSection() {
               backgroundColor: f.color,
               borderRadius: "50%",
               opacity: 0.45,
-              x: useTransform(springX, [-0.5, 0.5], [-18, 18]),
             }}
           />
         ))}

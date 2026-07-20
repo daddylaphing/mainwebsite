@@ -4,6 +4,8 @@
  * Handles payment processing with Razorpay
  */
 
+import crypto from "crypto";
+
 export interface RazorpayOrderOptions {
   amount: number; // in paise (₹100 = 10000 paise)
   currency?: string;
@@ -99,8 +101,6 @@ export class RazorpayService {
       throw new Error("Razorpay not configured");
     }
 
-    const crypto = require("crypto");
-    
     const generatedSignature = crypto
       .createHmac("sha256", this.keySecret)
       .update(`${verification.razorpay_order_id}|${verification.razorpay_payment_id}`)
@@ -112,7 +112,7 @@ export class RazorpayService {
   /**
    * Fetch payment details
    */
-  async getPayment(paymentId: string): Promise<any> {
+  async getPayment(paymentId: string): Promise<RazorpayOrder> {
     if (!this.isConfigured()) {
       throw new Error("Razorpay not configured");
     }
@@ -137,14 +137,14 @@ export class RazorpayService {
   /**
    * Initiate refund
    */
-  async createRefund(paymentId: string, amount?: number): Promise<any> {
+  async createRefund(paymentId: string, amount?: number): Promise<RazorpayOrder> {
     if (!this.isConfigured()) {
       throw new Error("Razorpay not configured");
     }
 
     const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString("base64");
 
-    const body: any = {};
+    const body: { amount?: number } = {};
     if (amount) {
       body.amount = amount;
     }
@@ -169,7 +169,7 @@ export class RazorpayService {
   /**
    * Capture payment (for authorized payments)
    */
-  async capturePayment(paymentId: string, amount: number): Promise<any> {
+  async capturePayment(paymentId: string, amount: number): Promise<RazorpayOrder> {
     if (!this.isConfigured()) {
       throw new Error("Razorpay not configured");
     }

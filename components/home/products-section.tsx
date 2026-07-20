@@ -4,7 +4,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Phone, Plus, Minus, ArrowRight } from "lucide-react";
+import { Phone, ArrowRight } from "lucide-react";
 import { useCart } from "@/components/providers/cart-provider";
 import { ProductQuantitySelector } from "@/components/product/product-quantity-selector";
 import { MaskReveal } from "@/components/ui/text-reveal";

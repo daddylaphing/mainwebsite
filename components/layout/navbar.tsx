@@ -26,7 +26,10 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    const id = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40);
@@ -44,11 +47,15 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
-
-  const [activeHash, setActiveHash] = useState("");
   useEffect(() => {
-    if (typeof window !== "undefined") setActiveHash(window.location.hash);
+    const id = setTimeout(() => setMobileOpen(false), 0);
+    return () => clearTimeout(id);
+  }, [pathname]);
+
+  const [activeHash, setActiveHash] = useState(() =>
+    typeof window !== "undefined" ? window.location.hash : ""
+  );
+  useEffect(() => {
     const handleHashChange = () => setActiveHash(window.location.hash);
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);

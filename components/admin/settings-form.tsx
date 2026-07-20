@@ -5,13 +5,19 @@ import { updateSetting } from "@/lib/admin/settings";
 import { Store, ShoppingCart, Truck, Save } from "lucide-react";
 
 interface SettingsFormProps {
-  initialSettings: Record<string, any>;
+  initialSettings: Record<string, unknown>;
 }
 
 export function SettingsForm({ initialSettings }: SettingsFormProps) {
-  const [storeStatus, setStoreStatus] = useState(initialSettings.store_status || { is_open: true, message: "" });
-  const [onlineOrders, setOnlineOrders] = useState(initialSettings.online_orders || { enabled: true, message: "" });
-  const [delivery, setDelivery] = useState(initialSettings.delivery || { enabled: true, message: "" });
+  const [storeStatus, setStoreStatus] = useState(
+    (initialSettings.store_status as { is_open: boolean; message: string }) || { is_open: true, message: "" }
+  );
+  const [onlineOrders, setOnlineOrders] = useState(
+    (initialSettings.online_orders as { enabled: boolean; message: string }) || { enabled: true, message: "" }
+  );
+  const [delivery, setDelivery] = useState(
+    (initialSettings.delivery as { enabled: boolean; message: string }) || { enabled: true, message: "" }
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
@@ -28,7 +34,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
 
       setSaveMessage("Settings saved successfully!");
       setTimeout(() => setSaveMessage(""), 3000);
-    } catch (error) {
+    } catch {
       setSaveMessage("Error saving settings");
     } finally {
       setIsSaving(false);
@@ -144,7 +150,7 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
                     Checkout Disabled
                   </div>
                   <div className="text-orange-700 text-xs font-medium leading-relaxed">
-                    When online orders are disabled, the checkout button will be hidden and customers will see: "Currently accepting offline orders only."
+                    When online orders are disabled, the checkout button will be hidden and customers will see: &ldquo;Currently accepting offline orders only.&rdquo;
                   </div>
                 </div>
               </div>

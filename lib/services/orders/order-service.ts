@@ -28,7 +28,7 @@ export interface CreateOrderData {
     price: number;
     quantity: number;
     image_url?: string;
-    kit_config?: any;
+    kit_config?: Record<string, unknown>;
   }>;
   shipping_address: {
     full_name: string;

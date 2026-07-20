@@ -5,10 +5,6 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { CartProvider } from "@/components/providers/cart-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { CartSheet } from "@/components/cart/cart-sheet";
-import { CookieConsent } from "@/components/cookie-consent";
 import { SplashProvider } from "@/components/providers/splash-provider";
 import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { SkipToContent } from "@/components/ui/skip-to-content";
@@ -119,10 +115,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://gyrvdaucaznmastgspvc.supabase.co" />
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          rel="preload"
+          rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,700&family=Inter:wght@300;400;500;600;700&display=swap"
-          as="style"
         />
       </head>
       <body>
