@@ -374,10 +374,6 @@ export function CartSheet() {
                   </div>
                 )}
                 <div className="flex justify-between text-[#4A4540]">
-                  <span>Packaging Charges</span>
-                  <span className="font-semibold text-[#1A1A1A]">₹{packagingCharge}</span>
-                </div>
-                <div className="flex justify-between text-[#4A4540]">
                   <span>GST (5%)</span>
                   <span className="font-semibold text-[#1A1A1A]">₹{tax}</span>
                 </div>

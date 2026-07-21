@@ -141,7 +141,11 @@ function ProductPanel({
                 className="text-[10px] text-[#A09890] uppercase tracking-[0.12em] mb-2"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                {product.category === "wholesale" ? `Per sheet · min ${product.minimum_quantity}` : "Per kit"}
+                {product.category === "wholesale"
+                  ? product.name.toLowerCase().includes("momo")
+                    ? `Per plate · min ${product.minimum_quantity}`
+                    : `Per sheet · min ${product.minimum_quantity}`
+                  : "Per kit"}
               </p>
               <p
                 className="text-[#1A1A1A] font-bold leading-none"
