@@ -274,7 +274,7 @@ export default function CheckoutPage() {
       {/* Load Razorpay checkout.js */}
       <Script
         src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
         onLoad={() => setRazorpayLoaded(true)}
         onError={() =>
           setErrorMessage(
@@ -540,13 +540,18 @@ export default function CheckoutPage() {
                 {/* Submit */}
                 <button
                   type="submit"
-                  disabled={isProcessing || !refundAccepted}
+                  disabled={isProcessing || !refundAccepted || !razorpayLoaded}
                   className="w-full h-14 bg-[#1A1A1A] text-white font-bold text-xs uppercase tracking-widest rounded-[14px] hover:bg-[#6E1D25] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isProcessing ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
                       CREATING ORDER…
+                    </>
+                  ) : !razorpayLoaded ? (
+                    <>
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                      LOADING PAYMENT…
                     </>
                   ) : (
                     `PAY ₹${total} via Razorpay`
