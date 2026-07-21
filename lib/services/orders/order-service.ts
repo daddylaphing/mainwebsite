@@ -92,8 +92,10 @@ class OrderService {
         razorpayOrderId = razorpayOrder.id;
       } catch (error) {
         console.error("Failed to create Razorpay order:", error);
-        // Don't throw — order can still be created without Razorpay
+        throw new Error(`Razorpay order creation failed: ${error instanceof Error ? error.message : String(error)}`);
       }
+    } else {
+      throw new Error("Razorpay is not configured. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET.");
     }
 
     // Insert order using only real schema columns
