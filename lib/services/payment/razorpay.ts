@@ -34,17 +34,18 @@ export interface RazorpayPaymentVerification {
 }
 
 export class RazorpayService {
-  private keyId: string;
-  private keySecret: string;
   private baseUrl: string = "https://api.razorpay.com/v1";
 
-  constructor() {
-    this.keyId = process.env.RAZORPAY_KEY_ID || "";
-    this.keySecret = process.env.RAZORPAY_KEY_SECRET || "";
+  private get keyId(): string {
+    return process.env.RAZORPAY_KEY_ID || "";
+  }
 
-    if (!this.keyId || !this.keySecret) {
-      console.warn("Razorpay credentials not configured");
-    }
+  private get keySecret(): string {
+    return process.env.RAZORPAY_KEY_SECRET || "";
+  }
+
+  constructor() {
+    // Credentials read lazily via getters — no stale values on serverless cold starts
   }
 
   /**

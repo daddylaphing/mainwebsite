@@ -42,8 +42,13 @@ export async function POST(request: NextRequest) {
     );
 
     if (!success) {
+      console.error("Signature verification failed for order:", body.order_id, {
+        razorpay_order_id: body.razorpay_order_id,
+        razorpay_payment_id: body.razorpay_payment_id,
+        key_configured: !!process.env.RAZORPAY_KEY_SECRET,
+      });
       return NextResponse.json(
-        { error: "Payment verification failed" },
+        { error: "Payment verification failed — signature mismatch" },
         { status: 400 }
       );
     }
