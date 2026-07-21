@@ -176,17 +176,9 @@ export default function CheckoutPage() {
 
       const { order_id: dbOrderId, razorpay_order_id: rzpOrderId } = createData;
 
-      // If Razorpay order was not created on backend (e.g. not configured),
-      // fall through gracefully — mark as confirmed directly.
+      // If Razorpay order was not created, hard fail — never skip payment
       if (!rzpOrderId) {
-        setIsProcessing(false);
-        setPaymentSuccess(true);
-        clearCart();
-        setTimeout(() => {
-          router.push("/account");
-          router.refresh();
-        }, 3000);
-        return;
+        throw new Error("Payment gateway order could not be created. Please try again or contact support.");
       }
 
       // STEP 2 — Open Razorpay checkout modal
