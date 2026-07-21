@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
+    const serviceSupabase = createServiceClient();
 
     const {
       data: { user },
@@ -77,8 +78,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, message: "Already verified" });
     }
 
-    // Mark as paid
-    const { error: updateError } = await supabase
+    // Mark as paid using the service role client so RLS policies do not block trusted server-side updates.
+    const { error: updateError } = await serviceSupabase
       .from("orders")
       .update({
         payment_status: "paid",
