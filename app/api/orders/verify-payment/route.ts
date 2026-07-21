@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { orderService } from "@/lib/services/orders/order-service";
+import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
 
-    // Check authentication
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -17,15 +16,55 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Validate required fields
     if (!body.order_id || !body.razorpay_payment_id || !body.razorpay_signature || !body.razorpay_order_id) {
       return NextResponse.json({ error: "Missing payment details" }, { status: 400 });
+    }
+
+    // Read secret fresh every request
+    const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").trim();
+
+    if (!keySecret) {
+      console.error("[verify-payment] RAZORPAY_KEY_SECRET is not set");
+      return NextResponse.json({ error: "Payment gateway not configured" }, { status: 500 });
+    }
+
+    const razorpayOrderId = String(body.razorpay_order_id).trim();
+    const razorpayPaymentId = String(body.razorpay_payment_id).trim();
+    const razorpaySignature = String(body.razorpay_signature).trim();
+
+    // Compute expected signature
+    const payload = `${razorpayOrderId}|${razorpayPaymentId}`;
+    const generatedSignature = crypto
+      .createHmac("sha256", keySecret)
+      .update(payload)
+      .digest("hex");
+
+    const isValid =
+      generatedSignature.length === razorpaySignature.length &&
+      crypto.timingSafeEqual(
+        Buffer.from(generatedSignature, "utf8"),
+        Buffer.from(razorpaySignature, "utf8")
+      );
+
+    console.log("[verify-payment]", {
+      isValid,
+      secretLength: keySecret.length,
+      payload,
+      generated: generatedSignature,
+      received: body.razorpay_signature,
+    });
+
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "Payment verification failed — signature mismatch" },
+        { status: 400 }
+      );
     }
 
     // Verify order belongs to user
     const { data: order } = await supabase
       .from("orders")
-      .select("user_id")
+      .select("user_id, payment_status")
       .eq("id", body.order_id)
       .single();
 
@@ -33,35 +72,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    // Update payment status
-    const success = await orderService.updatePaymentStatus(
-      body.order_id,
-      body.razorpay_payment_id,
-      body.razorpay_signature,
-      body.razorpay_order_id
-    );
-
-    if (!success) {
-      console.error("Signature verification failed for order:", body.order_id, {
-        razorpay_order_id: body.razorpay_order_id,
-        razorpay_payment_id: body.razorpay_payment_id,
-        key_configured: !!process.env.RAZORPAY_KEY_SECRET,
-      });
-      return NextResponse.json(
-        { error: "Payment verification failed — signature mismatch" },
-        { status: 400 }
-      );
+    // Already verified — idempotent
+    if (order.payment_status === "paid") {
+      return NextResponse.json({ success: true, message: "Already verified" });
     }
 
-    return NextResponse.json({
-      success: true,
-      message: "Payment verified successfully",
-    });
+    // Mark as paid
+    const { error: updateError } = await supabase
+      .from("orders")
+      .update({
+        payment_status: "paid",
+        payment_id: body.razorpay_payment_id,
+        status: "confirmed",
+      })
+      .eq("id", body.order_id);
+
+    if (updateError) {
+      console.error("[verify-payment] DB update failed:", updateError);
+      return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, message: "Payment verified successfully" });
+
   } catch (error) {
-    console.error("Payment verification error:", error);
-    return NextResponse.json(
-      { error: "Failed to verify payment" },
-      { status: 500 }
-    );
+    console.error("[verify-payment] Unexpected error:", error);
+    return NextResponse.json({ error: "Failed to verify payment" }, { status: 500 });
   }
 }

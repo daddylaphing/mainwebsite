@@ -110,13 +110,19 @@ export class RazorpayService {
       .update(body)
       .digest("hex");
 
-    const match = generatedSignature === verification.razorpay_signature;
+    const receivedSignature = String(verification.razorpay_signature || "").trim();
+    const receivedBuffer = Buffer.from(receivedSignature, "utf8");
+    const generatedBuffer = Buffer.from(generatedSignature, "utf8");
+
+    const match =
+      receivedBuffer.length === generatedBuffer.length &&
+      crypto.timingSafeEqual(generatedBuffer, receivedBuffer);
 
     if (!match) {
       console.error("[Razorpay] Signature mismatch", {
-        expected: verification.razorpay_signature,
+        receivedSignatureLength: receivedBuffer.length,
+        generatedSignatureLength: generatedBuffer.length,
         generated: generatedSignature,
-        keySecretLength: secret.length,
         body,
       });
     }

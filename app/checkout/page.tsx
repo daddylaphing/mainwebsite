@@ -182,8 +182,16 @@ export default function CheckoutPage() {
       }
 
       // STEP 2 — Open Razorpay checkout modal
+      const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?.trim() || "";
+
+      if (!razorpayKeyId) {
+        throw new Error(
+          "Razorpay public key is not configured. Set NEXT_PUBLIC_RAZORPAY_KEY_ID in .env.local and Vercel."
+        );
+      }
+
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        key: razorpayKeyId,
         amount: Math.round(total * 100), // paise
         currency: "INR",
         name: "Laphing Daddy",
