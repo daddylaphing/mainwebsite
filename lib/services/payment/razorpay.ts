@@ -102,12 +102,26 @@ export class RazorpayService {
       throw new Error("Razorpay not configured");
     }
 
+    const secret = this.keySecret;
+    const body = `${verification.razorpay_order_id}|${verification.razorpay_payment_id}`;
+
     const generatedSignature = crypto
-      .createHmac("sha256", this.keySecret)
-      .update(`${verification.razorpay_order_id}|${verification.razorpay_payment_id}`)
+      .createHmac("sha256", secret)
+      .update(body)
       .digest("hex");
 
-    return generatedSignature === verification.razorpay_signature;
+    const match = generatedSignature === verification.razorpay_signature;
+
+    if (!match) {
+      console.error("[Razorpay] Signature mismatch", {
+        expected: verification.razorpay_signature,
+        generated: generatedSignature,
+        keySecretLength: secret.length,
+        body,
+      });
+    }
+
+    return match;
   }
 
   /**
