@@ -51,6 +51,13 @@ const ADDONS = [
     icon: null,
     image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/seasoningmix.png",
   },
+  {
+    id: "waiwai",
+    name: "Extra Wai Wai",
+    price: 20,
+    icon: null,
+    image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/waiwai.png",
+  },
 ];
 
 function isKitProduct(name: string): boolean {
@@ -90,6 +97,7 @@ export function CartSheet() {
       garlic: items.find((i) => i.id === "addon-garlic")?.quantity || 0,
       sauce: items.find((i) => i.id === "addon-sauce")?.quantity || 0,
       seasoning: items.find((i) => i.id === "addon-seasoning")?.quantity || 0,
+      waiwai: items.find((i) => i.id === "addon-waiwai")?.quantity || 0,
     } as Record<string, number>;
   }, [items]);
 
@@ -368,16 +376,6 @@ export function CartSheet() {
                 <div className="flex justify-between text-[#4A4540]">
                   <span>Packaging Charges</span>
                   <span className="font-semibold text-[#1A1A1A]">₹{packagingCharge}</span>
-                </div>
-                <div className="flex justify-between text-[#4A4540]">
-                  <span>Delivery</span>
-                  <span className="font-semibold text-[#1A1A1A]">
-                    {shippingCharge === 0 ? (
-                      <Badge className="bg-[#6E1D25]/10 text-[#6E1D25] border-0 text-[10px] font-bold">FREE</Badge>
-                    ) : (
-                      `₹${shippingCharge}`
-                    )}
-                  </span>
                 </div>
                 <div className="flex justify-between text-[#4A4540]">
                   <span>GST (5%)</span>

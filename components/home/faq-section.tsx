@@ -1,21 +1,27 @@
-  "use client";
+"use client";
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 
-const FAQS = [
-  { q: "What is Laphing?", a: "Laphing is a popular Tibetan/Nepalese street food made from starchy mung bean or potato starch sheets, served with a spicy chilli oil, garlic water, and special sauce." },
-  { q: "Where do you deliver?", a: "We deliver to Delhi, Noida, Gurugram (Gurgaon), and Ghaziabad only." },
-  { q: "How does delivery work?", a: "Delivery is arranged by you (the customer) through apps like Uber, Rapido, or Porter. Our top recommendation and preferred partner is Uncle Delivery for the best rates and handling." },
-  { q: "When can I place an order?", a: "Customers can book orders between 3:00 PM and 6:00 PM only." },
-  { q: "What is the refund policy?", a: "All orders are strictly non-refundable once placed." },
-  { q: "What is the minimum order?", a: "Laphing Kit: minimum 2 kits per order (₹50 each). Fresh Laphing Sheet: minimum 5 sheets (₹20 each). Cheese Corn Dog: no minimum. Packaging charge of ₹30 applies per order (₹50 for bulk orders above 10 kits)." },
-  { q: "Are the sheets made fresh?", a: "Yes. All laphing sheets are made fresh to order every morning. We do not use any preservatives. Consume within 2 days of delivery." },
-];
+interface FAQ {
+  id: string;
+  question: string;
+  answer: string;
+  sort_order: number;
+  is_published: boolean;
+}
 
-export function FAQSection() {
+interface FAQSectionProps {
+  faqs: FAQ[];
+}
+
+export function FAQSection({ faqs }: FAQSectionProps) {
   const [open, setOpen] = useState<number | null>(null);
+
+  const published = faqs
+    .filter((f) => f.is_published)
+    .sort((a, b) => a.sort_order - b.sort_order);
 
   return (
     <section id="faq" className="bg-[#FAFAF8]">
@@ -58,9 +64,9 @@ export function FAQSection() {
 
         {/* Accordion */}
         <div className="max-w-3xl mx-auto">
-          {FAQS.map((faq, i) => (
+          {published.map((faq, i) => (
             <motion.div
-              key={i}
+              key={faq.id}
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -83,7 +89,7 @@ export function FAQSection() {
                     className={`text-base md:text-lg font-medium transition-colors duration-200 ${open === i ? "text-[#1A1A1A]" : "text-[#444748] group-hover:text-[#1A1A1A]"}`}
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    {faq.q}
+                    {faq.question}
                   </span>
                 </div>
                 <motion.div
@@ -108,7 +114,7 @@ export function FAQSection() {
                       className="pl-14 pr-12 pb-7 text-[#7A7570] text-sm md:text-base leading-relaxed"
                       style={{ fontFamily: "'Inter', sans-serif" }}
                     >
-                      {faq.a}
+                      {faq.answer}
                     </p>
                   </motion.div>
                 )}

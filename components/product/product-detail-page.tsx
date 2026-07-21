@@ -31,8 +31,10 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
   const [isAdding, setIsAdding] = useState(false);
 
   const meetsMinimum = quantity >= (product.minimum_quantity || 1);
+  // bulk_price applies when ordering 5+ sheets; otherwise regular price
+  const bulkThreshold = 5;
   const effectivePrice =
-    product.bulk_price && quantity >= (product.minimum_quantity || 1)
+    product.bulk_price && quantity >= bulkThreshold
       ? product.bulk_price
       : product.price;
   const totalPrice = effectivePrice * quantity;
@@ -163,19 +165,28 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
                   ₹{effectivePrice}
                 </span>
                 <span className="text-[#A09890] text-xs uppercase tracking-wider">
-                  {product.category === "wholesale" ? "per sheet" : "each"}
+                  {product.category === "wholesale"
+                    ? product.slug === "momos" || product.slug === "steamed-momos" || product.name.toLowerCase().includes("momo")
+                      ? "per plate"
+                      : "per sheet"
+                    : "each"}
                 </span>
               </div>
+              {product.bulk_price && product.category !== "wholesale" && (
+                <p className="text-xs text-[#7A7570] mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Bulk rate: <span className="font-semibold text-[#1A1A1A]">₹{product.bulk_price}/sheet</span> for 5+ sheets
+                </p>
+              )}
             </div>
 
             {/* Quantity Selector or Bulk Notice */}
-            {product.slug === "wholesale-momos" ? (
+            {product.category === "wholesale" ? (
               <div className="bg-[#F7F3EC] border border-[rgba(26,26,26,0.08)] p-6 space-y-3">
                 <div className="text-sm font-bold text-[#6E1D25] uppercase tracking-wider" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Bulk Purchase Only
+                  Bulk / Catering Orders Only
                 </div>
                 <p className="text-xs text-[#7A7570] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  This product is manufactured exclusively for wholesale partners, restaurants, and catering services. Standard retail checkout is unavailable.
+                  This product is available exclusively for bulk, catering, and wholesale orders. Please call or message us directly to place an order.
                 </p>
               </div>
             ) : (
@@ -211,7 +222,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
             )}
 
             {/* Add to Cart or Contact Button */}
-            {product.slug === "wholesale-momos" ? (
+            {product.category === "wholesale" ? (
               <Link
                 href="/#contact"
                 className="btn-ink w-full justify-center text-sm inline-flex items-center"

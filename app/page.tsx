@@ -15,6 +15,7 @@ import { ReviewCardSkeleton } from "@/components/ui/loading-skeleton";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { getFeaturedProducts } from "@/lib/products";
 import { getFeaturedReviews } from "@/lib/reviews";
+import { getFAQs } from "@/lib/faqs-server";
 import { CurvedLoopDivider } from "@/components/home/curved-loop-divider";
 import { FloatingSpiceFlakes } from "@/components/ui/floating-spice-flakes";
 import { PreparationScrollStack } from "@/components/home/preparation-scroll-stack";
@@ -41,6 +42,7 @@ async function ReviewsData() {
 }
 
 export default async function HomePage() {
+  const faqs = await getFAQs();
 
   const businessSchema = {
     "@context": "https://schema.org",
@@ -183,7 +185,7 @@ export default async function HomePage() {
 
         {/* FAQ — 06 */}
         <ErrorBoundary>
-          <FAQSection />
+          <FAQSection faqs={faqs} />
         </ErrorBoundary>
 
         {/* Contact — 07 */}

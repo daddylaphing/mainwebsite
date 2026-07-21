@@ -17,6 +17,7 @@ export interface KitExtras {
   extra_garlic_water: number;
   extra_sauce: number;
   extra_seasoning: number;
+  extra_wai_wai: number;
 }
 
 export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCustomizerProps) {
@@ -27,6 +28,7 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
     extra_garlic_water: 0,
     extra_sauce: 0,
     extra_seasoning: 0,
+    extra_wai_wai: 0,
   });
 
   useEffect(() => {
@@ -44,7 +46,8 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
       extras.extra_chilli_oil * config.extra_chilli_oil_price +
       extras.extra_garlic_water * config.extra_garlic_water_price +
       extras.extra_sauce * (config.extra_sauce_price || 15) +
-      extras.extra_seasoning * (config.extra_seasoning_price || 10)
+      extras.extra_seasoning * (config.extra_seasoning_price || 10) +
+      extras.extra_wai_wai * 20
     );
   };
 
@@ -74,15 +77,22 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
       key: "extra_sauce" as keyof KitExtras,
       name: "Extra Sauce",
       price: config?.extra_sauce_price || 15,
-      image: null,
+      image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/laphingsauce.png",
       description: "Spicy peanut sauce",
     },
     {
       key: "extra_seasoning" as keyof KitExtras,
       name: "Extra Seasoning",
       price: config?.extra_seasoning_price || 10,
-      image: null,
+      image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/seasoningmix.png",
       description: "Signature seasoning mix",
+    },
+    {
+      key: "extra_wai_wai" as keyof KitExtras,
+      name: "Extra Wai Wai",
+      price: 20,
+      image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/waiwai.png",
+      description: "Crispy Wai Wai noodle topping",
     },
   ];
 

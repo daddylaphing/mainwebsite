@@ -610,12 +610,6 @@ export default function CheckoutPage() {
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Shipping</span>
-                  <span className="text-[#1A1A1A] font-semibold">
-                    {shippingCharge === 0 ? "FREE" : `₹${shippingCharge}`}
-                  </span>
-                </div>
-                <div className="flex justify-between">
                   <span>GST (5%)</span>
                   <span className="text-[#1A1A1A] font-semibold">₹{tax}</span>
                 </div>

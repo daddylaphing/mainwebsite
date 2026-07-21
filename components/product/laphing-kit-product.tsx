@@ -29,6 +29,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
     extra_garlic_water: 0,
     extra_sauce: 0,
     extra_seasoning: 0,
+    extra_wai_wai: 0,
   });
   const [isAdding, setIsAdding] = useState(false);
 
@@ -47,7 +48,10 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
     const extrasPrice =
       extras.extra_sheets * (config?.extra_sheet_price || 20) +
       extras.extra_chilli_oil * (config?.extra_chilli_oil_price || 15) +
-      extras.extra_garlic_water * (config?.extra_garlic_water_price || 10);
+      extras.extra_garlic_water * (config?.extra_garlic_water_price || 10) +
+      extras.extra_sauce * (config?.extra_sauce_price || 15) +
+      extras.extra_seasoning * (config?.extra_seasoning_price || 10) +
+      extras.extra_wai_wai * 20;
     return basePrice + extrasPrice;
   };
 
@@ -86,6 +90,36 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
           images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/garlicwater.png"],
           is_active: true,
         } as unknown as Product, extras.extra_garlic_water);
+      }
+
+      if (extras.extra_sauce > 0) {
+        addItem({
+          id: "addon-sauce",
+          name: "Extra Laphing Sauce",
+          price: 15,
+          images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/laphingsauce.png"],
+          is_active: true,
+        } as unknown as Product, extras.extra_sauce);
+      }
+
+      if (extras.extra_seasoning > 0) {
+        addItem({
+          id: "addon-seasoning",
+          name: "Extra Seasoning Mix",
+          price: 10,
+          images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/seasoningmix.png"],
+          is_active: true,
+        } as unknown as Product, extras.extra_seasoning);
+      }
+
+      if (extras.extra_wai_wai > 0) {
+        addItem({
+          id: "addon-waiwai",
+          name: "Extra Wai Wai",
+          price: 20,
+          images: ["https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/waiwai.png"],
+          is_active: true,
+        } as unknown as Product, extras.extra_wai_wai);
       }
 
       toast.success("Added to cart successfully!");

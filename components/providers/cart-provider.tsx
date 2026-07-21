@@ -58,7 +58,7 @@ function calcTotals(items: CartItemUI[]): Omit<CartState, "items" | "coupon"> {
         ? BULK_PACKAGING_CHARGE
         : BASE_PACKAGING_CHARGE
       : 0;
-  const shippingCharge = subtotal >= 500 ? 0 : 50;
+  const shippingCharge = 0; // Customer arranges own delivery
   const taxable = subtotal - discount + packagingCharge;
   const tax = Math.round(taxable * TAX_RATE);
   const total = taxable + shippingCharge + tax;

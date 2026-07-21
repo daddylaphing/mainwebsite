@@ -14,6 +14,7 @@ import {
   Users,
   Settings,
   BarChart3,
+  HelpCircle,
   X,
 } from "lucide-react";
 
@@ -24,6 +25,7 @@ const MENU_ITEMS = [
   { label: "Categories",    href: "/admin/categories",    icon: FolderTree },
   { label: "Reviews",       href: "/admin/reviews",       icon: Star },
   { label: "Recipe Guides", href: "/admin/recipe-guides", icon: BookOpen },
+  { label: "FAQ",           href: "/admin/faq",           icon: HelpCircle },
   { label: "Homepage",      href: "/admin/homepage",      icon: Home },
   { label: "Founder",       href: "/admin/founder",       icon: User },
   { label: "Users",         href: "/admin/users",         icon: Users },
