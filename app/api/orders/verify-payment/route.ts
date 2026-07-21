@@ -5,7 +5,13 @@ import crypto from "crypto";
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const serviceSupabase = createServiceClient();
+    let serviceSupabase;
+    try {
+      serviceSupabase = createServiceClient();
+    } catch (err) {
+      console.error("[verify-payment] createServiceClient failed:", err);
+      return NextResponse.json({ error: "Server misconfiguration: SUPABASE_SERVICE_ROLE_KEY is not set" }, { status: 500 });
+    }
 
     const {
       data: { user },
@@ -90,7 +96,7 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error("[verify-payment] DB update failed:", updateError);
-      return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to update order: " + (updateError.message || JSON.stringify(updateError)) }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: "Payment verified successfully" });
