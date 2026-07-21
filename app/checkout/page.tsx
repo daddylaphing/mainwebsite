@@ -203,6 +203,19 @@ export default function CheckoutPage() {
         }) => {
           // STEP 3 — Verify payment signature on our backend
           try {
+            // Debug: check what the server computes
+            const debugRes = await fetch("/api/debug-rzp", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const debugData = await debugRes.json();
+            console.log("[RZP DEBUG]", debugData);
+
             const verifyRes = await fetch("/api/orders/verify-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
