@@ -18,9 +18,10 @@ export default async function OrderPage({ params }: OrderPageProps) {
     .from("orders")
     .select(`*, order_items(*)`)
     .eq("id", params.id)
+    .eq("user_id", user.id)
     .single();
 
-  if (error || !order || order.user_id !== user.id) {
+  if (error || !order) {
     return redirect("/account");
   }
 

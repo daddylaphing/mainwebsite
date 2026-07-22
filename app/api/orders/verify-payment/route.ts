@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { sendOrderConfirmationEmail } from "@/lib/emails";
 import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
+    const requestUrl = new URL(request.url);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || requestUrl.origin;
+
     const supabase = await createClient();
     let serviceSupabase;
     try {
@@ -97,6 +101,40 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error("[verify-payment] DB update failed:", updateError);
       return NextResponse.json({ error: "Failed to update order: " + (updateError.message || JSON.stringify(updateError)) }, { status: 500 });
+    }
+
+    const { data: fullOrder, error: orderDetailsError } = await serviceSupabase
+      .from("orders")
+      .select("*, order_items(*)")
+      .eq("id", body.order_id)
+      .single();
+
+    if (orderDetailsError) {
+      console.error("[verify-payment] order fetch failed:", orderDetailsError);
+    } else if (fullOrder) {
+      try {
+        await sendOrderConfirmationEmail({
+          email: user.email ?? "",
+          name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Customer",
+          orderNumber: fullOrder.order_number,
+          items: (fullOrder.order_items ?? []).map((item: any) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          subtotal: fullOrder.subtotal,
+          packaging: fullOrder.packaging_charge,
+          shipping: fullOrder.shipping_charge,
+          tax: fullOrder.tax,
+          total: fullOrder.total,
+          shippingAddress: fullOrder.shipping_address,
+          deliveryNotes: fullOrder.delivery_notes,
+          orderLink: `${siteUrl}/account/orders/${fullOrder.id}`,
+          pickupAddress: process.env.NEXT_PUBLIC_RESTAURANT_PICKUP_ADDRESS || "Shop 12, Food Lane, Tibetan Street, Sector 18, Noida, Uttar Pradesh 201301",
+        });
+      } catch (emailError) {
+        console.error("[verify-payment] order confirmation email failed:", emailError);
+      }
     }
 
     return NextResponse.json({ success: true, message: "Payment verified successfully" });
