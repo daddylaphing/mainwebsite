@@ -32,9 +32,9 @@ interface CartContextType extends CartState {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const BASE_PACKAGING_CHARGE = 30;
-const BULK_PACKAGING_CHARGE = 50;
-const BULK_KIT_THRESHOLD = 10;
+const BASE_PACKAGING_CHARGE = 30;  // up to 9 kits
+const BULK_PACKAGING_CHARGE = 60;  // 10+ kits
+const BULK_KIT_THRESHOLD = 10;     // kits threshold (inclusive)
 const TAX_RATE = 0.05; // 5% GST
 
 // ─── Reducer ──────────────────────────────────────────────────────────────────
@@ -54,7 +54,7 @@ function calcTotals(items: CartItemUI[]): Omit<CartState, "items" | "coupon"> {
   const kitQty = countKitQuantity(items);
   const packagingCharge =
     items.length > 0
-      ? kitQty > BULK_KIT_THRESHOLD
+      ? kitQty >= BULK_KIT_THRESHOLD
         ? BULK_PACKAGING_CHARGE
         : BASE_PACKAGING_CHARGE
       : 0;

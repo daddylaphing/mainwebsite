@@ -622,6 +622,10 @@ export default function CheckoutPage() {
                   </span>
                 </div>
                 <div className="flex justify-between">
+                  <span>Packaging Charges</span>
+                  <span className="text-[#1A1A1A] font-semibold">₹{packagingCharge}</span>
+                </div>
+                <div className="flex justify-between">
                   <span>GST (5%)</span>
                   <span className="text-[#1A1A1A] font-semibold">₹{tax}</span>
                 </div>
