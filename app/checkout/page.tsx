@@ -241,6 +241,43 @@ export default function CheckoutPage() {
               throw new Error(verifyData.error || "Payment verification failed.");
             }
 
+            // Send confirmation emails to customer + admin
+            try {
+              await fetch("/api/orders/confirmation", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  email: user.email ?? "",
+                  name: name,
+                  orderNumber: createData.order_number,
+                  items: items.map((item) => ({
+                    name: item.product.name,
+                    quantity: item.quantity,
+                    price: item.price,
+                  })),
+                  subtotal,
+                  packaging: packagingCharge,
+                  shipping: shippingCharge,
+                  tax,
+                  total,
+                  shippingAddress: {
+                    full_name: name,
+                    phone,
+                    line1,
+                    line2: line2 || undefined,
+                    city,
+                    state,
+                    pincode,
+                  },
+                  deliveryNotes: notes || undefined,
+                  pickupAddress: "Laphing Daddy Kitchen, Shop 12, Food Lane, Tibetan Street, Sector 18, Noida — Ph: 9354775439",
+                }),
+              });
+            } catch {
+              // Don't block redirect if email fails
+              console.warn("Order confirmation email failed to send");
+            }
+
             setPaymentSuccess(true);
             clearCart();
             setTimeout(() => {

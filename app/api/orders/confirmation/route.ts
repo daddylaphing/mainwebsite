@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, name, orderNumber, items, subtotal, packaging, shipping, tax, total, shippingAddress, deliveryNotes } = body;
+    const { email, name, orderNumber, items, subtotal, packaging, shipping, tax, total, shippingAddress, deliveryNotes, pickupAddress } = body;
 
     if (!email || !name || !orderNumber) {
       return NextResponse.json(
@@ -25,6 +25,7 @@ export async function POST(request: Request) {
       total,
       shippingAddress,
       deliveryNotes,
+      pickupAddress,
     });
 
     return NextResponse.json({ success: true });
