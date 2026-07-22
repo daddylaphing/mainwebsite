@@ -108,7 +108,7 @@ export default function SignupPage() {
     });
 
     if (otpError) {
-      setError(`OTP error: ${otpError.message}`);
+      setError(`OTP error: ${otpError.message || otpError.status || JSON.stringify(otpError)}`);
       window.grecaptcha?.reset(recaptchaWidgetId.current ?? undefined);
       setLoading(false);
       return;
