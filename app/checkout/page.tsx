@@ -244,9 +244,9 @@ export default function CheckoutPage() {
             setPaymentSuccess(true);
             clearCart();
             setTimeout(() => {
-              router.push("/account");
+              router.push(`/account/orders/${dbOrderId}`);
               router.refresh();
-            }, 3000);
+            }, 1800);
           } catch (err: unknown) {
             setErrorMessage(
               (err instanceof Error ? err.message : null) || "Payment verification failed. Please contact support."
@@ -683,7 +683,7 @@ export default function CheckoutPage() {
                 </h2>
                 <p className="text-[#7A7570] text-sm max-w-xs leading-relaxed mx-auto">
                   Your order is confirmed and payment verified. Redirecting to
-                  your orders…
+                  your order details page…
                 </p>
               </motion.div>
             </div>
