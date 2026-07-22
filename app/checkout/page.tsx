@@ -57,6 +57,18 @@ export default function CheckoutPage() {
   const [refundAccepted, setRefundAccepted] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
+  // Orders only accepted 3 PM – 6 PM IST
+  function isOrderingOpen(): boolean {
+    const now = new Date();
+    // IST = UTC + 5:30
+    const istOffset = 5.5 * 60; // minutes
+    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+    const istMinutes = (utcMinutes + istOffset) % (24 * 60);
+    const istHour = Math.floor(istMinutes / 60);
+    return istHour >= 15 && istHour < 18; // 3 PM to 6 PM
+  }
+  const orderingOpen = isOrderingOpen();
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login?redirectTo=/checkout");
@@ -123,6 +135,11 @@ export default function CheckoutPage() {
   const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isProcessing) return;
+
+    if (!isOrderingOpen()) {
+      setErrorMessage("Orders are only accepted between 3:00 PM and 6:00 PM IST.");
+      return;
+    }
 
     if (!razorpayLoaded || !window.Razorpay) {
       setErrorMessage(
@@ -588,25 +605,37 @@ export default function CheckoutPage() {
                 </div>
 
                 {/* Submit */}
-                <button
-                  type="submit"
-                  disabled={isProcessing || !refundAccepted || !razorpayLoaded}
-                  className="w-full h-14 bg-[#1A1A1A] text-white font-bold text-xs uppercase tracking-widest rounded-[14px] hover:bg-[#6E1D25] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      CREATING ORDER…
-                    </>
-                  ) : !razorpayLoaded ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin" />
-                      LOADING PAYMENT…
-                    </>
-                  ) : (
-                    `PAY ₹${total} via Razorpay`
-                  )}
-                </button>
+                {!orderingOpen ? (
+                  <div className="w-full rounded-[14px] bg-[#F7F3EC] border border-[#E6DFD5] p-5 text-center space-y-1">
+                    <p className="text-sm font-bold text-[#1A1A1A]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      Orders closed right now
+                    </p>
+                    <p className="text-xs text-[#7A7570]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                      We accept orders between <span className="font-semibold text-[#1A1A1A]">3:00 PM – 6:00 PM IST</span> daily.
+                      Come back then to place your order.
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={isProcessing || !refundAccepted || !razorpayLoaded}
+                    className="w-full h-14 bg-[#1A1A1A] text-white font-bold text-xs uppercase tracking-widest rounded-[14px] hover:bg-[#6E1D25] transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        CREATING ORDER…
+                      </>
+                    ) : !razorpayLoaded ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        LOADING PAYMENT…
+                      </>
+                    ) : (
+                      `PAY ₹${total} via Razorpay`
+                    )}
+                  </button>
+                )}
 
                 {errorMessage && (
                   <p className="text-center text-xs text-white bg-[#6E1D25] border border-[#6E1D25]/20 rounded-xl py-3 font-medium">
