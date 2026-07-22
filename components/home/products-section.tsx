@@ -30,7 +30,7 @@ function ProductPanel({
   onQuantityChange: (qty: number) => void;
   onAddToCart: () => void;
 }) {
-  const isEven = index % 2 === 0 ?
+  const isEven = index % 2 === 0;
   const sectionNumber = String(index + 1).padStart(2, "0");
   const panelRef = useRef<HTMLDivElement>(null);
 

@@ -40,7 +40,6 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
   const minQty = config?.min_kit_qty || 3;
   const kitPrice = config?.laphing_kit_price || 50;
   const packagingCharge = config?.packaging_charge || 30;
-  const meetsMinimum = quantity >= minQty;
 
   const calculateTotal = () => {
     const basePrice = kitPrice * quantity;

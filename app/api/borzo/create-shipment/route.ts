@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
         state: shipping_address.state,
         pincode: shipping_address.pincode,
       },
-      items: (order.order_items || []).map((item: any) => ({
+      items: (order.order_items || []).map((item: { name: string; quantity: number; price: number }) => ({
         name: item.name,
         quantity: item.quantity,
         price: item.price,

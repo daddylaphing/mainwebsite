@@ -6,7 +6,6 @@ import { useState, useMemo, useEffect } from "react";
 import { ShoppingBag, Trash2, Plus, Minus, ShieldCheck, Leaf, Zap, Layers } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/providers/cart-provider";
 import { SuggestionModal } from "@/components/cart/suggestion-modal";
@@ -77,7 +76,6 @@ export function CartSheet() {
     items,
     subtotal,
     packagingCharge,
-    shippingCharge,
     tax,
     total,
     discount,
