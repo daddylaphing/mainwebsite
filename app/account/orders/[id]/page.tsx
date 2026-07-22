@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { OrderDetail } from "@/components/order/order-detail";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 
 interface OrderPageProps {
   params: { id: string };
@@ -11,7 +11,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    notFound();
+    redirect(`/login?redirectTo=/account/orders/${params.id}`);
   }
 
   const { data: order, error } = await supabase
@@ -21,7 +21,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
     .single();
 
   if (error || !order || order.user_id !== user.id) {
-    notFound();
+    return redirect("/account");
   }
 
   return <OrderDetail order={order} />;
