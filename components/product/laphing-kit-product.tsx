@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Product } from "@/types";
 import { ProductQuantitySelector } from "./product-quantity-selector";
-import { MinOrderWarning } from "./min-order-warning";
 import { KitCustomizer, KitExtras } from "./kit-customizer";
 import { RecommendationPopup } from "../modals/recommendation-popup";
 import { useSiteConfig } from "@/lib/hooks/use-site-config";
@@ -231,23 +230,18 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
             <ProductQuantitySelector
               quantity={quantity}
               onChange={setQuantity}
-              min={1}
+              min={minQty}
               max={50}
               size="lg"
             />
           </div>
 
-          {/* Minimum Order Warning */}
-          <MinOrderWarning current={quantity} minimum={minQty} productName="Laphing Kit" />
-
           {/* Kit Customizer */}
-          {meetsMinimum && (
-            <KitCustomizer
-              kitQuantity={quantity}
-              onChange={setExtras}
-              disabled={!meetsMinimum}
-            />
-          )}
+          <KitCustomizer
+            kitQuantity={quantity}
+            onChange={setExtras}
+            disabled={false}
+          />
 
           {/* Add to Cart */}
           <div className="space-y-4">
@@ -265,7 +259,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
 
             <button
               onClick={handleAddToCart}
-              disabled={!meetsMinimum || isAdding}
+              disabled={isAdding}
               className="btn-ink w-full justify-center text-sm"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
