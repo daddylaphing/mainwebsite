@@ -131,6 +131,7 @@ export interface Order {
   total: number;
   coupon_code: string | null;
   payment_status: PaymentStatus;
+  payment_method?: string | null;
   payment_id: string | null;
   shipping_address: AddressSnapshot;
   delivery_notes: string | null;
