@@ -39,21 +39,26 @@ export default function SignupPage() {
 
   const supabase = createClient();
 
-  // Render reCAPTCHA widget
+  // Render reCAPTCHA widget after script loads
+  function renderRecaptcha() {
+    if (recaptchaRef.current && recaptchaWidgetId.current === null && window.grecaptcha) {
+      window.grecaptcha.ready(() => {
+        if (recaptchaRef.current && recaptchaWidgetId.current === null) {
+          recaptchaWidgetId.current = window.grecaptcha.render(recaptchaRef.current, {
+            sitekey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
+            theme: "light",
+            size: "normal",
+          });
+        }
+      });
+    }
+  }
+
+  // Also try on mount in case script already loaded (cached)
   useEffect(() => {
     if (step !== "form") return;
-    const render = () => {
-      if (recaptchaRef.current && recaptchaWidgetId.current === null && window.grecaptcha) {
-        recaptchaWidgetId.current = window.grecaptcha.render(recaptchaRef.current, {
-          sitekey: process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY,
-          theme: "light",
-          size: "normal",
-        });
-      }
-    };
-    if (window.grecaptcha) {
-      window.grecaptcha.ready(render);
-    }
+    if (window.grecaptcha) renderRecaptcha();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
   async function handleSignup(e: React.FormEvent) {
@@ -171,7 +176,11 @@ export default function SignupPage() {
 
   return (
     <>
-      <Script src="https://www.google.com/recaptcha/api.js" strategy="afterInteractive" />
+      <Script
+        src="https://www.google.com/recaptcha/api.js?render=explicit"
+        strategy="afterInteractive"
+        onLoad={() => renderRecaptcha()}
+      />
 
       <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center px-5 py-24 md:py-32">
         <motion.div
