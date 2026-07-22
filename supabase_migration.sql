@@ -482,13 +482,13 @@ RETURNS TRIGGER AS $$
 BEGIN
   IF NEW.status = 'confirmed' AND OLD.status = 'pending' THEN
     UPDATE public.products p
-    SET stock_quantity = stock_quantity - oi.quantity
+    SET inventory = inventory - oi.quantity
     FROM public.order_items oi
     WHERE oi.order_id = NEW.id AND oi.product_id = p.id;
   END IF;
   IF NEW.status = 'cancelled' AND OLD.status IN ('confirmed','preparing','packed') THEN
     UPDATE public.products p
-    SET stock_quantity = stock_quantity + oi.quantity
+    SET inventory = inventory + oi.quantity
     FROM public.order_items oi
     WHERE oi.order_id = NEW.id AND oi.product_id = p.id;
   END IF;
@@ -689,14 +689,14 @@ INSERT INTO public.categories (name, slug, description, sort_order) VALUES
   ('Accessories', 'accessories', 'Preparation accessories', 4)
 ON CONFLICT (slug) DO NOTHING;
 
-INSERT INTO public.products (name, slug, description, short_description, price, stock_quantity, is_active, is_featured, is_bestseller, shelf_life_days, preparation_time_minutes)
+INSERT INTO public.products (name, slug, description, short_description, price, inventory, is_active, is_featured, is_bestseller, shelf_life_days, preparation_time_minutes)
 SELECT 'Laphing Kit', 'laphing-kit',
   'Everything you need to make authentic laphing at home. Includes fresh laphing sheet, signature chilli oil, garlic water, laphing sauce, seasoning mix, and step-by-step preparation guide.',
   'Complete kit for authentic laphing at home',
   250.00, 100, true, true, true, 2, 15
 WHERE NOT EXISTS (SELECT 1 FROM public.products WHERE slug = 'laphing-kit');
 
-INSERT INTO public.products (name, slug, description, short_description, price, wholesale_price, stock_quantity, is_active, is_featured, shelf_life_days)
+INSERT INTO public.products (name, slug, description, short_description, price, wholesale_price, inventory, is_active, is_featured, shelf_life_days)
 SELECT 'Laphing Sheet (Wholesale)', 'laphing-sheet-wholesale',
   'Fresh, soft and handmade laphing sheets. Perfect for home cooks and businesses. Made fresh to order every morning.',
   'Handmade fresh laphing sheets',
