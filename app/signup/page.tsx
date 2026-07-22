@@ -357,7 +357,7 @@ export default function SignupPage() {
                       required
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                      placeholder="00000000"
+                      placeholder="000000"
                       className="w-full bg-white border border-[rgba(26,26,26,0.08)] rounded-none px-4 py-4 text-[#1A1A1A] text-2xl font-bold text-center tracking-[0.5em] placeholder-[#A09890]/30 focus:outline-none focus:border-[#D4A843] transition-colors"
                     />
                   </div>
