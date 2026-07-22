@@ -12,8 +12,11 @@ export interface EmailOptions {
 }
 
 export async function sendEmail(options: EmailOptions) {
+  // Use onboarding@resend.dev if custom domain not verified yet
+  const fromAddress = `Laphing Daddy <${EMAIL_FROM}>`;
+
   const { data, error } = await resend.emails.send({
-    from: `Laphing Daddy <${EMAIL_FROM}>`,
+    from: fromAddress,
     to: options.to || [EMAIL_TO],
     subject: options.subject,
     html: options.html,
@@ -21,8 +24,8 @@ export async function sendEmail(options: EmailOptions) {
   });
 
   if (error) {
-    console.error("Resend error:", error);
-    throw new Error("Failed to send email");
+    console.error("Resend error:", JSON.stringify(error));
+    throw new Error(`Failed to send email: ${JSON.stringify(error)}`);
   }
 
   return data;
