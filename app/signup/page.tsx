@@ -341,7 +341,7 @@ export default function SignupPage() {
                   Verify your email
                 </h1>
                 <p className="text-[#7A7570] text-xs mb-7 text-center" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  We sent a 6-digit code to <span className="text-[#1A1A1A] font-semibold">{email}</span>
+                  We sent a verification code to <span className="text-[#1A1A1A] font-semibold">{email}</span>
                 </p>
 
                 <form onSubmit={handleVerifyOtp} className="flex flex-col gap-4">
@@ -352,12 +352,12 @@ export default function SignupPage() {
                     <input
                       type="text"
                       inputMode="numeric"
-                      pattern="[0-9]{6}"
-                      maxLength={6}
+                      pattern="[0-9]{6,8}"
+                      maxLength={8}
                       required
                       value={otp}
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                      placeholder="000000"
+                      placeholder="00000000"
                       className="w-full bg-white border border-[rgba(26,26,26,0.08)] rounded-none px-4 py-4 text-[#1A1A1A] text-2xl font-bold text-center tracking-[0.5em] placeholder-[#A09890]/30 focus:outline-none focus:border-[#D4A843] transition-colors"
                     />
                   </div>
@@ -370,7 +370,7 @@ export default function SignupPage() {
 
                   <button
                     type="submit"
-                    disabled={loading || otp.length !== 6}
+                    disabled={loading || otp.length < 6}
                     className="btn-ink w-full py-4 text-xs font-bold uppercase tracking-wider"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
