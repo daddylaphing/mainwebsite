@@ -2,7 +2,7 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM = process.env.EMAIL_FROM || "onboarding@resend.dev";
-const EMAIL_TO = process.env.EMAIL_TO || "daddylaphing@gmail.com";
+const EMAIL_TO = process.env.EMAIL_TO || "laphingdaddy@gmail.com";
 
 export interface EmailOptions {
   to?: string | string[];
@@ -154,8 +154,10 @@ export async function sendOrderConfirmationEmail(data: {
   shipping: number;
   tax: number;
   total: number;
-  shippingAddress: { name: string; phone: string; line1: string; line2?: string; city: string; state: string; pincode: string };
+  shippingAddress: { full_name: string; phone: string; line1: string; line2?: string; city: string; state: string; pincode: string };
   deliveryNotes?: string;
+  orderLink?: string;
+  pickupAddress?: string;
 }) {
   const itemsHtml = data.items.map(item => `
     <tr style="border-bottom: 1px solid #e5e5e5;">
@@ -165,8 +167,11 @@ export async function sendOrderConfirmationEmail(data: {
     </tr>
   `).join("");
 
+  const recipients = [EMAIL_TO];
+  if (data.email) recipients.unshift(data.email);
+
   return sendEmail({
-    to: data.email,
+    to: recipients,
     subject: `Order Confirmed - ${data.orderNumber} 🥟`,
     html: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -221,7 +226,7 @@ export async function sendOrderConfirmationEmail(data: {
           
           <h3 style="color: #1a1a1a; margin: 24px 0 16px;">Shipping Address</h3>
           <div style="background: #fafafa; border-radius: 8px; padding: 16px; color: #444; line-height: 1.8;">
-            <p style="margin: 0 0 4px;"><strong>${data.shippingAddress.name}</strong></p>
+            <p style="margin: 0 0 4px;"><strong>${data.shippingAddress.full_name}</strong></p>
             <p style="margin: 0 0 4px;">${data.shippingAddress.phone}</p>
             <p style="margin: 0 0 4px;">${data.shippingAddress.line1}</p>
             ${data.shippingAddress.line2 ? `<p style="margin: 0 0 4px;">${data.shippingAddress.line2}</p>` : ""}

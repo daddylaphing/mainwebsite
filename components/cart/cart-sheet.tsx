@@ -244,13 +244,11 @@ export function CartSheet() {
                           <div className="flex items-center bg-white border border-[#E6DFD5] rounded-lg p-0.5 gap-0.5 mt-2 w-max">
                             <button
                               onClick={() => {
-                                // If they decrease a Wholesale product, make sure it stays above minimum
-                                const isWholesale = /wholesale/i.test(item.product.name);
-                                const isKit = isKitProduct(item.product.name) && !item.id.startsWith("addon");
-                                const min = isWholesale ? 5 : isKit ? 2 : 1;
+                                // Use the product's own minimum_quantity from DB
+                                const min = item.product.minimum_quantity || 1;
                                 if (item.quantity > min) {
                                   updateQty(item.id, item.quantity - 1);
-                                } else if (item.quantity === min) {
+                                } else if (item.quantity <= min) {
                                   removeItem(item.id);
                                 }
                               }}

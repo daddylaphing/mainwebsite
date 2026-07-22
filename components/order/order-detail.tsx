@@ -1,5 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CheckCircle2, Clock, CreditCard, MapPin, Package, Truck } from "lucide-react";
 import type { Order, OrderItem } from "@/types";
 import { DeliveryBookingCard } from "@/components/order/order-delivery-card";
@@ -34,10 +38,56 @@ function statusColor(status: string) {
 }
 
 export function OrderDetail({ order }: OrderDetailProps) {
+  const [showDeliveryPopup, setShowDeliveryPopup] = useState(false);
   const items = order.order_items ?? order.items ?? [];
 
+  useEffect(() => {
+    if (order.status === "confirmed") {
+      setShowDeliveryPopup(true);
+    }
+  }, [order.status]);
+
+  const restaurantAddress = {
+    name: "Laphing Daddy Kitchen",
+    line1: "Shop 12, Food Lane, Tibetan Street",
+    line2: "Sector 18, Noida, Uttar Pradesh 201301",
+    phone: "9354775439",
+    instructions: "Book your delivery pickup. Uncle Delivery is preferred.",
+  };
+
   return (
-    <div className="min-h-screen bg-[#FAFAF8] pt-28 pb-20">
+    <>
+      <Dialog open={showDeliveryPopup} onOpenChange={setShowDeliveryPopup}>
+        <DialogContent className="bg-[#FAFAF8] border border-[#E6DFD5] max-w-lg rounded-3xl shadow-[0_24px_50px_rgba(26,26,26,0.15)] p-8">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Book your delivery
+            </DialogTitle>
+            <DialogDescription className="text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
+              Your order is confirmed. Please arrange pickup from the restaurant and book delivery with your preferred rider. Uncle Delivery is recommended.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-6 rounded-3xl bg-white border border-[#E6DFD5] p-6 text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <p className="font-semibold text-[#1A1A1A] mb-2">Pickup Location</p>
+            <p>{restaurantAddress.name}</p>
+            <p>{restaurantAddress.line1}</p>
+            <p>{restaurantAddress.line2}</p>
+            <p className="mt-2">Phone: {restaurantAddress.phone}</p>
+            <p className="mt-3 text-[#7A7570]">{restaurantAddress.instructions}</p>
+          </div>
+
+          <div className="mt-6 flex justify-end">
+            <DialogClose>
+              <button className="rounded-full border border-[#E6DFD5] bg-white px-5 py-3 text-xs font-bold uppercase tracking-[0.32em] text-[#1A1A1A] hover:bg-[#F7F3EC] transition-colors">
+                Got it
+              </button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <div className="min-h-screen bg-[#FAFAF8] pt-28 pb-20">
       <div className="max-w-6xl mx-auto px-4 md:px-8 space-y-8">
         <div className="bg-white border border-[#E6DFD5] rounded-3xl shadow-sm p-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
@@ -99,17 +149,33 @@ export function OrderDetail({ order }: OrderDetailProps) {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="bg-white border border-[#E6DFD5] rounded-3xl shadow-sm p-8">
-                <div className="flex items-center gap-3 mb-4 text-[#1A1A1A] font-bold">
-                  <MapPin className="h-4 w-4" />
-                  Delivery Address
+              <div className="space-y-6">
+                <div className="bg-white border border-[#E6DFD5] rounded-3xl shadow-sm p-8">
+                  <div className="flex items-center gap-3 mb-4 text-[#1A1A1A] font-bold">
+                    <MapPin className="h-4 w-4" />
+                    Delivery Address
+                  </div>
+                  <div className="text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p className="font-semibold text-[#1A1A1A]">{order.shipping_address.full_name}</p>
+                    <p>{order.shipping_address.line1}</p>
+                    {order.shipping_address.line2 && <p>{order.shipping_address.line2}</p>}
+                    <p>{order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.pincode}</p>
+                    <p className="mt-3">Phone: {order.shipping_address.phone}</p>
+                  </div>
                 </div>
-                <div className="text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  <p className="font-semibold text-[#1A1A1A]">{order.shipping_address.full_name}</p>
-                  <p>{order.shipping_address.line1}</p>
-                  {order.shipping_address.line2 && <p>{order.shipping_address.line2}</p>}
-                  <p>{order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.pincode}</p>
-                  <p className="mt-3">Phone: {order.shipping_address.phone}</p>
+
+                <div className="bg-white border border-[#E6DFD5] rounded-3xl shadow-sm p-8">
+                  <div className="flex items-center gap-3 mb-4 text-[#1A1A1A] font-bold">
+                    <MapPin className="h-4 w-4" />
+                    Pickup Address
+                  </div>
+                  <div className="text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                    <p className="font-semibold text-[#1A1A1A]">Laphing Daddy Kitchen</p>
+                    <p>Shop 12, Food Lane, Tibetan Street</p>
+                    <p>Sector 18, Noida, Uttar Pradesh 201301</p>
+                    <p className="mt-3">Phone: 9354775439</p>
+                    <p className="mt-3 text-[#7A7570]">Please book delivery pickup once your order is ready. This is the restaurant pickup location for all confirmed orders.</p>
+                  </div>
                 </div>
               </div>
 
@@ -200,5 +266,6 @@ export function OrderDetail({ order }: OrderDetailProps) {
         </div>
       </div>
     </div>
+    </>
   );
 }
