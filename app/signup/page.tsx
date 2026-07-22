@@ -80,13 +80,14 @@ export default function SignupPage() {
       body: JSON.stringify({ token: captchaToken }),
     });
     if (!captchaRes.ok) {
-      setError("reCAPTCHA verification failed. Please try again.");
+      const captchaData = await captchaRes.json().catch(() => ({}));
+      setError(`reCAPTCHA failed: ${captchaData.error || "Please try again."}`);
       window.grecaptcha?.reset(recaptchaWidgetId.current ?? undefined);
       setLoading(false);
       return;
     }
 
-    // 2. Send OTP via signInWithOtp (creates user if not exists, sends 6-digit code)
+    // 2. Send OTP
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
       options: {
@@ -96,17 +97,16 @@ export default function SignupPage() {
     });
 
     if (otpError) {
-      setError(otpError.message);
+      setError(`OTP error: ${otpError.message}`);
       window.grecaptcha?.reset(recaptchaWidgetId.current ?? undefined);
       setLoading(false);
       return;
     }
 
-    // Store password to set after OTP verification
+    // Store password and name for after verification
     sessionStorage.setItem("signup_pending_password", password);
     sessionStorage.setItem("signup_pending_name", name);
 
-    // 3. Supabase sends a 6-digit OTP to the email — move to OTP step
     setStep("otp");
     setLoading(false);
   }
@@ -307,10 +307,18 @@ export default function SignupPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="btn-ink w-full py-4 text-xs font-bold uppercase tracking-wider"
+                    className="w-full py-4 text-xs font-bold uppercase tracking-wider bg-[#1A1A1A] hover:bg-[#6E1D25] text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create Account"}
+                    {loading ? (
+                      <>
+                        <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                        </svg>
+                        Sending Code...
+                      </>
+                    ) : "Create Account"}
                   </button>
                 </form>
 
