@@ -192,7 +192,11 @@ export default function AccountPage() {
               ) : (
                 <div className="flex flex-col gap-3">
                   {orders.map((order) => (
-                    <div key={order.id} className="flex items-center justify-between p-4 bg-white rounded-xl border border-[#E6DFD5]">
+                    <Link
+                      key={order.id}
+                      href={`/account/orders/${order.id}`}
+                      className="flex items-center justify-between p-4 bg-white rounded-xl border border-[#E6DFD5] hover:border-[#D4A843]/50 hover:bg-[#F7F3EC]/50 transition-all"
+                    >
                       <div style={{ fontFamily: "'Inter', sans-serif" }}>
                         <p className="text-[#1A1A1A] font-bold text-sm">#{order.order_number}</p>
                         <p className="text-[#7A7570] text-xs mt-0.5">
@@ -202,7 +206,7 @@ export default function AccountPage() {
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${STATUS_COLORS[order.status] ?? "bg-[#1A1A1A]/5 text-[#1A1A1A]/40 border-[#1A1A1A]/10"}`}>
                         {order.status.replace("_", " ")}
                       </span>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}

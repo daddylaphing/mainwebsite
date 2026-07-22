@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { updateSetting } from "@/lib/admin/settings";
-import { Store, ShoppingCart, Truck, Save } from "lucide-react";
+import { Store, ShoppingCart, Truck, Save, MapPin } from "lucide-react";
+
+interface RestaurantInfo {
+  name: string;
+  line1: string;
+  line2: string;
+  phone: string;
+  whatsapp: string;
+}
 
 interface SettingsFormProps {
   initialSettings: Record<string, unknown>;
@@ -18,20 +26,28 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
   const [delivery, setDelivery] = useState(
     (initialSettings.delivery as { enabled: boolean; message: string }) || { enabled: true, message: "" }
   );
+  const [restaurant, setRestaurant] = useState<RestaurantInfo>(
+    (initialSettings.restaurant_info as RestaurantInfo) || {
+      name: "Laphing Daddy Kitchen",
+      line1: "",
+      line2: "",
+      phone: "",
+      whatsapp: "",
+    }
+  );
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
   const handleSave = async () => {
     setIsSaving(true);
     setSaveMessage("");
-
     try {
       await Promise.all([
         updateSetting("store_status", storeStatus),
         updateSetting("online_orders", onlineOrders),
         updateSetting("delivery", delivery),
+        updateSetting("restaurant_info", restaurant),
       ]);
-
       setSaveMessage("Settings saved successfully!");
       setTimeout(() => setSaveMessage(""), 3000);
     } catch {
@@ -230,6 +246,44 @@ export function SettingsForm({ initialSettings }: SettingsFormProps) {
               />
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Restaurant Info */}
+      <div className="bg-white border border-[#E6DFD5] rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center gap-3 mb-6 border-b border-[#E6DFD5]/40 pb-4">
+          <div className="w-10 h-10 bg-[#6E1D25]/10 rounded-xl flex items-center justify-center shrink-0">
+            <MapPin className="h-5 w-5 text-[#6E1D25]" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-[#1A1A1A]" style={{ fontFamily: "'Playfair Display', serif" }}>
+              Restaurant Pickup Address
+            </h2>
+            <p className="text-xs text-[#7A7570] font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>
+              Shown to customers on their order confirmation page
+            </p>
+          </div>
+        </div>
+        <div className="space-y-4">
+          {[
+            { label: "Kitchen Name", key: "name" as keyof RestaurantInfo, placeholder: "Laphing Daddy Kitchen" },
+            { label: "Address Line 1", key: "line1" as keyof RestaurantInfo, placeholder: "Shop / Building / Street" },
+            { label: "Address Line 2", key: "line2" as keyof RestaurantInfo, placeholder: "City, State, Pincode" },
+            { label: "Phone", key: "phone" as keyof RestaurantInfo, placeholder: "9667414181" },
+            { label: "WhatsApp Number (with country code)", key: "whatsapp" as keyof RestaurantInfo, placeholder: "919667414181" },
+          ].map(({ label, key, placeholder }) => (
+            <div key={key} className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-[#7A7570] uppercase tracking-wider">{label}</label>
+              <input
+                type="text"
+                value={restaurant[key]}
+                onChange={(e) => setRestaurant({ ...restaurant, [key]: e.target.value })}
+                placeholder={placeholder}
+                className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-4 py-3 text-[#1A1A1A] text-sm focus:outline-none focus:border-[#6E1D25]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              />
+            </div>
+          ))}
         </div>
       </div>
 

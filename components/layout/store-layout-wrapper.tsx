@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { CartSheet } from "@/components/cart/cart-sheet";
 import { CookieConsent } from "@/components/cookie-consent";
+import { LiveOrderWidget } from "@/components/layout/live-order-widget";
 
 export function StoreLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -27,6 +28,7 @@ export function StoreLayoutWrapper({ children }: { children: React.ReactNode }) 
       <Footer />
       <CartSheet />
       <CookieConsent />
+      <LiveOrderWidget />
     </>
   );
 }
