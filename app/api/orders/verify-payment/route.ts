@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { sendOrderConfirmationEmail } from "@/lib/emails";
+import { sendOrderConfirmationEmail, sendAdminNewOrderEmail } from "@/lib/emails";
 import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
@@ -117,7 +117,7 @@ export async function POST(request: NextRequest) {
           email: user.email ?? "",
           name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Customer",
           orderNumber: fullOrder.order_number,
-          items: (fullOrder.order_items ?? []).map((item: any) => ({
+          items: (fullOrder.order_items ?? []).map((item: { name: string; quantity: number; price: number }) => ({
             name: item.name,
             quantity: item.quantity,
             price: item.price,
@@ -132,8 +132,24 @@ export async function POST(request: NextRequest) {
           orderLink: `${siteUrl}/account/orders/${fullOrder.id}`,
           pickupAddress: process.env.NEXT_PUBLIC_RESTAURANT_PICKUP_ADDRESS || "Shop 12, Food Lane, Tibetan Street, Sector 18, Noida, Uttar Pradesh 201301",
         });
+
+        // Also notify admin
+        await sendAdminNewOrderEmail({
+          orderNumber: fullOrder.order_number,
+          orderId: fullOrder.id,
+          customerName: user.user_metadata?.full_name || user.email?.split("@")[0] || "Customer",
+          customerEmail: user.email ?? "",
+          customerPhone: fullOrder.shipping_address?.phone ?? "",
+          total: fullOrder.total,
+          items: (fullOrder.order_items ?? []).map((item: { name: string; quantity: number; price: number }) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          shippingAddress: fullOrder.shipping_address,
+        });
       } catch (emailError) {
-        console.error("[verify-payment] order confirmation email failed:", emailError);
+        console.error("[verify-payment] email failed:", emailError);
       }
     }
 

@@ -268,3 +268,146 @@ export async function sendOrderConfirmationEmail(data: {
     `,
   });
 }
+
+// ─── Status labels for emails ─────────────────────────────────────────────────
+const STATUS_LABELS: Record<string, { label: string; color: string; message: string }> = {
+  confirmed:        { label: "Order Confirmed",       color: "#2563EB", message: "Your order has been confirmed and we are getting ready to prepare it fresh." },
+  preparing:        { label: "Being Prepared",        color: "#EA580C", message: "Our kitchen has started preparing your fresh laphing kit." },
+  packed:           { label: "Packed & Ready",        color: "#7C3AED", message: "Your order is packed and ready for pickup by the delivery rider." },
+  out_for_delivery: { label: "Out for Delivery",      color: "#0891B2", message: "Your order is on its way! The delivery rider has picked it up." },
+  delivered:        { label: "Order Delivered",       color: "#16A34A", message: "Your order has been delivered. Enjoy your fresh laphing!" },
+  cancelled:        { label: "Order Cancelled",       color: "#DC2626", message: "Your order has been cancelled. If this was unexpected, please contact us." },
+};
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://laphingdaddy.com";
+
+function emailWrapper(body: string): string {
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"/></head>
+<body style="margin:0;padding:0;background:#F7F3EC;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#F7F3EC;padding:40px 20px;"><tr><td align="center">
+<table width="100%" style="max-width:520px;background:#FFFFFF;border:1px solid #E6DFD5;" cellpadding="0" cellspacing="0">
+  <tr><td style="padding:28px 36px 20px;border-bottom:1px solid #E6DFD5;text-align:center;">
+    <p style="margin:0;font-size:20px;font-weight:800;color:#1A1A1A;letter-spacing:-0.01em;font-family:Georgia,serif;">
+      Laphing <span style="color:#D4A843;font-style:italic;">Daddy</span>
+    </p>
+  </td></tr>
+  <tr><td style="padding:32px 36px;">${body}</td></tr>
+  <tr><td style="padding:16px 36px 24px;border-top:1px solid #E6DFD5;text-align:center;">
+    <p style="margin:0;font-size:11px;color:#A09890;">Authentic Tibetan Laphing &middot; Delhi NCR</p>
+    <p style="margin:4px 0 0;font-size:11px;color:#C4BDB5;">&copy; 2025 Laphing Daddy. All rights reserved.</p>
+  </td></tr>
+</table>
+</td></tr></table></body></html>`;
+}
+
+// ─── Order Status Update Email ────────────────────────────────────────────────
+export async function sendOrderStatusEmail(data: {
+  email: string;
+  name: string;
+  orderNumber: string;
+  orderId: string;
+  status: string;
+  note?: string;
+}) {
+  const info = STATUS_LABELS[data.status];
+  if (!info) return; // Don't send for statuses without a template (e.g. pending)
+
+  const orderUrl = `${SITE_URL}/account/orders/${data.orderId}`;
+  const isDelivered = data.status === "delivered";
+  const isCancelled = data.status === "cancelled";
+
+  const body = `
+    <p style="margin:0 0 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#A09890;">
+      Order Update
+    </p>
+    <h1 style="margin:0 0 16px;font-size:24px;font-weight:800;color:#1A1A1A;">${info.label}</h1>
+
+    <div style="background:#F7F3EC;border-left:3px solid ${info.color};padding:14px 16px;margin-bottom:24px;">
+      <p style="margin:0;font-size:14px;color:#4A4540;line-height:1.6;">${info.message}</p>
+      ${data.note ? `<p style="margin:8px 0 0;font-size:13px;color:#7A7570;font-style:italic;">"${data.note}"</p>` : ""}
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E6DFD5;font-size:12px;color:#7A7570;text-transform:uppercase;letter-spacing:0.1em;">Order</td>
+          <td style="padding:8px 0;border-bottom:1px solid #E6DFD5;font-size:14px;font-weight:700;color:#1A1A1A;text-align:right;">#${data.orderNumber}</td></tr>
+      <tr><td style="padding:8px 0;font-size:12px;color:#7A7570;text-transform:uppercase;letter-spacing:0.1em;">Status</td>
+          <td style="padding:8px 0;font-size:14px;font-weight:700;text-align:right;color:${info.color};">${info.label}</td></tr>
+    </table>
+
+    ${isDelivered ? `
+    <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:16px;margin-bottom:24px;text-align:center;">
+      <p style="margin:0;font-size:14px;font-weight:700;color:#166534;">Your order has been delivered!</p>
+      <p style="margin:6px 0 0;font-size:13px;color:#166534;">Thank you for ordering from Laphing Daddy. Enjoy your meal!</p>
+    </div>` : ""}
+
+    ${isCancelled ? `
+    <p style="font-size:13px;color:#7A7570;margin:0 0 24px;">
+      If you have any questions about the cancellation, please reach out to us on 
+      <a href="https://wa.me/919667414181" style="color:#D4A843;font-weight:600;">WhatsApp</a>.
+    </p>` : ""}
+
+    <a href="${orderUrl}" style="display:inline-block;background:#1A1A1A;color:#FFFFFF;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;padding:12px 28px;text-decoration:none;">
+      View Order
+    </a>
+  `;
+
+  return sendEmail({
+    to: data.email,
+    subject: `${info.label} — Order #${data.orderNumber}`,
+    html: emailWrapper(body),
+  });
+}
+
+// ─── Admin: New Order Notification ───────────────────────────────────────────
+export async function sendAdminNewOrderEmail(data: {
+  orderNumber: string;
+  orderId: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  total: number;
+  items: Array<{ name: string; quantity: number; price: number }>;
+  shippingAddress: { full_name: string; phone: string; line1: string; city: string; state: string; pincode: string };
+}) {
+  const itemsList = data.items.map(i =>
+    `<tr><td style="padding:8px 0;border-bottom:1px solid #E6DFD5;">${i.name}</td>
+     <td style="padding:8px 0;border-bottom:1px solid #E6DFD5;text-align:center;">${i.quantity}</td>
+     <td style="padding:8px 0;border-bottom:1px solid #E6DFD5;text-align:right;">Rs.${(i.price * i.quantity)}</td></tr>`
+  ).join("");
+
+  const adminOrderUrl = `${SITE_URL}/admin/orders/${data.orderId}`;
+
+  const body = `
+    <div style="background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:14px 16px;margin-bottom:24px;">
+      <p style="margin:0;font-size:14px;font-weight:700;color:#991B1B;">New Order Received!</p>
+      <p style="margin:4px 0 0;font-size:13px;color:#7F1D1D;">Order #${data.orderNumber} — Rs.${data.total}</p>
+    </div>
+
+    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#A09890;margin:0 0 8px;">Customer</p>
+    <p style="margin:0 0 4px;font-size:14px;color:#1A1A1A;font-weight:600;">${data.customerName}</p>
+    <p style="margin:0 0 4px;font-size:13px;color:#7A7570;">${data.customerEmail}</p>
+    <p style="margin:0 0 20px;font-size:13px;color:#7A7570;">${data.customerPhone}</p>
+
+    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#A09890;margin:0 0 8px;">Items</p>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px;">
+      ${itemsList}
+    </table>
+
+    <p style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#A09890;margin:0 0 8px;">Delivery To</p>
+    <p style="margin:0 0 20px;font-size:13px;color:#4A4540;line-height:1.7;">
+      ${data.shippingAddress.full_name}<br/>
+      ${data.shippingAddress.phone}<br/>
+      ${data.shippingAddress.line1}, ${data.shippingAddress.city}, ${data.shippingAddress.state} ${data.shippingAddress.pincode}
+    </p>
+
+    <a href="${adminOrderUrl}" style="display:inline-block;background:#6E1D25;color:#FFFFFF;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:0.1em;padding:12px 28px;text-decoration:none;">
+      Open in Admin
+    </a>
+  `;
+
+  return sendEmail({
+    to: EMAIL_TO,
+    subject: `New Order #${data.orderNumber} — Rs.${data.total}`,
+    html: emailWrapper(body),
+  });
+}
