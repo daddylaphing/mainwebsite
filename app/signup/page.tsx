@@ -86,22 +86,25 @@ export default function SignupPage() {
       return;
     }
 
-    // 2. Sign up with Supabase — this creates the user and sends OTP
-    const { error: signupError } = await supabase.auth.signUp({
+    // 2. Send OTP via signInWithOtp (creates user if not exists, sends 6-digit code)
+    const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
-      password,
       options: {
+        shouldCreateUser: true,
         data: { full_name: name },
-        // Don't use emailRedirectTo — we want OTP, not magic link
       },
     });
 
-    if (signupError) {
-      setError(signupError.message);
+    if (otpError) {
+      setError(otpError.message);
       window.grecaptcha?.reset(recaptchaWidgetId.current ?? undefined);
       setLoading(false);
       return;
     }
+
+    // Store password to set after OTP verification
+    sessionStorage.setItem("signup_pending_password", password);
+    sessionStorage.setItem("signup_pending_name", name);
 
     // 3. Supabase sends a 6-digit OTP to the email — move to OTP step
     setStep("otp");
@@ -116,7 +119,7 @@ export default function SignupPage() {
     const { data, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token: otp.trim(),
-      type: "signup",
+      type: "email",
     });
 
     if (verifyError) {
@@ -125,13 +128,25 @@ export default function SignupPage() {
       return;
     }
 
+    // Set password and name after OTP verification
+    const pendingPassword = sessionStorage.getItem("signup_pending_password");
+    const pendingName = sessionStorage.getItem("signup_pending_name");
+
+    if (pendingPassword) {
+      await supabase.auth.updateUser({
+        password: pendingPassword,
+        data: { full_name: pendingName || name },
+      });
+      sessionStorage.removeItem("signup_pending_password");
+      sessionStorage.removeItem("signup_pending_name");
+    }
+
     if (data.user) {
-      // Send welcome email
       try {
         await fetch("/api/auth/welcome", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, name }),
+          body: JSON.stringify({ email, name: pendingName || name }),
         });
       } catch {
         // Non-blocking
@@ -145,7 +160,7 @@ export default function SignupPage() {
   async function handleResendOtp() {
     setResending(true);
     setError(null);
-    const { error } = await supabase.auth.resend({ type: "signup", email });
+    const { error } = await supabase.auth.signInWithOtp({ email });
     if (error) setError(error.message);
     setResending(false);
   }
