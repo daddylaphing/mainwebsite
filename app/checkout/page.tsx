@@ -37,6 +37,8 @@ export default function CheckoutPage() {
     shippingCharge,
     tax,
     total,
+    bulkTier,
+    bulkDiscount,
     clearCart,
   } = useCart();
   const { user, loading: authLoading } = useAuth();
@@ -76,6 +78,7 @@ export default function CheckoutPage() {
   // Compute discount-adjusted totals for display
   const voucherDiscount = appliedVoucher?.discount_amount ?? 0;
   const adjustedSubtotal = subtotal;
+  // Total already includes bulkDiscount in cart provider; subtract voucher on top
   const adjustedTotal = Math.max(0, total - voucherDiscount);
 
   useEffect(() => {
@@ -700,16 +703,22 @@ export default function CheckoutPage() {
                     ₹{adjustedSubtotal}
                   </span>
                 </div>
-                {voucherDiscount > 0 && (
+                {bulkDiscount > 0 && bulkTier && (
                   <div className="flex justify-between text-green-700">
                     <span className="flex items-center gap-1">
-                      Voucher ({appliedVoucher?.code})
+                      🎁 {bulkTier.label}
                     </span>
-                    <span className="font-semibold">-₹{voucherDiscount.toFixed(0)}</span>
+                    <span className="font-semibold">−₹{bulkDiscount.toFixed(0)}</span>
+                  </div>
+                )}
+                {voucherDiscount > 0 && (
+                  <div className="flex justify-between text-green-700">
+                    <span>🏷 Voucher ({appliedVoucher?.code})</span>
+                    <span className="font-semibold">−₹{voucherDiscount.toFixed(0)}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>Packaging Charges</span>
+                  <span>Packaging</span>
                   <span className="text-[#1A1A1A] font-semibold">₹{packagingCharge}</span>
                 </div>
                 <div className="flex justify-between">
@@ -721,10 +730,10 @@ export default function CheckoutPage() {
                   <span>Total Amount</span>
                   <span className="text-[#6E1D25] font-bold">₹{adjustedTotal}</span>
                 </div>
-                {voucherDiscount > 0 && (
-                  <div className="flex justify-between text-green-700 text-xs font-semibold">
+                {(bulkDiscount > 0 || voucherDiscount > 0) && (
+                  <div className="flex justify-between text-green-700 text-xs font-bold pt-1 border-t border-green-100">
                     <span>🎉 Total Savings</span>
-                    <span>₹{voucherDiscount.toFixed(0)}</span>
+                    <span>₹{(bulkDiscount + voucherDiscount).toFixed(0)}</span>
                   </div>
                 )}
               </div>

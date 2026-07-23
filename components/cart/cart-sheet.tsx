@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/components/providers/cart-provider";
 import { SuggestionModal } from "@/components/cart/suggestion-modal";
+import { BulkTierBanner } from "@/components/cart/bulk-tier-banner";
 import { getProxiedImageUrl } from "@/lib/image-proxy";
 import type { Product } from "@/types";
 
@@ -79,6 +80,8 @@ export function CartSheet() {
     tax,
     total,
     discount,
+    bulkTier,
+    bulkDiscount,
     removeItem,
     updateQty,
     addItem,
@@ -108,6 +111,15 @@ export function CartSheet() {
     [items]
   );
   const extraSheetQty = addonQtys.sheet || 0;
+
+  // Lowest kit price in cart (used to value "free kit" discount label)
+  const lowestKitPrice = useMemo(() => {
+    const kitItems = items.filter(
+      (i) => isKitProduct(i.product.name) && !i.id.startsWith("addon")
+    );
+    if (!kitItems.length) return 0;
+    return Math.min(...kitItems.map((i) => i.price));
+  }, [items]);
 
   useEffect(() => {
     if (kitQty === 1 && extraSheetQty >= 2 && !upsellDismissed) {
@@ -283,6 +295,11 @@ export function CartSheet() {
               </AnimatePresence>
             </div>
 
+            {/* Bulk tier progress banner — shown whenever kits are in cart */}
+            {kitQty > 0 && (
+              <BulkTierBanner kitQty={kitQty} kitUnitPrice={lowestKitPrice} />
+            )}
+
             {/* Add Extra (A La Carte) — shown only when a kit/laphing in cart */}
             <AnimatePresence>
               {hasKitItem && items.length > 0 && (
@@ -363,14 +380,20 @@ export function CartSheet() {
                   <span>Subtotal</span>
                   <span className="font-semibold text-[#1A1A1A]">₹{subtotal}</span>
                 </div>
-                {discount > 0 && (
-                  <div className="flex justify-between text-green-700">
-                    <span>Discount</span>
-                    <span className="font-semibold">-₹{discount}</span>
-                  </div>
+                {bulkDiscount > 0 && bulkTier && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex justify-between text-green-700"
+                  >
+                    <span className="flex items-center gap-1">
+                      🎁 {bulkTier.label}
+                    </span>
+                    <span className="font-bold">−₹{bulkDiscount.toFixed(0)}</span>
+                  </motion.div>
                 )}
                 <div className="flex justify-between text-[#4A4540]">
-                  <span>Packaging Charges</span>
+                  <span>Packaging</span>
                   <span className="font-semibold text-[#1A1A1A]">₹{packagingCharge}</span>
                 </div>
                 <div className="flex justify-between text-[#4A4540]">
@@ -382,6 +405,11 @@ export function CartSheet() {
                   <span>Total</span>
                   <span className="text-[#6E1D25]">₹{total}</span>
                 </div>
+                {bulkDiscount > 0 && (
+                  <p className="text-center text-[10px] text-green-700 font-bold uppercase tracking-wide">
+                    You save ₹{bulkDiscount.toFixed(0)} on this order 🎉
+                  </p>
+                )}
               </div>
 
               {/* CTA */}

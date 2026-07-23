@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { orderService } from "@/lib/services/orders/order-service";
 import { voucherService } from "@/lib/services/vouchers/voucher-service";
+import { getApplicableTier, calcBulkDiscount } from "@/lib/bulk-tiers";
 
 const BASE_PACKAGING_CHARGE = 30;
 const BULK_PACKAGING_CHARGE = 60;
@@ -89,10 +90,11 @@ export async function POST(request: NextRequest) {
       0
     );
 
-    // ── Step 3: Recalculate packaging & tax ────────────────────────────────────
-    const kitQty = verifiedItems
-      .filter((i) => /kit/i.test(i.name) && !i.product_id?.startsWith("addon"))
-      .reduce((sum, i) => sum + i.quantity, 0);
+    // ── Step 3: Recalculate packaging, bulk tier discount, and tax ────────────
+    const kitItems = verifiedItems.filter(
+      (i) => /kit/i.test(i.name) && !i.product_id?.startsWith("addon")
+    );
+    const kitQty = kitItems.reduce((s, i) => s + i.quantity, 0);
 
     const packagingCharge = verifiedItems.length > 0
       ? kitQty >= BULK_KIT_THRESHOLD
@@ -102,8 +104,18 @@ export async function POST(request: NextRequest) {
 
     const shippingCharge = 0;
 
-    // ── Step 4: Validate voucher server-side (if provided) ─────────────────────
-    let discountAmount = 0;
+    // ── Step 4: Apply bulk tier discount (server-authoritative) ───────────────
+    const bulkTier = getApplicableTier(kitQty);
+    const kitSubtotal = kitItems.reduce((s, i) => s + i.price * i.quantity, 0);
+    const lowestKitPrice = kitItems.length
+      ? Math.min(...kitItems.map((i) => i.price))
+      : 0;
+    const bulkDiscountAmount = bulkTier
+      ? calcBulkDiscount(bulkTier, lowestKitPrice, kitSubtotal)
+      : 0;
+
+    // ── Step 5: Validate voucher server-side (if provided) ─────────────────────
+    let voucherDiscountAmount = 0;
     let voucherId: string | null = null;
     let voucherCode: string | null = body.coupon_code ?? null;
 
@@ -140,22 +152,18 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      discountAmount = validation.discount_amount ?? 0;
+      voucherDiscountAmount = validation.discount_amount ?? 0;
       voucherId = validation.voucher!.id;
       voucherCode = validation.voucher!.code;
-
-      // Free delivery override
-      if (validation.free_delivery) {
-        // shippingCharge is already 0 for this store, but flag it
-      }
     }
 
-    // ── Step 5: Compute server-authoritative total ─────────────────────────────
-    const taxable = subtotal - discountAmount + packagingCharge;
+    // ── Step 6: Compute server-authoritative total (bulk + voucher stack) ──────
+    const totalDiscount = bulkDiscountAmount + voucherDiscountAmount;
+    const taxable = subtotal - totalDiscount + packagingCharge;
     const tax = Math.round(taxable * TAX_RATE);
     const total = Math.max(0, taxable + shippingCharge + tax);
 
-    // ── Step 6: Create order ───────────────────────────────────────────────────
+    // ── Step 7: Create order ───────────────────────────────────────────────────
     const result = await orderService.createOrder({
       user_id: user.id,
       items: verifiedItems,
@@ -164,19 +172,19 @@ export async function POST(request: NextRequest) {
       tax,
       shipping_charge: shippingCharge,
       packaging_charge: packagingCharge,
-      discount: discountAmount,
+      discount: totalDiscount,
       total,
       delivery_notes: body.delivery_notes,
       coupon_code: voucherCode ?? undefined,
     });
 
-    // ── Step 7: Reserve voucher redemption (pending until payment confirms) ────
+    // ── Step 8: Reserve voucher redemption (pending until payment confirms) ────
     if (voucherId) {
       await voucherService.reserveVoucher({
         voucherId,
         userId: user.id,
         orderId: result.orderId,
-        discountAmount,
+        discountAmount: voucherDiscountAmount,
         ipAddress:
           request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
           undefined,
@@ -188,14 +196,16 @@ export async function POST(request: NextRequest) {
       order_id: result.orderId,
       order_number: result.orderNumber,
       razorpay_order_id: result.razorpayOrderId,
-      // Return server-computed totals so client can display them
       computed: {
         subtotal,
         packaging_charge: packagingCharge,
         shipping_charge: shippingCharge,
         tax,
-        discount: discountAmount,
+        bulk_discount: bulkDiscountAmount,
+        voucher_discount: voucherDiscountAmount,
+        discount: totalDiscount,
         total,
+        bulk_tier_label: bulkTier?.label ?? null,
       },
     });
   } catch (error) {
