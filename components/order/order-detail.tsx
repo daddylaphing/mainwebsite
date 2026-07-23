@@ -93,7 +93,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
     <>
       {/* ── Popup: Confirm Order via WhatsApp ── */}
       <Dialog open={showDeliveryPopup} onOpenChange={setShowDeliveryPopup}>
-        <DialogContent className="bg-[#FAFAF8] border border-[#E6DFD5] max-w-md rounded-2xl shadow-xl p-7">
+        <DialogContent className="bg-[#FAFAF8] border border-[#E6DFD5] max-w-md rounded-2xl shadow-xl p-7 focus:outline-none [&>button]:hidden">
           <DialogHeader className="mb-3">
             <DialogTitle
               className="text-xl font-bold text-[#1A1A1A]"
@@ -115,11 +115,11 @@ export function OrderDetail({ order }: OrderDetailProps) {
             href={confirmUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1db954] text-white font-bold text-sm uppercase tracking-widest py-4 rounded-xl transition-colors shadow-md mt-1"
+            className="w-full flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1db954] text-white font-bold text-sm uppercase tracking-widest px-6 py-4 rounded-xl transition-colors shadow-md mt-1"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            <MessageCircle className="h-4.5 w-4.5" />
-            Confirm My Order on WhatsApp
+            <MessageCircle className="h-5 w-5 shrink-0" />
+            <span>Confirm My Order on WhatsApp</span>
           </a>
 
           <p className="text-[10px] text-center text-[#7A7570] mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -140,17 +140,6 @@ export function OrderDetail({ order }: OrderDetailProps) {
 
           <div className="mt-4 rounded-xl bg-[#FFF9E6] border border-[#D4A843]/30 p-3 text-xs text-[#7A7570]" style={{ fontFamily: "'Inter', sans-serif" }}>
             <span className="font-bold text-[#D4A843]">Tip:</span> Book Uncle Delivery, Rapido, or Porter to pick up from the kitchen above.
-          </div>
-
-          <div className="mt-4 flex justify-end">
-            <DialogClose>
-              <button
-                className="px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-[#7A7570] hover:text-[#1A1A1A] border border-[#E6DFD5] rounded-xl hover:bg-[#F7F3EC] transition-colors"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                I&apos;ll do it later
-              </button>
-            </DialogClose>
           </div>
         </DialogContent>
       </Dialog>
