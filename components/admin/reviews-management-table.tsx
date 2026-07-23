@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Edit, Trash2, Eye, EyeOff, Star } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { Toast } from "@/components/ui/toast";
 import type { Review } from "@/lib/reviews";
 
 interface ReviewsManagementTableProps {
@@ -14,6 +16,15 @@ export function ReviewsManagementTable({ reviews: initialReviews }: ReviewsManag
   const router = useRouter();
   const [reviews, setReviews] = useState(initialReviews);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    open: boolean;
+    message: string;
+    variant: "success" | "error";
+  }>({ open: false, message: "", variant: "success" });
+
+  const showToast = (message: string, variant: "success" | "error" = "success") =>
+    setToast({ open: true, message, variant });
 
   const handleToggleActive = async (reviewId: string, currentActive: boolean) => {
     const supabase = createBrowserClient();
@@ -46,8 +57,7 @@ export function ReviewsManagementTable({ reviews: initialReviews }: ReviewsManag
   };
 
   const handleDelete = async (reviewId: string) => {
-    if (!confirm("Are you sure you want to delete this review?")) return;
-
+    setConfirmDelete(null);
     setIsDeleting(reviewId);
     const supabase = createBrowserClient();
     
@@ -58,11 +68,15 @@ export function ReviewsManagementTable({ reviews: initialReviews }: ReviewsManag
 
     if (!error) {
       setReviews(reviews.filter(r => r.id !== reviewId));
+      showToast("Review deleted successfully.");
+    } else {
+      showToast("Failed to delete review.", "error");
     }
     setIsDeleting(null);
   };
 
   return (
+    <>
     <div className="bg-white border border-[#E6DFD5] rounded-2xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -146,7 +160,7 @@ export function ReviewsManagementTable({ reviews: initialReviews }: ReviewsManag
                       <Edit className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(review.id)}
+                      onClick={() => setConfirmDelete(review.id)}
                       disabled={isDeleting === review.id}
                       className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-750 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -168,5 +182,25 @@ export function ReviewsManagementTable({ reviews: initialReviews }: ReviewsManag
         </div>
       )}
     </div>
+
+    {/* Confirm delete modal */}
+    <ConfirmModal
+      open={confirmDelete !== null}
+      title="Delete Review"
+      message="Are you sure you want to delete this review? This action cannot be undone."
+      confirmLabel="Delete"
+      variant="danger"
+      onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+      onCancel={() => setConfirmDelete(null)}
+    />
+
+    {/* Toast */}
+    <Toast
+      open={toast.open}
+      message={toast.message}
+      variant={toast.variant}
+      onClose={() => setToast((t) => ({ ...t, open: false }))}
+    />
+    </>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Loader2, Plus, Trash2, ChevronUp, ChevronDown, Eye, EyeOff, Save, X } from "lucide-react";
 import { createFAQ, updateFAQ, deleteFAQ } from "@/lib/faqs";
 import type { FAQ } from "@/lib/faqs";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
 
 interface FAQEditorProps {
   initialFAQs: FAQ[];
@@ -21,6 +22,7 @@ export function FAQEditor({ initialFAQs }: FAQEditorProps) {
   const [addForm, setAddForm] = useState<Omit<FAQ, "id" | "created_at">>(EMPTY_FORM);
   const [saving, setSaving] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null);
 
   const notify = (msg: string, ok = true) => {
@@ -100,7 +102,6 @@ export function FAQEditor({ initialFAQs }: FAQEditorProps) {
 
   /* ── Delete ── */
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this FAQ? This cannot be undone.")) return;
     setDeleting(id);
     const { error } = await deleteFAQ(id);
     if (error) {
@@ -291,7 +292,7 @@ export function FAQEditor({ initialFAQs }: FAQEditorProps) {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(faq.id)}
+                    onClick={() => setConfirmDeleteId(faq.id)}
                     disabled={deleting === faq.id}
                     className="p-2 rounded-lg text-[#7A7570] hover:text-red-600 hover:bg-red-50 transition-colors"
                   >
@@ -313,6 +314,20 @@ export function FAQEditor({ initialFAQs }: FAQEditorProps) {
           </div>
         )}
       </div>
+
+      {/* Confirm delete modal */}
+      <ConfirmModal
+        open={confirmDeleteId !== null}
+        title="Delete FAQ"
+        message="Delete this FAQ? This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={() => {
+          if (confirmDeleteId) handleDelete(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }

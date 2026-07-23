@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
 
 interface Order {
   id: string;
@@ -47,6 +48,14 @@ export function OrdersManagementTable({ orders: initialOrders }: OrdersManagemen
   const [orders, setOrders] = useState(initialOrders);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
+  const [toast, setToast] = useState<{
+    open: boolean;
+    message: string;
+    variant: "success" | "error";
+  }>({ open: false, message: "", variant: "success" });
+
+  const showToast = (message: string, variant: "success" | "error" = "success") =>
+    setToast({ open: true, message, variant });
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setIsUpdating(orderId);
@@ -66,10 +75,10 @@ export function OrdersManagementTable({ orders: initialOrders }: OrdersManagemen
           o.id === orderId ? { ...o, status: newStatus } : o
         ));
       } else {
-        alert("Failed to update order status");
+        showToast("Failed to update order status.", "error");
       }
     } catch {
-      alert("Error updating order status");
+      showToast("Error updating order status.", "error");
     } finally {
       setIsUpdating(null);
     }
@@ -84,6 +93,7 @@ export function OrdersManagementTable({ orders: initialOrders }: OrdersManagemen
     : orders.filter(o => o.status === filter);
 
   return (
+    <>
     <div className="space-y-6">
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
@@ -232,5 +242,14 @@ export function OrdersManagementTable({ orders: initialOrders }: OrdersManagemen
         )}
       </div>
     </div>
+
+    {/* Toast */}
+    <Toast
+      open={toast.open}
+      message={toast.message}
+      variant={toast.variant}
+      onClose={() => setToast((t) => ({ ...t, open: false }))}
+    />
+    </>
   );
 }

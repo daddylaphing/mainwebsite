@@ -14,6 +14,7 @@ import {
   Send,
   AlertTriangle
 } from "lucide-react";
+import { Toast } from "@/components/ui/toast";
 
 import type { Order, OrderItem } from "@/types";
 
@@ -41,6 +42,14 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
   const [note, setNote] = useState("");
   const [updating, setUpdating] = useState(false);
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
+  const [toast, setToast] = useState<{
+    open: boolean;
+    message: string;
+    variant: "success" | "error";
+  }>({ open: false, message: "", variant: "success" });
+
+  const showToast = (message: string, variant: "success" | "error" = "success") =>
+    setToast({ open: true, message, variant });
 
   const handleUpdateStatus = async () => {
     setUpdating(true);
@@ -59,13 +68,13 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
       if (response.ok) {
         setOrder({ ...order, status });
         setNote("");
-        alert("Order status updated successfully!");
+        showToast("Order status updated successfully.");
         router.refresh();
       } else {
-        alert(data.error || "Failed to update order status");
+        showToast(data.error || "Failed to update order status.", "error");
       }
     } catch {
-      alert("Error updating order status");
+      showToast("Error updating order status.", "error");
     } finally {
       setUpdating(false);
     }
@@ -86,6 +95,7 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
   const currentStepIndex = getStatusStepIndex(order.status);
 
   return (
+    <>
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Left Column: Order details & items */}
       <div className="lg:col-span-2 space-y-6">
@@ -346,5 +356,14 @@ export function OrderDetailContent({ order: initialOrder }: OrderDetailContentPr
         </div>
       </div>
     </div>
+
+    {/* Toast */}
+    <Toast
+      open={toast.open}
+      message={toast.message}
+      variant={toast.variant}
+      onClose={() => setToast((t) => ({ ...t, open: false }))}
+    />
+    </>
   );
 }

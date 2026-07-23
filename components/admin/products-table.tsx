@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Edit, Trash2, Eye, EyeOff, Star } from "lucide-react";
 import { createBrowserClient } from "@/lib/supabase/client";
+import { ConfirmModal } from "@/components/ui/confirm-modal";
+import { Toast } from "@/components/ui/toast";
 import type { Product } from "@/types";
 
 // Helper function to get primary product image
@@ -20,6 +22,15 @@ export function ProductsTable({ products: initialProducts }: ProductsTableProps)
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [toast, setToast] = useState<{
+    open: boolean;
+    message: string;
+    variant: "success" | "error";
+  }>({ open: false, message: "", variant: "success" });
+
+  const showToast = (message: string, variant: "success" | "error" = "success") =>
+    setToast({ open: true, message, variant });
 
   const handleToggleActive = async (productId: string, currentActive: boolean) => {
     const supabase = createBrowserClient();
@@ -52,8 +63,7 @@ export function ProductsTable({ products: initialProducts }: ProductsTableProps)
   };
 
   const handleDelete = async (productId: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-
+    setConfirmDelete(null);
     setIsDeleting(productId);
     const supabase = createBrowserClient();
     
@@ -64,11 +74,15 @@ export function ProductsTable({ products: initialProducts }: ProductsTableProps)
 
     if (!error) {
       setProducts(products.filter(p => p.id !== productId));
+      showToast("Product deleted successfully.");
+    } else {
+      showToast("Failed to delete product.", "error");
     }
     setIsDeleting(null);
   };
 
   return (
+    <>
     <div className="bg-white border border-[#E6DFD5] rounded-2xl overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -167,7 +181,7 @@ export function ProductsTable({ products: initialProducts }: ProductsTableProps)
                       <Edit className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(product.id)}
+                      onClick={() => setConfirmDelete(product.id)}
                       disabled={isDeleting === product.id}
                       className="p-2 bg-red-500/10 hover:bg-red-500/20 text-red-750 rounded-lg transition-colors disabled:opacity-50"
                     >
@@ -189,5 +203,25 @@ export function ProductsTable({ products: initialProducts }: ProductsTableProps)
         </div>
       )}
     </div>
+
+    {/* Confirm delete modal */}
+    <ConfirmModal
+      open={confirmDelete !== null}
+      title="Delete Product"
+      message="Are you sure you want to delete this product? This action cannot be undone."
+      confirmLabel="Delete"
+      variant="danger"
+      onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
+      onCancel={() => setConfirmDelete(null)}
+    />
+
+    {/* Toast */}
+    <Toast
+      open={toast.open}
+      message={toast.message}
+      variant={toast.variant}
+      onClose={() => setToast((t) => ({ ...t, open: false }))}
+    />
+    </>
   );
 }
