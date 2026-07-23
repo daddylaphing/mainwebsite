@@ -10,6 +10,136 @@ export type OrderStatus =
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
 export type CouponType = "percentage" | "fixed" | "free_shipping";
 
+// ─── Voucher Types ────────────────────────────────────────────────────────────
+export type VoucherDiscountType =
+  | "percentage"
+  | "fixed_amount"
+  | "free_delivery"
+  | "buy_x_get_y";
+
+export type VoucherRedemptionStatus = "pending" | "confirmed" | "restored";
+
+export interface Voucher {
+  id: string;
+  code: string;
+  description: string | null;
+  discount_type: VoucherDiscountType;
+  discount_value: number;
+  max_discount: number | null;
+  min_order_value: number | null;
+  max_order_value: number | null;
+  start_date: string | null;
+  expiry_date: string | null;
+  max_global_uses: number | null;
+  max_uses_per_user: number;
+  used_count: number;
+  applicable_product_ids: string[];
+  excluded_product_ids: string[];
+  applicable_category_ids: string[];
+  excluded_category_ids: string[];
+  applicable_user_roles: string[];
+  first_order_only: boolean;
+  new_customers_only: boolean;
+  existing_customers_only: boolean;
+  is_stackable: boolean;
+  free_delivery: boolean;
+  buy_x_get_y_config: Record<string, unknown> | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string | null;
+}
+
+export interface VoucherRedemption {
+  id: string;
+  voucher_id: string;
+  user_id: string;
+  order_id: string | null;
+  discount_amount: number;
+  status: VoucherRedemptionStatus;
+  ip_address: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  voucher?: Pick<Voucher, "id" | "code" | "discount_type" | "discount_value">;
+}
+
+export interface VoucherAuditLog {
+  id: string;
+  voucher_id: string | null;
+  admin_id: string | null;
+  action: string;
+  old_values: Record<string, unknown> | null;
+  new_values: Record<string, unknown> | null;
+  note: string | null;
+  created_at: string;
+}
+
+// ─── Voucher Validation ───────────────────────────────────────────────────────
+export type VoucherValidationError =
+  | "INVALID_CODE"
+  | "EXPIRED"
+  | "NOT_STARTED"
+  | "DISABLED"
+  | "USAGE_LIMIT_REACHED"
+  | "ALREADY_USED"
+  | "MIN_ORDER_NOT_MET"
+  | "MAX_ORDER_EXCEEDED"
+  | "NOT_APPLICABLE"
+  | "FIRST_ORDER_ONLY"
+  | "NEW_CUSTOMERS_ONLY"
+  | "EXISTING_CUSTOMERS_ONLY"
+  | "ROLE_NOT_ELIGIBLE"
+  | "SERVER_ERROR";
+
+export interface VoucherValidationResult {
+  valid: boolean;
+  error?: VoucherValidationError;
+  message?: string;
+  voucher?: Voucher;
+  discount_amount?: number;
+  free_delivery?: boolean;
+}
+
+// ─── Voucher Form (admin) ─────────────────────────────────────────────────────
+export interface VoucherFormData {
+  code: string;
+  description: string;
+  discount_type: VoucherDiscountType;
+  discount_value: number;
+  max_discount?: number | null;
+  min_order_value?: number | null;
+  max_order_value?: number | null;
+  start_date?: string | null;
+  expiry_date?: string | null;
+  max_global_uses?: number | null;
+  max_uses_per_user: number;
+  applicable_product_ids: string[];
+  excluded_product_ids: string[];
+  applicable_category_ids: string[];
+  excluded_category_ids: string[];
+  applicable_user_roles: string[];
+  first_order_only: boolean;
+  new_customers_only: boolean;
+  existing_customers_only: boolean;
+  is_stackable: boolean;
+  free_delivery: boolean;
+  is_active: boolean;
+}
+
+// ─── Analytics ────────────────────────────────────────────────────────────────
+export interface VoucherAnalytics {
+  total_redemptions: number;
+  total_savings_given: number;
+  active_count: number;
+  expired_count: number;
+  top_vouchers: Array<{
+    code: string;
+    used_count: number;
+    total_savings: number;
+  }>;
+}
+
 // ─── Database Row Types ───────────────────────────────────────────────────────
 
 export interface Profile {

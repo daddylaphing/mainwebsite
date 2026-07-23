@@ -16,6 +16,7 @@ import {
 import { useCart } from "@/components/providers/cart-provider";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Separator } from "@/components/ui/separator";
+import { VoucherInput, type AppliedVoucher } from "@/components/checkout/voucher-input";
 
 // Extend window type for Razorpay
 declare global {
@@ -57,6 +58,9 @@ export default function CheckoutPage() {
   const [refundAccepted, setRefundAccepted] = useState(false);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
 
+  // Voucher state
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
+
   // Orders only accepted 3 PM – 6 PM IST
   function isOrderingOpen(): boolean {
     const now = new Date();
@@ -68,6 +72,11 @@ export default function CheckoutPage() {
     return istHour >= 15 && istHour < 18; // 3 PM to 6 PM
   }
   const orderingOpen = isOrderingOpen();
+
+  // Compute discount-adjusted totals for display
+  const voucherDiscount = appliedVoucher?.discount_amount ?? 0;
+  const adjustedSubtotal = subtotal;
+  const adjustedTotal = Math.max(0, total - voucherDiscount);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -179,9 +188,11 @@ export default function CheckoutPage() {
           tax,
           shipping_charge: shippingCharge,
           packaging_charge: packagingCharge,
-          discount: 0,
-          total,
+          discount: voucherDiscount,
+          total: adjustedTotal,
           delivery_notes: notes || undefined,
+          // Pass voucher code — server re-validates and ignores client-side totals
+          coupon_code: appliedVoucher?.code ?? undefined,
         }),
       });
 
@@ -191,7 +202,9 @@ export default function CheckoutPage() {
         throw new Error(createData.error || "Failed to create order.");
       }
 
-      const { order_id: dbOrderId, razorpay_order_id: rzpOrderId } = createData;
+      const { order_id: dbOrderId, razorpay_order_id: rzpOrderId, computed } = createData;
+      // Use server-authoritative total for Razorpay amount
+      const serverTotal = computed?.total ?? adjustedTotal;
 
       // If Razorpay order was not created, hard fail — never skip payment
       if (!rzpOrderId) {
@@ -209,7 +222,7 @@ export default function CheckoutPage() {
 
       const options = {
         key: razorpayKeyId,
-        amount: Math.round(total * 100), // paise
+        amount: Math.round(serverTotal * 100), // paise — server-authoritative
         currency: "INR",
         name: "Laphing Daddy",
         description: "Authentic Tibetan Laphing Kit",
@@ -530,6 +543,19 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* Voucher / Coupon Code */}
+                <div className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-2xl p-6">
+                  <VoucherInput
+                    subtotal={subtotal}
+                    productIds={items
+                      .map((i) => i.product.id)
+                      .filter((id) => !id.startsWith("addon"))}
+                    appliedVoucher={appliedVoucher}
+                    onApply={(v) => setAppliedVoucher(v)}
+                    onRemove={() => setAppliedVoucher(null)}
+                  />
+                </div>
+
                 {/* Payment Method Info */}
                 <div className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-2xl p-6 space-y-3">
                   <h2
@@ -619,7 +645,7 @@ export default function CheckoutPage() {
                         LOADING PAYMENT…
                       </>
                     ) : (
-                      `PAY ₹${total} via Razorpay`
+                      `PAY ₹${adjustedTotal} via Razorpay`
                     )}
                   </button>
                 )}
@@ -671,9 +697,17 @@ export default function CheckoutPage() {
                 <div className="flex justify-between">
                   <span>Subtotal</span>
                   <span className="text-[#1A1A1A] font-semibold">
-                    ₹{subtotal}
+                    ₹{adjustedSubtotal}
                   </span>
                 </div>
+                {voucherDiscount > 0 && (
+                  <div className="flex justify-between text-green-700">
+                    <span className="flex items-center gap-1">
+                      Voucher ({appliedVoucher?.code})
+                    </span>
+                    <span className="font-semibold">-₹{voucherDiscount.toFixed(0)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span>Packaging Charges</span>
                   <span className="text-[#1A1A1A] font-semibold">₹{packagingCharge}</span>
@@ -685,8 +719,14 @@ export default function CheckoutPage() {
                 <Separator className="bg-[#E6DFD5]" />
                 <div className="flex justify-between text-[#1A1A1A] font-bold text-base">
                   <span>Total Amount</span>
-                  <span className="text-[#6E1D25] font-bold">₹{total}</span>
+                  <span className="text-[#6E1D25] font-bold">₹{adjustedTotal}</span>
                 </div>
+                {voucherDiscount > 0 && (
+                  <div className="flex justify-between text-green-700 text-xs font-semibold">
+                    <span>🎉 Total Savings</span>
+                    <span>₹{voucherDiscount.toFixed(0)}</span>
+                  </div>
+                )}
               </div>
 
               <div className="pt-2 flex items-center justify-center gap-2 text-[#7A7570]/50 text-xs">

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { sendOrderConfirmationEmail, sendAdminNewOrderEmail } from "@/lib/emails";
+import { voucherService } from "@/lib/services/vouchers/voucher-service";
 import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
@@ -102,6 +103,9 @@ export async function POST(request: NextRequest) {
       console.error("[verify-payment] DB update failed:", updateError);
       return NextResponse.json({ error: "Failed to update order: " + (updateError.message || JSON.stringify(updateError)) }, { status: 500 });
     }
+
+    // Confirm voucher redemption — increments used_count atomically
+    await voucherService.confirmRedemption(body.order_id);
 
     const { data: fullOrder, error: orderDetailsError } = await serviceSupabase
       .from("orders")
