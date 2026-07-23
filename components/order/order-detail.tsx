@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Clock, CreditCard, MapPin, Package, MessageCircle, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Clock, CreditCard, MapPin, Package, MessageCircle, ShoppingBag, ArrowLeft, CheckCircle2 } from "lucide-react";
 import type { Order, OrderItem } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 
@@ -37,12 +37,14 @@ function statusColor(status: string) {
   }
 }
 
+const BUSINESS_PHONE = "919354775439";
+
 const DEFAULT_RESTAURANT: RestaurantInfo = {
   name: "Laphing Daddy Kitchen",
   line1: "Address not configured",
   line2: "Update in admin settings",
-  phone: "9667414181",
-  whatsapp: "919667414181",
+  phone: "9354775439",
+  whatsapp: BUSINESS_PHONE,
 };
 
 export function OrderDetail({ order }: OrderDetailProps) {
@@ -50,7 +52,6 @@ export function OrderDetail({ order }: OrderDetailProps) {
   const [restaurant, setRestaurant] = useState<RestaurantInfo>(DEFAULT_RESTAURANT);
   const items = order.order_items ?? order.items ?? [];
 
-  // Load restaurant info from DB
   useEffect(() => {
     const supabase = createClient();
     supabase
@@ -63,43 +64,70 @@ export function OrderDetail({ order }: OrderDetailProps) {
       });
   }, []);
 
-  // Show popup on confirmed/pending
   useEffect(() => {
-    if (order.status === "confirmed" || order.status === "pending") {
+    if (order.status === "pending" || order.status === "confirmed") {
       const timer = setTimeout(() => setShowDeliveryPopup(true), 500);
       return () => clearTimeout(timer);
     }
   }, [order.status]);
 
-  const whatsappMsg = encodeURIComponent(
-    `Hi! I have a query about my order.\n\nOrder: #${order.order_number}\nAmount: Rs.${order.total}\nItems: ${items.map((i) => `${i.name} x${i.quantity}`).join(", ")}\n\nCould you please update me on the status?`
-  );
-  const whatsappUrl = `https://wa.me/${restaurant.whatsapp}?text=${whatsappMsg}`;
+  // ── WhatsApp URLs ─────────────────────────────────────────────────────────
+  // Must-click: customer confirms order via WhatsApp
+  const confirmUrl = `https://wa.me/${BUSINESS_PHONE}?text=${encodeURIComponent(
+    `Hi! I just placed an order on Laphing Daddy and want to confirm it.\n\n` +
+    `*Order #${order.order_number}*\n` +
+    `Amount Paid: Rs.${order.total}\n` +
+    `Items: ${items.map((i) => `${i.name} x${i.quantity}`).join(", ")}\n\n` +
+    `Please confirm my order. Thank you!`
+  )}`;
+
+  // General help / queries
+  const queryUrl = `https://wa.me/${BUSINESS_PHONE}?text=${encodeURIComponent(
+    `Hi! I need help with my order.\n\n` +
+    `Order: #${order.order_number}\n` +
+    `Amount: Rs.${order.total}\n\n` +
+    `Query: `
+  )}`;
 
   return (
     <>
-      {/* ── Delivery Booking Popup ── */}
+      {/* ── Popup: Confirm Order via WhatsApp ── */}
       <Dialog open={showDeliveryPopup} onOpenChange={setShowDeliveryPopup}>
         <DialogContent className="bg-[#FAFAF8] border border-[#E6DFD5] max-w-md rounded-2xl shadow-xl p-7">
-          <DialogHeader className="mb-4">
+          <DialogHeader className="mb-3">
             <DialogTitle
               className="text-xl font-bold text-[#1A1A1A]"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Order Placed — Book Your Delivery
+              One More Step
             </DialogTitle>
             <DialogDescription
               className="text-sm text-[#4A4540] mt-1.5 leading-relaxed"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              Your order is confirmed. Arrange a delivery rider to pick up from our kitchen.
-              <br />
-              <span className="font-semibold text-[#1A1A1A]">Uncle Delivery is recommended</span> — Rapido, Porter or any service works too.
+              Your payment is done. To get your order confirmed and prepared,
+              you <strong className="text-[#1A1A1A]">must send us a WhatsApp message</strong> using the button below.
             </DialogDescription>
           </DialogHeader>
 
-          <div className="rounded-xl bg-white border border-[#E6DFD5] p-4 text-sm text-[#4A4540] space-y-1" style={{ fontFamily: "'Inter', sans-serif" }}>
-            <p className="font-semibold text-[#1A1A1A] text-xs uppercase tracking-wider text-[#7A7570] mb-2">Pickup Location</p>
+          {/* Confirmation CTA — prominent */}
+          <a
+            href={confirmUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2.5 bg-[#25D366] hover:bg-[#1db954] text-white font-bold text-sm uppercase tracking-widest py-4 rounded-xl transition-colors shadow-md mt-1"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            <MessageCircle className="h-4.5 w-4.5" />
+            Confirm My Order on WhatsApp
+          </a>
+
+          <p className="text-[10px] text-center text-[#7A7570] mt-2" style={{ fontFamily: "'Inter', sans-serif" }}>
+            This opens WhatsApp with a pre-filled message. Just press Send.
+          </p>
+
+          <div className="mt-4 rounded-xl bg-white border border-[#E6DFD5] p-4 text-sm text-[#4A4540] space-y-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#7A7570] mb-2">Pickup Location</p>
             <p className="font-semibold text-[#1A1A1A]">{restaurant.name}</p>
             <p>{restaurant.line1}</p>
             <p>{restaurant.line2}</p>
@@ -110,23 +138,17 @@ export function OrderDetail({ order }: OrderDetailProps) {
             </p>
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#1A1A1A] hover:bg-[#6E1D25] text-white font-bold text-xs uppercase tracking-widest px-5 py-3 rounded-xl transition-colors"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              <MessageCircle className="h-3.5 w-3.5" />
-              Contact on WhatsApp
-            </a>
+          <div className="mt-4 rounded-xl bg-[#FFF9E6] border border-[#D4A843]/30 p-3 text-xs text-[#7A7570]" style={{ fontFamily: "'Inter', sans-serif" }}>
+            <span className="font-bold text-[#D4A843]">Tip:</span> Book Uncle Delivery, Rapido, or Porter to pick up from the kitchen above.
+          </div>
+
+          <div className="mt-4 flex justify-end">
             <DialogClose>
               <button
-                className="px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#7A7570] hover:text-[#1A1A1A] border border-[#E6DFD5] rounded-xl hover:bg-[#F7F3EC] transition-colors"
+                className="px-5 py-2.5 text-xs font-bold uppercase tracking-widest text-[#7A7570] hover:text-[#1A1A1A] border border-[#E6DFD5] rounded-xl hover:bg-[#F7F3EC] transition-colors"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                Got it
+                I&apos;ll do it later
               </button>
             </DialogClose>
           </div>
@@ -137,7 +159,6 @@ export function OrderDetail({ order }: OrderDetailProps) {
       <div className="min-h-screen bg-[#FAFAF8] pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 md:px-8 space-y-6">
 
-          {/* Back + Header */}
           <div className="flex items-center gap-4">
             <Link href="/account" className="flex items-center gap-1.5 text-xs font-semibold text-[#7A7570] hover:text-[#1A1A1A] transition-colors uppercase tracking-wider">
               <ArrowLeft className="h-3.5 w-3.5" />
@@ -145,6 +166,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
             </Link>
           </div>
 
+          {/* Header */}
           <div className="bg-white border border-[#E6DFD5] rounded-2xl p-6 md:p-8">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
               <div>
@@ -155,7 +177,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
                   Thank you!
                 </h1>
                 <p className="text-sm text-[#7A7570] mt-2 max-w-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Payment successful. Please book a delivery rider to pick up your order from our kitchen.
+                  Payment successful. Confirm your order on WhatsApp and book a delivery rider.
                 </p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-3">
@@ -165,26 +187,40 @@ export function OrderDetail({ order }: OrderDetailProps) {
                 <div className="flex gap-2 flex-wrap">
                   <Link
                     href="/products"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#1A1A1A] hover:bg-[#6E1D25] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-[#E6DFD5] hover:border-[#1A1A1A] bg-white text-[#1A1A1A] text-xs font-bold uppercase tracking-widest rounded-xl transition-colors"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     <ShoppingBag className="h-3.5 w-3.5" />
                     Shop More
                   </Link>
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 border border-[#E6DFD5] hover:border-[#1A1A1A] text-[#1A1A1A] text-xs font-bold uppercase tracking-widest rounded-xl transition-colors bg-white"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    <MessageCircle className="h-3.5 w-3.5" />
-                    WhatsApp Us
-                  </a>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Must-click confirm banner — shown when pending/confirmed */}
+          {(order.status === "pending" || order.status === "confirmed") && (
+            <div className="bg-[#F0FFF4] border-2 border-[#25D366]/50 rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <p className="font-bold text-[#1A1A1A] text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Confirm your order on WhatsApp
+                </p>
+                <p className="text-xs text-[#4A4540] mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Send us a message to get your order prepared. Takes 10 seconds.
+                </p>
+              </div>
+              <a
+                href={confirmUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#1db954] text-white font-bold text-xs uppercase tracking-widest px-5 py-3 rounded-xl transition-colors shadow-sm"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Confirm on WhatsApp
+              </a>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6">
             <div className="space-y-6">
@@ -223,15 +259,15 @@ export function OrderDetail({ order }: OrderDetailProps) {
                 </div>
               </div>
 
-              {/* Delivery note */}
+              {/* Delivery instructions */}
               <div className="bg-white border border-[#E6DFD5] rounded-2xl p-5 text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#7A7570] mb-3">Delivery Instructions</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-[#7A7570] mb-3">What to do next</p>
                 <ol className="list-decimal list-inside space-y-1.5 text-[#4A4540]">
+                  <li>Click <strong className="text-[#25D366]">Confirm on WhatsApp</strong> above and send the message</li>
                   <li>Wait for order status to update to <strong className="text-[#1A1A1A]">Preparing</strong></li>
                   <li>Open Uncle Delivery, Rapido, or Porter app</li>
                   <li>Set pickup to the kitchen address above</li>
-                  <li>Set drop to your delivery address</li>
-                  <li>Book the rider and share ETA with us on WhatsApp</li>
+                  <li>Set drop to your delivery address and book the rider</li>
                 </ol>
               </div>
 
@@ -285,20 +321,21 @@ export function OrderDetail({ order }: OrderDetailProps) {
                 </p>
               </div>
 
+              {/* Help / query WhatsApp */}
               <div className="bg-[#F7F3EC] border border-[#E6DFD5] rounded-2xl p-5">
-                <p className="text-xs font-bold uppercase tracking-wider text-[#7A7570] mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Need Help?</p>
-                <p className="text-sm text-[#4A4540] mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
-                  Message us with your order number for any queries.
+                <p className="text-xs font-bold uppercase tracking-wider text-[#7A7570] mb-1.5" style={{ fontFamily: "'Inter', sans-serif" }}>Need Help?</p>
+                <p className="text-xs text-[#4A4540] mb-4 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  Questions about your order? Message us on WhatsApp.
                 </p>
                 <a
-                  href={whatsappUrl}
+                  href={queryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-[#1A1A1A] hover:bg-[#6E1D25] text-white font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-colors"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   <MessageCircle className="h-3.5 w-3.5" />
-                  WhatsApp Us
+                  Ask on WhatsApp
                 </a>
               </div>
             </aside>
