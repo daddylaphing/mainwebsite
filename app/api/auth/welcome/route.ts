@@ -1,9 +1,24 @@
 import { sendWelcomeEmail } from "@/lib/emails";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 2 welcome emails per IP per day
+    const ip = getClientIp(request);
+    const limit = checkRateLimit({
+      id: "welcome",
+      identifier: ip,
+      limit: 2,
+      windowSeconds: 24 * 60 * 60,
+    });
+
+    if (!limit.allowed) {
+      // Silently ignore — don't leak rate limit info on auth endpoints
+      return NextResponse.json({ success: true });
+    }
+
     const { email, name } = await request.json();
 
     if (!email || !name) {

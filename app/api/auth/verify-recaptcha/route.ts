@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 5 attempts per IP per 10 minutes
+  const ip = getClientIp(request);
+  const limit = checkRateLimit({
+    id: "recaptcha",
+    identifier: ip,
+    limit: 5,
+    windowSeconds: 10 * 60,
+  });
+
+  if (!limit.allowed) {
+    return NextResponse.json({ success: false, error: "Too many attempts" }, { status: 429 });
+  }
+
   const { token } = await request.json();
 
   if (!token) {

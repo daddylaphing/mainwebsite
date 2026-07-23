@@ -33,7 +33,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.razorpay.com",
       "font-src 'self' https://fonts.gstatic.com data: https://*.razorpay.com",
       "img-src 'self' data: blob: https://gyrvdaucaznmastgspvc.supabase.co https://lh3.googleusercontent.com https://www.google-analytics.com https://*.supabase.co https://*.razorpay.com",
-      "connect-src 'self' https://gyrvdaucaznmastgspvc.supabase.co wss://gyrvdaucaznmastgspvc.supabase.co https://www.google-analytics.com https://analytics.google.com https://*.razorpay.com https://www.google.com https://recaptcha.google.com",
+      "connect-src 'self' https://gyrvdaucaznmastgspvc.supabase.co wss://gyrvdaucaznmastgspvc.supabase.co https://www.google-analytics.com https://analytics.google.com https://*.razorpay.com",
       "frame-src 'self' https://accounts.google.com https://*.razorpay.com https://www.google.com/recaptcha/ https://recaptcha.google.com/",
       "object-src 'none'",
       "base-uri 'self'",
