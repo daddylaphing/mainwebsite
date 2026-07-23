@@ -20,7 +20,7 @@ export default async function AdminDashboard() {
     { count: totalReviews },
     { count: totalUsers },
     { data: recentOrders },
-    { data: lowStockProducts },
+    { data: allLowStockCandidates },
   ] = await Promise.all([
     supabase.from("orders").select("*", { count: "exact", head: true }),
     supabase.from("products").select("*", { count: "exact", head: true }),
@@ -33,12 +33,16 @@ export default async function AdminDashboard() {
       .limit(5),
     supabase
       .from("products")
-      .select("id, name, inventory")
-      .lte("inventory", 10)
+      .select("id, name, inventory, low_stock_threshold")
       .eq("active", true)
       .order("inventory", { ascending: true })
-      .limit(5),
+      .limit(20),
   ]);
+
+  // Filter low stock by each product's own threshold
+  const lowStockProducts = (allLowStockCandidates ?? [])
+    .filter((p) => p.inventory <= (p.low_stock_threshold ?? 10))
+    .slice(0, 5);
 
   const stats = [
     {
@@ -159,7 +163,7 @@ export default async function AdminDashboard() {
                       ₹{order.total}
                     </div>
                     <div className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mt-0.5">
-                      {order.status.replace("_", " ")}
+                      {(order.status ?? "unknown").replace(/_/g, " ")}
                     </div>
                   </div>
                 </div>

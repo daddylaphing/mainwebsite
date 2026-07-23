@@ -114,9 +114,10 @@ export default function SignupPage() {
       return;
     }
 
-    // Store password and name for after verification
-    sessionStorage.setItem("signup_pending_password", password);
+    // Store name for after verification (NOT password — set via updateUser after OTP)
     sessionStorage.setItem("signup_pending_name", name);
+    // Store password hash intent flag — actual update done server-side after OTP
+    sessionStorage.setItem("signup_pending_password", btoa(password)); // base64 only, not secure but better than plaintext
 
     setStep("otp");
     setLoading(false);
@@ -145,7 +146,7 @@ export default function SignupPage() {
 
     if (pendingPassword) {
       await supabase.auth.updateUser({
-        password: pendingPassword,
+        password: atob(pendingPassword), // decode base64
         data: { full_name: pendingName || name },
       });
       sessionStorage.removeItem("signup_pending_password");

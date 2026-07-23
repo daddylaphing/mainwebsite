@@ -204,7 +204,7 @@ export default function AccountPage() {
                         </p>
                       </div>
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${STATUS_COLORS[order.status] ?? "bg-[#1A1A1A]/5 text-[#1A1A1A]/40 border-[#1A1A1A]/10"}`}>
-                        {order.status.replace("_", " ")}
+                        {(order.status ?? "unknown").replace(/_/g, " ")}
                       </span>
                     </Link>
                   ))}
