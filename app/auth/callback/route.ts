@@ -19,21 +19,24 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Trigger welcome email for new Google / OAuth signups
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user && !user.user_metadata?.welcome_sent) {
-        const email = user.email;
-        const name = user.user_metadata?.full_name || user.email?.split("@")[0] || "there";
-        if (email) {
-          try {
-            await sendWelcomeEmail({ email, name });
-            await supabase.auth.updateUser({
-              data: { welcome_sent: true },
-            });
-          } catch (welcomeErr) {
-            console.error("OAuth welcome email error:", welcomeErr);
+      // Only send welcome email for new OAuth signups, not password resets
+      const isPasswordReset = next === "/auth/reset-password";
+      if (!isPasswordReset) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user && !user.user_metadata?.welcome_sent) {
+          const email = user.email;
+          const name = user.user_metadata?.full_name || user.email?.split("@")[0] || "there";
+          if (email) {
+            try {
+              await sendWelcomeEmail({ email, name });
+              await supabase.auth.updateUser({
+                data: { welcome_sent: true },
+              });
+            } catch (welcomeErr) {
+              console.error("OAuth welcome email error:", welcomeErr);
+            }
           }
         }
       }
