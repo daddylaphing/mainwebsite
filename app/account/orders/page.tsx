@@ -65,7 +65,7 @@ export default function OrdersPage() {
     const supabase = createClient();
     supabase
       .from("orders")
-      .select("*, order_items(*)")
+      .select("*, items:order_items(*)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .then(({ data }) => {
@@ -223,7 +223,7 @@ export default function OrdersPage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {filtered.map((order, i) => {
-                  const items = order.order_items ?? [];
+                  const items = (order.items ?? []);
                   const itemNames = items.map((it) => it.name).join(", ");
                   return (
                     <motion.div
