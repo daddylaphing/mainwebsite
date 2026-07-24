@@ -74,13 +74,6 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
       description: "Aromatic garlic water",
     },
     {
-      key: "extra_sauce" as keyof KitExtras,
-      name: "Extra Sauce",
-      price: config?.extra_sauce_price || 15,
-      image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/laphingsauce.png",
-      description: "Spicy peanut sauce",
-    },
-    {
       key: "extra_seasoning" as keyof KitExtras,
       name: "Extra Seasoning",
       price: config?.extra_seasoning_price || 10,

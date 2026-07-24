@@ -115,7 +115,7 @@ export function ProductListClient({ initialProducts }: ProductListClientProps) {
               <div className="p-6 flex flex-col flex-1 gap-4">
                 <div className="flex-1 space-y-2">
                   <span className="text-[10px] font-bold text-[#D4A843] uppercase tracking-wider block" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    {product.category === "kit" ? "Laphing Kit" : product.category === "corndog" ? "Corn Dog" : product.category === "wholesale" ? "Wholesale Sheets" : "Sides & More"}
+                    {product.category === "kit" ? "Laphing Kit" : product.category === "corndog" ? "Corn Dog" : product.category === "wholesale" ? (product.name.toLowerCase().includes("momo") ? "Wholesale Momos" : "Wholesale Sheets") : "Sides & More"}
                   </span>
                   <h3
                     className="text-xl font-bold text-[#1A1A1A]"

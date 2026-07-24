@@ -135,8 +135,8 @@ export function ContactSection() {
                 <div className="bg-[#F7F3EC]/50 border border-[#E6DFD5]/60 rounded-xl p-4 flex gap-3 items-start">
                   <Clock className="h-4 w-4 text-[#D4A843] shrink-0 mt-0.5" />
                   <div>
-                    <h5 className="text-[11px] font-bold text-[#1A1A1A] uppercase tracking-wider mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>Booking Hours</h5>
-                    <p className="text-xs text-[#7A7570] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>3:00 PM – 6:00 PM Daily</p>
+                    <h5 className="text-[11px] font-bold text-[#1A1A1A] uppercase tracking-wider mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>Delivery Hours</h5>
+                    <p className="text-xs text-[#7A7570] leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>10:00 AM – 8:00 PM Daily</p>
                   </div>
                 </div>
               </div>

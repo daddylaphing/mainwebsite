@@ -63,15 +63,9 @@ export default function CheckoutPage() {
   // Voucher state
   const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
 
-  // Orders only accepted 3 PM – 6 PM IST
+  // Orders are now accepted 24 hours
   function isOrderingOpen(): boolean {
-    const now = new Date();
-    // IST = UTC + 5:30
-    const istOffset = 5.5 * 60; // minutes
-    const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-    const istMinutes = (utcMinutes + istOffset) % (24 * 60);
-    const istHour = Math.floor(istMinutes / 60);
-    return istHour >= 15 && istHour < 18; // 3 PM to 6 PM
+    return true;
   }
   const orderingOpen = isOrderingOpen();
 
@@ -149,7 +143,7 @@ export default function CheckoutPage() {
     if (isProcessing) return;
 
     if (!isOrderingOpen()) {
-      setErrorMessage("Orders are only accepted between 3:00 PM and 6:00 PM IST.");
+      setErrorMessage("We are currently not accepting orders. Please try again later.");
       return;
     }
 
@@ -354,9 +348,9 @@ export default function CheckoutPage() {
                       </p>
                       <p className="text-[#4A4540]">
                         <span className="font-bold text-[#1A1A1A]">
-                          Booking Window:
+                          Delivery Window:
                         </span>{" "}
-                        Between 3 PM to 6 PM only
+                        10 AM to 8 PM daily
                       </p>
                     </div>
                     <div className="space-y-1.5">
@@ -588,11 +582,10 @@ export default function CheckoutPage() {
                 {!orderingOpen ? (
                   <div className="w-full rounded-[14px] bg-[#F7F3EC] border border-[#E6DFD5] p-5 text-center space-y-1">
                     <p className="text-sm font-bold text-[#1A1A1A]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                      Orders closed right now
+                      Orders temporarily unavailable
                     </p>
                     <p className="text-xs text-[#7A7570]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                      We accept orders between <span className="font-semibold text-[#1A1A1A]">3:00 PM – 6:00 PM IST</span> daily.
-                      Come back then to place your order.
+                      Delivery is available <span className="font-semibold text-[#1A1A1A]">10:00 AM – 8:00 PM IST</span> daily.
                     </p>
                   </div>
                 ) : (
@@ -670,14 +663,14 @@ export default function CheckoutPage() {
                 {bulkDiscount > 0 && bulkTier && (
                   <div className="flex justify-between text-green-700">
                     <span className="flex items-center gap-1">
-                      🎁 {bulkTier.label}
+                      {bulkTier.label}
                     </span>
                     <span className="font-semibold">−₹{bulkDiscount.toFixed(0)}</span>
                   </div>
                 )}
                 {voucherDiscount > 0 && (
                   <div className="flex justify-between text-green-700">
-                    <span>🏷 Voucher ({appliedVoucher?.code})</span>
+                    <span>Voucher ({appliedVoucher?.code})</span>
                     <span className="font-semibold">−₹{voucherDiscount.toFixed(0)}</span>
                   </div>
                 )}
@@ -696,7 +689,7 @@ export default function CheckoutPage() {
                 </div>
                 {(bulkDiscount > 0 || voucherDiscount > 0) && (
                   <div className="flex justify-between text-green-700 text-xs font-bold pt-1 border-t border-green-100">
-                    <span>🎉 Total Savings</span>
+                    <span>Total Savings</span>
                     <span>₹{(bulkDiscount + voucherDiscount).toFixed(0)}</span>
                   </div>
                 )}

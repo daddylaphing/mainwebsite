@@ -46,7 +46,7 @@ export function CTASection() {
             className="text-label-caps text-[#6E1D25]"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Order Now — Daily 3 PM to 6 PM
+            Order Now — Open 24 Hours
           </span>
         </motion.div>
 
@@ -58,11 +58,11 @@ export function CTASection() {
             fontWeight: 700,
             fontSize: "clamp(52px, 9vw, 110px)",
             letterSpacing: "-0.03em",
-            lineHeight: "0.95",
+            lineHeight: "1.05",
           }}
         >
           <CharReveal text="Taste" delay={0.1} className="block" />
-          <span className="block text-[#6E1D25] italic font-medium">
+          <span className="block text-[#6E1D25] italic font-medium py-1">
             <CharReveal text="Authentic" delay={0.3} />
           </span>
           <CharReveal text="Laphing." delay={0.55} className="block" />

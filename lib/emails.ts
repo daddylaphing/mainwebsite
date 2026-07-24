@@ -123,7 +123,7 @@ export async function sendWelcomeEmail(data: { email: string; name: string }) {
             <ul style="margin: 0; padding-left: 20px; color: #166534; line-height: 2;">
               <li>Browse our <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/#products" style="color: #e7b52c;">Laphing Kits</a> - everything you need to make it at home</li>
               <li>Add <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/#products" style="color: #e7b52c;">extra toppings & sauces</a> to customize your order</li>
-              <li>Book delivery for <strong>3 PM - 6 PM</strong> (Delhi, Noida, Gurugram, Ghaziabad)</li>
+              <li>Book delivery for <strong>10 AM - 8 PM</strong> (Delhi, Noida, Gurugram, Ghaziabad)</li>
               <li>Track orders in your <a href="${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/account" style="color: #e7b52c;">account</a></li>
             </ul>
           </div>
@@ -249,7 +249,7 @@ export async function sendOrderConfirmationEmail(data: {
           ` : ""}
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e5e5; text-align: center;">
-            <p style="color: #444; margin: 0 0 8px;">Your order will be prepared fresh and delivered during our booking window (3 PM - 6 PM).</p>
+            <p style="color: #444; margin: 0 0 8px;">Your order will be prepared fresh and delivered during our delivery window (10 AM - 8 PM).</p>
             <p style="color: #444; margin: 0 0 16px;">You'll receive a WhatsApp notification when your delivery is on the way.</p>
             <a href="${data.orderLink || `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/account`}" style="display: inline-block; background: #e7b52c; color: #000; font-weight: 700; padding: 12px 24px; border-radius: 8px; text-decoration: none;">View Order</a>
           </div>

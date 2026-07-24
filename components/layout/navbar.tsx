@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { ShoppingBag, User, LogOut, Settings, Package, ChevronDown, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { useCart } from "@/components/providers/cart-provider";
 import { useAuth } from "@/components/providers/auth-provider";
 import { cn } from "@/lib/utils";
@@ -52,9 +53,7 @@ export function Navbar() {
     return () => clearTimeout(id);
   }, [pathname]);
 
-  const [activeHash, setActiveHash] = useState(() =>
-    typeof window !== "undefined" ? window.location.hash : ""
-  );
+  const [activeHash, setActiveHash] = useState("");
   useEffect(() => {
     const handleHashChange = () => setActiveHash(window.location.hash);
     window.addEventListener("hashchange", handleHashChange);
@@ -122,9 +121,17 @@ export function Navbar() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-display text-[18px] md:text-[22px] font-700 tracking-tight leading-none flex items-center gap-1 text-[#1A1A1A] transition-colors duration-300"
+            className="font-display text-[18px] md:text-[22px] font-700 tracking-tight leading-none flex items-center gap-2 text-[#1A1A1A] transition-colors duration-300"
             style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700 }}
           >
+            <Image
+              src="/logo.png"
+              alt="Laphing Daddy Logo"
+              width={32}
+              height={32}
+              className="object-contain w-7 h-7 md:w-8 md:h-8"
+              priority
+            />
             Laphing <span className="italic text-[#D4A843]">Daddy</span>
           </Link>
 

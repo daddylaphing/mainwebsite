@@ -382,9 +382,10 @@ export interface FAQ {
   id: string;
   question: string;
   answer: string;
-  category: string;
+  category: string | null;
   sort_order: number;
   is_published: boolean;
+  created_at: string;
 }
 
 export interface DeliveryZone {

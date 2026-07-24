@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Camera, MessageCircle, Phone, ArrowUpRight } from "lucide-react";
 
 const LINK_GROUPS = [
@@ -9,7 +10,7 @@ const LINK_GROUPS = [
     links: [
       { href: "/#products", label: "Products" },
       { href: "/how-it-works", label: "How to Prepare" },
-      { href: "/#faq", label: "FAQ" },
+      { href: "/#faq", label: "FAQ", scrollTo: "faq" },
       { href: "/#contact", label: "Contact" },
     ],
   },
@@ -117,16 +118,38 @@ export function Footer() {
                 >
                   {group.heading}
                 </p>
-                {group.links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-[13px] text-[#7A7570] hover:text-[#D4A843] transition-colors duration-150 font-medium leading-none"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {group.links.map((link) => {
+                  const scrollId = (link as { scrollTo?: string }).scrollTo;
+                  if (scrollId) {
+                    return (
+                      <a
+                        key={link.href}
+                        href={link.href}
+                        onClick={(e) => {
+                          const el = document.getElementById(scrollId);
+                          if (el) {
+                            e.preventDefault();
+                            el.scrollIntoView({ behavior: "smooth", block: "start" });
+                          }
+                        }}
+                        className="text-[13px] text-[#7A7570] hover:text-[#D4A843] transition-colors duration-150 font-medium leading-none cursor-pointer"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {link.label}
+                      </a>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="text-[13px] text-[#7A7570] hover:text-[#D4A843] transition-colors duration-150 font-medium leading-none"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
               </div>
             ))}
           </div>

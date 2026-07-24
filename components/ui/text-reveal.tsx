@@ -197,7 +197,7 @@ export function CharReveal({
       {text.split("").map((char, i) => (
         <span
           key={i}
-          className="cr-char inline-block overflow-hidden will-change-transform"
+          className="cr-char inline-block will-change-transform"
           aria-hidden
         >
           <span className="inline-block" style={{ display: char === " " ? "inline" : undefined }}>

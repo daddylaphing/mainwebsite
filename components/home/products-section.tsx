@@ -99,7 +99,7 @@ function ProductPanel({
               className="text-label-caps text-[#D4A843]"
               style={{ fontFamily: "'Inter', sans-serif" }}
             >
-              {product.featured ? "Best Seller" : product.category === "wholesale" ? "Wholesale" : "Product"} — {sectionNumber}
+              {product.featured ? "Best Seller" : product.category === "wholesale" ? (product.name.toLowerCase().includes("momo") ? "Wholesale Momos" : "Wholesale Sheets") : "Product"} — {sectionNumber}
             </span>
           </div>
 

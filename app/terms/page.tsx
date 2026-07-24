@@ -68,6 +68,22 @@ export default function TermsPage() {
               arising from the use of our products or services.
             </p>
           </section>
+
+          <section>
+            <h2
+              className="font-bold text-xl text-[#1A1A1A] mb-4"
+              style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              5. Delivery Disclaimer
+            </h2>
+            <p className="text-[#7A7570] text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+              Laphing Daddy is not responsible for any damage, tampering, spoilage, or mishandling of
+              products that occurs during delivery. Once your order is handed over to the delivery
+              partner (Uber, Rapido, Porter, or any other courier service), we cannot be held liable
+              for the condition in which it arrives. We strongly recommend using a reliable delivery
+              service and ensuring someone is available to receive the order promptly.
+            </p>
+          </section>
         </div>
       </div>
     </div>

@@ -306,7 +306,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
                 </div>
                 <p className="text-sm text-[#4A4540]" style={{ fontFamily: "'Inter', sans-serif" }}>
                   Kits are prepared within <strong className="text-[#1A1A1A]">30–45 min</strong> of confirmation.
-                  Available for pickup <strong className="text-[#1A1A1A]">3 PM – 6 PM</strong>.
+                  Available for delivery <strong className="text-[#1A1A1A]">10 AM – 8 PM</strong>.
                 </p>
               </div>
 

@@ -64,7 +64,7 @@ export default function PrivacyPage() {
               4. Contact Us
             </h2>
             <p className="text-[#7A7570] text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              For questions about this privacy policy, please contact us at privacy@laphingdaddy.com
+              For questions about this privacy policy, please contact us at laphingdaddy@gmail.com
             </p>
           </section>
         </div>

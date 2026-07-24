@@ -174,7 +174,7 @@ export default function WholesalePage() {
             className="text-[#A09890] text-xs mt-8"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Business hours: 3:00 PM - 6:00 PM (Mon-Sun)
+            Business hours: 10:00 AM - 8:00 PM (Mon-Sun)
           </p>
         </div>
       </main>

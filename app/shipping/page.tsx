@@ -37,7 +37,7 @@ export default function ShippingPage() {
               2. Processing Time
             </h2>
             <p className="text-[#7A7570] text-sm leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Our kits are freshly prepared on the day of delivery. Booking slot details and dispatch timings are coordinated strictly during our booking window (3:00 PM – 6:00 PM).
+              Our kits are freshly prepared on the day of delivery. Dispatch timings are coordinated during our delivery window (10:00 AM – 8:00 PM).
             </p>
           </section>
 

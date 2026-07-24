@@ -38,13 +38,6 @@ const ADDONS = [
     image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/garlicwater.png",
   },
   {
-    id: "sauce",
-    name: "Extra Laphing Sauce",
-    price: 15,
-    icon: null,
-    image: "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/inthekit/laphingsauce.png",
-  },
-  {
     id: "seasoning",
     name: "Extra Seasoning Mix",
     price: 10,
@@ -96,7 +89,6 @@ export function CartSheet() {
       sheet: items.find((i) => i.id === "addon-sheet")?.quantity || 0,
       chili: items.find((i) => i.id === "addon-chili")?.quantity || 0,
       garlic: items.find((i) => i.id === "addon-garlic")?.quantity || 0,
-      sauce: items.find((i) => i.id === "addon-sauce")?.quantity || 0,
       seasoning: items.find((i) => i.id === "addon-seasoning")?.quantity || 0,
       waiwai: items.find((i) => i.id === "addon-waiwai")?.quantity || 0,
     } as Record<string, number>;
@@ -387,7 +379,7 @@ export function CartSheet() {
                     className="flex justify-between text-green-700"
                   >
                     <span className="flex items-center gap-1">
-                      🎁 {bulkTier.label}
+                      {bulkTier.label}
                     </span>
                     <span className="font-bold">−₹{bulkDiscount.toFixed(0)}</span>
                   </motion.div>
@@ -407,7 +399,7 @@ export function CartSheet() {
                 </div>
                 {bulkDiscount > 0 && (
                   <p className="text-center text-[10px] text-green-700 font-bold uppercase tracking-wide">
-                    You save ₹{bulkDiscount.toFixed(0)} on this order 🎉
+                    You save ₹{bulkDiscount.toFixed(0)} on this order
                   </p>
                 )}
               </div>

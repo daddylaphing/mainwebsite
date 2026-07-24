@@ -183,7 +183,7 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
               }}
             >
               <MaskReveal delay={0.1}>
-                LAPHING KIT
+                DIY LAPHING KIT
               </MaskReveal>
             </h1>
             <p className="text-[#7A7570] text-base leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
