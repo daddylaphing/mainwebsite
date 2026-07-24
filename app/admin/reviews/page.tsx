@@ -11,7 +11,7 @@ export default async function ReviewsManagementPage() {
 
   const { data: reviews } = await supabase
     .from("reviews")
-    .select("*")
+    .select("*, reviewer_name, thumbnail_url, instagram_reel_url, quote, rating, featured, active, display_order")
     .order("created_at", { ascending: false });
 
   return (

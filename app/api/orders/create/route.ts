@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
         price = productPriceMap[item.product_id];
       } else {
         // Addon or non-DB item: trust client price but clamp to reasonable range
-        price = Math.max(0, Math.min(Number(item.price ?? 0), 10000));
+        price = Math.max(0, Math.min(Number(item.price ?? 0), 500));
       }
       return { ...item, price };
     });

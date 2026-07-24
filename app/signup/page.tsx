@@ -145,12 +145,16 @@ export default function SignupPage() {
     const pendingName = sessionStorage.getItem("signup_pending_name");
 
     if (pendingPassword) {
-      await supabase.auth.updateUser({
-        password: atob(pendingPassword), // decode base64
+      const { error: updateErr } = await supabase.auth.updateUser({
+        password: atob(pendingPassword),
         data: { full_name: pendingName || name },
       });
       sessionStorage.removeItem("signup_pending_password");
       sessionStorage.removeItem("signup_pending_name");
+      if (updateErr) {
+        // Non-critical — user is logged in but password wasn't set; they can reset it
+        console.warn("Password set failed after OTP:", updateErr.message);
+      }
     }
 
     if (data.user) {
@@ -381,7 +385,7 @@ export default function SignupPage() {
 
                 <div className="flex items-center justify-between mt-5 text-xs" style={{ fontFamily: "'Inter', sans-serif" }}>
                   <button
-                    onClick={() => { setStep("form"); setOtp(""); setError(null); }}
+                    onClick={() => { setStep("form"); setOtp(""); setError(null); recaptchaWidgetId.current = null; }}
                     className="text-[#7A7570] hover:text-[#1A1A1A] transition-colors"
                   >
                     Back

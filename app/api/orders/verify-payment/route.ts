@@ -51,12 +51,10 @@ export async function POST(request: NextRequest) {
       .update(payload)
       .digest("hex");
 
-    const isValid =
-      generatedSignature.length === razorpaySignature.length &&
-      crypto.timingSafeEqual(
-        Buffer.from(generatedSignature, "utf8"),
-        Buffer.from(razorpaySignature, "utf8")
-      );
+    const isValid = crypto.timingSafeEqual(
+      Buffer.from(generatedSignature, "hex"),
+      Buffer.from(razorpaySignature.padEnd(generatedSignature.length, " "), "utf8").slice(0, generatedSignature.length)
+    ) && generatedSignature === razorpaySignature;
 
     console.log("[verify-payment]", {
       isValid,

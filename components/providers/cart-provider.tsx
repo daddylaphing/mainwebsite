@@ -4,6 +4,7 @@ import {
   createContext,
   useContext,
   useReducer,
+  useEffect,
   useCallback,
   type ReactNode,
 } from "react";
@@ -177,8 +178,35 @@ function cartReducer(state: FullCartState, action: CartAction): FullCartState {
 
 const CartContext = createContext<CartContextType | null>(null);
 
+const CART_STORAGE_KEY = "ld_cart_items";
+
+function loadPersistedItems(): CartItemUI[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as CartItemUI[];
+  } catch {
+    return [];
+  }
+}
+
+function buildInitialState(): FullCartState {
+  const items = loadPersistedItems();
+  return { ...INITIAL, items, ...calcTotals(items) };
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, INITIAL);
+  const [state, dispatch] = useReducer(cartReducer, undefined, buildInitialState);
+
+  // Persist cart items to localStorage on every change
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(state.items));
+    } catch {
+      // Ignore storage errors (private browsing, quota exceeded)
+    }
+  }, [state.items]);
 
   const addItem = useCallback((product: Product, quantity = 1) => {
     dispatch({ type: "ADD_ITEM", payload: { product, quantity } });

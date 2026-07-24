@@ -10,7 +10,9 @@ import { createClient } from "@/lib/supabase/client";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? "/account";
+  const rawRedirect = searchParams.get("redirectTo") ?? "/account";
+  // Only allow internal redirects — prevent open redirect attacks
+  const redirectTo = rawRedirect.startsWith("/") && !rawRedirect.startsWith("//") ? rawRedirect : "/account";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

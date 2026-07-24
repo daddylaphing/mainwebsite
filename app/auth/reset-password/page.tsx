@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { EyeOff, Lock, Loader2, CheckCircle2, Eye as EyeIcon } from "lucide-react";
@@ -15,8 +15,27 @@ export default function ResetPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasSession, setHasSession] = useState<boolean | null>(null); // null = checking
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const supabase = createClient();
+
+  // Verify there's a valid session (password reset token exchanges to session)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setHasSession(!!data.session);
+      if (!data.session) {
+        // No valid reset session — redirect to forgot-password
+        router.replace("/forgot-password?error=invalid_reset_link");
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimer.current) clearTimeout(redirectTimer.current);
+    };
+  }, []);
 
   async function handleReset(e: React.FormEvent) {
     e.preventDefault();
@@ -33,9 +52,20 @@ export default function ResetPasswordPage() {
       setLoading(false);
     } else {
       setDone(true);
-      setTimeout(() => router.push("/account"), 2500);
+      redirectTimer.current = setTimeout(() => router.push("/account"), 2500);
     }
   }
+
+  // Show loading while checking session
+  if (hasSession === null) {
+    return (
+      <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-[#D4A843] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!hasSession) return null; // Redirecting
 
   return (
     <div className="min-h-screen bg-[#FAFAF8] flex items-center justify-center px-5 py-24 md:py-32">
