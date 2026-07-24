@@ -10,6 +10,7 @@ import { ScrollProgress } from "@/components/layout/scroll-progress";
 import { SkipToContent } from "@/components/ui/skip-to-content";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StoreLayoutWrapper } from "@/components/layout/store-layout-wrapper";
+import { AuthErrorHandler } from "@/components/auth/auth-error-handler";
 
 
 
@@ -136,6 +137,7 @@ export default function RootLayout({
                   <LenisProvider>
                     <SkipToContent />
                     <ScrollProgress />
+                    <AuthErrorHandler />
                     <StoreLayoutWrapper>
                       {children}
                     </StoreLayoutWrapper>
