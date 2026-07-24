@@ -102,9 +102,9 @@ export default function AccountPage() {
             className="flex flex-col gap-2"
           >
             {[
-              { icon: User, label: "Account Overview", href: "/account", active: true },
-              { icon: Settings, label: "Settings", href: "/account/settings", active: false },
-              { icon: Package, label: "My Orders", href: "#orders", active: false },
+              { icon: User,     label: "Account Overview", href: "/account",          active: true  },
+              { icon: Settings, label: "Settings",          href: "/account/settings", active: false },
+              { icon: Package,  label: "My Orders",         href: "/account/orders",   active: false },
             ].map((item) => (
               <Link
                 key={item.label}

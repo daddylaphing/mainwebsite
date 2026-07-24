@@ -149,7 +149,7 @@ export function OrderDetail({ order }: OrderDetailProps) {
         <div className="max-w-5xl mx-auto px-4 md:px-8 space-y-6">
 
           <div className="flex items-center gap-4">
-            <Link href="/account" className="flex items-center gap-1.5 text-xs font-semibold text-[#7A7570] hover:text-[#1A1A1A] transition-colors uppercase tracking-wider">
+            <Link href="/account/orders" className="flex items-center gap-1.5 text-xs font-semibold text-[#7A7570] hover:text-[#1A1A1A] transition-colors uppercase tracking-wider">
               <ArrowLeft className="h-3.5 w-3.5" />
               My Orders
             </Link>

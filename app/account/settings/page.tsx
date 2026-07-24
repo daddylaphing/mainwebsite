@@ -16,7 +16,7 @@ import { toast } from "sonner";
 const NAV_ITEMS = [
   { icon: User,     label: "Account Overview", href: "/account",          active: false },
   { icon: Settings, label: "Settings",          href: "/account/settings", active: true  },
-  { icon: Package,  label: "My Orders",         href: "/account#orders",   active: false },
+  { icon: Package,  label: "My Orders",         href: "/account/orders",   active: false },
 ];
 
 export default function AccountSettingsPage() {
