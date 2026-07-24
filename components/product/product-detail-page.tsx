@@ -126,7 +126,7 @@ export function ProductDetailPage({ product }: ProductDetailPageProps) {
             <div>
               {product.category === "wholesale" && (
                 <span className="inline-block text-label-caps text-[#D4A843] mb-3">
-                  Wholesale Sheet
+                  {product.name.toLowerCase().includes("momo") ? "Wholesale Momos" : "Wholesale Sheets"}
                 </span>
               )}
               <h1
