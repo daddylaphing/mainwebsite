@@ -281,7 +281,7 @@ export default function OrdersPage() {
                                 ₹{order.total}
                               </p>
                             </div>
-                            {order.status === "delivering" || order.status === "out_for_delivery" ? (
+                            {order.status === "out_for_delivery" ? (
                               <>
                                 <div className="w-px h-6 bg-[#E6DFD5]" />
                                 <div className="flex items-center gap-1 text-cyan-700">
