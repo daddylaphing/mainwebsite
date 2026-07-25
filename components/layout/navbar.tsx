@@ -127,9 +127,9 @@ export function Navbar() {
             <Image
               src="/logo.png"
               alt="Laphing Daddy Logo"
-              width={32}
-              height={32}
-              className="object-contain w-7 h-7 md:w-8 md:h-8"
+              width={52}
+              height={52}
+              className="object-contain w-11 h-11 md:w-[52px] md:h-[52px]"
               priority
             />
             Laphing <span className="italic text-[#D4A843]">Daddy</span>
