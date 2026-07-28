@@ -17,6 +17,8 @@ export function ReviewForm({ initialReview }: ReviewFormProps) {
 
   const [reviewerName, setReviewerName] = useState(initialReview?.reviewer_name || "");
   const [reviewerInstagram, setReviewerInstagram] = useState(initialReview?.reviewer_instagram || "");
+  const [thumbnailUrl, setThumbnailUrl] = useState(initialReview?.thumbnail_url || "");
+  const [instagramReelUrl, setInstagramReelUrl] = useState(initialReview?.instagram_reel_url || "");
   const [rating, setRating] = useState(initialReview?.rating || 5);
   const [quote, setQuote] = useState(initialReview?.quote || "");
   const [active, setActive] = useState(initialReview?.active !== false);
@@ -35,6 +37,8 @@ export function ReviewForm({ initialReview }: ReviewFormProps) {
     const payload = {
       reviewer_name: reviewerName,
       reviewer_instagram: reviewerInstagram || null,
+      thumbnail_url: thumbnailUrl || null,
+      instagram_reel_url: instagramReelUrl || null,
       rating: Number(rating),
       quote,
       active,
@@ -121,6 +125,41 @@ export function ReviewForm({ initialReview }: ReviewFormProps) {
               placeholder="e.g. @sonam_dorjee"
               className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-4 py-3 text-[#1A1A1A] text-sm focus:outline-none focus:border-[#6E1D25]"
             />
+          </div>
+
+          {/* Thumbnail URL */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-[#7A7570] uppercase tracking-wider">
+              Video Thumbnail URL
+            </label>
+            <input
+              type="url"
+              value={thumbnailUrl}
+              onChange={(e) => setThumbnailUrl(e.target.value)}
+              placeholder="e.g. https://example.com/thumbnail.jpg"
+              className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-4 py-3 text-[#1A1A1A] text-sm focus:outline-none focus:border-[#6E1D25]"
+            />
+            <p className="text-xs text-[#A09890] italic">
+              Optional: Upload thumbnail to a service like Imgur or use Instagram thumbnail
+            </p>
+          </div>
+
+          {/* Instagram Reel URL / Supabase Video URL */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-bold text-[#7A7570] uppercase tracking-wider">
+              Video URL *
+            </label>
+            <input
+              type="url"
+              required
+              value={instagramReelUrl}
+              onChange={(e) => setInstagramReelUrl(e.target.value)}
+              placeholder="e.g. https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/reviews/videos/6.mp4"
+              className="bg-[#FAFAF8] border border-[#E6DFD5] rounded-xl px-4 py-3 text-[#1A1A1A] text-sm focus:outline-none focus:border-[#6E1D25]"
+            />
+            <p className="text-xs text-[#A09890] italic">
+              Paste the Supabase storage URL of the MP4 video (from reviews/videos/ bucket folder)
+            </p>
           </div>
 
           {/* Rating */}

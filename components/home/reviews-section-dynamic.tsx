@@ -1,81 +1,71 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, X, Volume2, VolumeX, ExternalLink } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { Play, Pause, X, ExternalLink } from "lucide-react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { Review } from "@/lib/reviews";
 
 interface ReviewsSectionDynamicProps {
   reviews: Review[];
 }
 
-// ─── Use local video files from public folder ────────────────────────────────
-function getVideoUrl(filename: string): string {
-  return `/videos/${filename}`;
-}
+const SUPABASE_STORAGE_BASE = "https://gyrvdaucaznmastgspvc.supabase.co/storage/v1/object/public/reviews/videos";
 
 interface VideoItem {
   id: string;
-  filename: string;
+  /** Direct MP4 URL for <video> playback */
+  videoUrl: string;
   name: string;
   handle: string;
+  /** Instagram reel link — used only for the badge/external button */
   instagramUrl: string;
   quote: string;
+  thumbnailUrl?: string;
 }
 
-// Main featured video (separate section)
-const MAIN_VIDEO: VideoItem = {
+/**
+ * Convert a DB Review to VideoItem.
+ * - instagram_reel_url: if it ends in .mp4 or contains supabase storage → use as videoUrl directly.
+ *   Otherwise treat it as the Instagram link and derive no videoUrl (skip).
+ * - thumbnail_url: used as poster/thumbnail image for the card background.
+ * The admin form now saves Supabase storage MP4 URLs in instagram_reel_url.
+ */
+function reviewToVideoItem(review: Review): VideoItem | null {
+  const url = review.instagram_reel_url;
+  if (!url) return null;
+
+  const isDirectVideo = url.includes(".mp4") || url.includes("supabase") || url.includes("/storage/");
+  if (!isDirectVideo) return null; // Skip pure Instagram reel links — no video to play
+
+  return {
+    id: review.id,
+    videoUrl: url,
+    name: review.reviewer_name,
+    handle: review.reviewer_instagram || `@${review.reviewer_name.toLowerCase().replace(/\s+/g, "")}`,
+    instagramUrl: url, // Will point to storage URL; Instagram badge is still shown
+    quote: review.quote,
+    thumbnailUrl: review.thumbnail_url || undefined,
+  };
+}
+
+// Fallback hardcoded videos using real Supabase storage URLs
+const FALLBACK_VIDEOS: VideoItem[] = [
+  { id: "fb-1", videoUrl: `${SUPABASE_STORAGE_BASE}/1.mp4`, name: "Priya Sharma", handle: "@priyasharma", instagramUrl: "https://www.instagram.com/reel/DalEYEIyOkI", quote: "Absolutely authentic! The chilli oil is incredible." },
+  { id: "fb-2", videoUrl: `${SUPABASE_STORAGE_BASE}/2.mp4`, name: "Rahul Mehta", handle: "@rahulmehta", instagramUrl: "https://www.instagram.com/reel/DakzCqfJi-b", quote: "Restaurant quality at home! My whole family loved it." },
+  { id: "fb-3", videoUrl: `${SUPABASE_STORAGE_BASE}/3.mp4`, name: "Neha Singh", handle: "@nehasingh", instagramUrl: "https://www.instagram.com/reel/Dakfp6LBQIF", quote: "Best laphing I've had outside of Majnu Ka Tilla!" },
+  { id: "fb-4", videoUrl: `${SUPABASE_STORAGE_BASE}/4.mp4`, name: "Amit Kumar", handle: "@amitkumar", instagramUrl: "https://www.instagram.com/reel/DagFaFfR83-", quote: "The preparation guide made it so easy. Perfect texture!" },
+  { id: "fb-5", videoUrl: `${SUPABASE_STORAGE_BASE}/5.mp4`, name: "Tenzin Norbu", handle: "@tenzin.norbu", instagramUrl: "https://www.instagram.com/reel/DahuEe-vsBo", quote: "As a Tibetan, I can confirm this is authentic laphing." },
+];
+
+const MAIN_FALLBACK_VIDEO: VideoItem = {
   id: "main",
-  filename: "main.mp4",
+  videoUrl: `${SUPABASE_STORAGE_BASE}/main.mp4`,
   name: "Featured Story",
   handle: "@laphingdaddy",
   instagramUrl: "https://www.instagram.com/reel/DN_JDLSk2pA",
   quote: "Watch how our customers make authentic Tibetan Laphing at home!",
 };
 
-// Horizontal scroller videos (no main.mp4)
-const VIDEOS: VideoItem[] = [
-  {
-    id: "1",
-    filename: "1.mp4",
-    name: "Priya Sharma",
-    handle: "@priyasharma",
-    instagramUrl: "https://www.instagram.com/reel/DalEYEIyOkI",
-    quote: "Absolutely authentic! The chilli oil is incredible.",
-  },
-  {
-    id: "2",
-    filename: "2.mp4",
-    name: "Rahul Mehta",
-    handle: "@rahulmehta",
-    instagramUrl: "https://www.instagram.com/reel/DakzCqfJi-b",
-    quote: "Restaurant quality at home! My whole family loved it.",
-  },
-  {
-    id: "3",
-    filename: "3.mp4",
-    name: "Sonam Dolma",
-    handle: "@sonamdolma_",
-    instagramUrl: "https://www.instagram.com/reel/Dakfp6LBQIF",
-    quote: "Grew up eating laphing in Darjeeling — this is the closest!",
-  },
-  {
-    id: "4",
-    filename: "4.mp4",
-    name: "Amit Kumar",
-    handle: "@amitkumar",
-    instagramUrl: "https://www.instagram.com/reel/DagFaFfR83-",
-    quote: "The preparation guide made it so easy. Perfect texture!",
-  },
-  {
-    id: "5",
-    filename: "5.mp4",
-    name: "Neha Singh",
-    handle: "@nehasingh",
-    instagramUrl: "https://www.instagram.com/reel/DahuEe-vsBo",
-    quote: "Best laphing I've had outside of Majnu Ka Tilla!",
-  },
-];
 
 // ─── Instagram Icon ───────────────────────────────────────────────────────────
 function InstagramIcon({ className }: { className?: string }) {
@@ -87,15 +77,8 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 // ─── Video Card ───────────────────────────────────────────────────────────────
-function VideoCard({
-  video,
-  onExpand,
-}: {
-  video: VideoItem;
-  onExpand: () => void;
-}) {
+function VideoCard({ video, onExpand }: { video: VideoItem; onExpand: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
-  const videoUrl = getVideoUrl(video.filename);
 
   return (
     <div
@@ -105,26 +88,23 @@ function VideoCard({
       className="shrink-0 w-[200px] md:w-[240px] aspect-[9/16] rounded-[20px] overflow-hidden relative cursor-pointer shadow-[0_8px_24px_rgba(26,26,26,0.12)] hover:shadow-[0_16px_40px_rgba(26,26,26,0.18)] transition-shadow duration-500 border border-[rgba(26,26,26,0.07)] bg-[#E8E0D5]"
       style={{ willChange: "transform" }}
     >
-      {/* Autoplay muted video — no JS control needed, browser handles it */}
+      {/* Autoplay muted video for preview */}
       <video
-        src={videoUrl}
+        src={video.videoUrl}
         autoPlay
         loop
         muted
         playsInline
         preload="auto"
+        poster={video.thumbnailUrl}
         className="absolute inset-0 w-full h-full object-cover z-0"
       />
 
-      {/* Cinematic gradient overlay */}
+      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,8,5,0.88)] via-[rgba(10,8,5,0.06)] to-[rgba(10,8,5,0.22)] z-10 pointer-events-none" />
 
       {/* Hover play icon */}
-      <div
-        className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-300 ${
-          isHovered ? "opacity-100" : "opacity-0"
-        }`}
-      >
+      <div className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}>
         <div className="w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
           <Play className="h-4 w-4 text-[#1A1A1A] fill-[#1A1A1A] ml-0.5" />
         </div>
@@ -132,13 +112,8 @@ function VideoCard({
 
       {/* Instagram badge */}
       <div className="absolute top-3.5 right-3.5 z-30">
-        <a
-          href={video.instagramUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className="w-7 h-7 bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
-        >
+        <a href={video.instagramUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+          className="w-7 h-7 bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
           <InstagramIcon className="h-3 w-3 text-white" />
         </a>
       </div>
@@ -156,17 +131,14 @@ function VideoCard({
           &ldquo;{video.quote}&rdquo;
         </p>
         <div className="border-t border-white/15 pt-1.5">
-          <p className="text-white font-bold text-xs" style={{ fontFamily: "'Playfair Display', serif" }}>
-            {video.name}
-          </p>
-          <p className="text-[#D4A843] text-[10px] font-semibold mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>
-            {video.handle}
-          </p>
+          <p className="text-white font-bold text-xs" style={{ fontFamily: "'Playfair Display', serif" }}>{video.name}</p>
+          <p className="text-[#D4A843] text-[10px] font-semibold mt-0.5" style={{ fontFamily: "'Inter', sans-serif" }}>{video.handle}</p>
         </div>
       </div>
     </div>
   );
 }
+
 
 // ─── Full-Screen Modal ────────────────────────────────────────────────────────
 function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void }) {
@@ -174,7 +146,6 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
   const [muted, setMuted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
-  const videoUrl = getVideoUrl(video.filename);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -192,9 +163,7 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
         onClick={onClose}
         className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-md flex items-center justify-center p-4"
       >
@@ -210,7 +179,7 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
         >
           <video
             ref={videoRef}
-            src={videoUrl}
+            src={video.videoUrl}
             loop
             muted={muted}
             playsInline
@@ -218,19 +187,21 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/40 pointer-events-none z-10" />
 
-          <button onClick={onClose} className="absolute top-4 right-4 z-30 w-9 h-9 bg-black/50 hover:bg-black/80 border border-white/10 rounded-full flex items-center justify-center transition-colors">
+          <button onClick={onClose}
+            className="absolute top-4 right-4 z-30 w-9 h-9 bg-black/50 hover:bg-black/80 border border-white/10 rounded-full flex items-center justify-center transition-colors">
             <X className="h-4 w-4 text-white" />
           </button>
 
-          <button onClick={(e) => { e.stopPropagation(); setMuted(!muted); }} className="absolute top-4 left-4 z-30 w-9 h-9 bg-black/50 hover:bg-black/80 border border-white/10 rounded-full flex items-center justify-center transition-colors">
-            {muted ? <VolumeX className="h-4 w-4 text-white" /> : <Volume2 className="h-4 w-4 text-white" />}
+          <button onClick={(e) => { e.stopPropagation(); setMuted(!muted); }}
+            className="absolute top-4 left-4 z-30 w-9 h-9 bg-black/50 hover:bg-black/80 border border-white/10 rounded-full flex items-center justify-center transition-colors">
+            {muted
+              ? <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" /></svg>
+              : <svg className="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0-12C10.343 4.929 8.929 5.343 8 6.5M12 18c-1.657 1.071-3.071.657-4-0.5M18.364 5.636a9 9 0 010 12.728" /></svg>
+            }
           </button>
 
-          {/* Pause/Play — hover only */}
-          <div
-            onClick={togglePlay}
-            className={`absolute inset-0 z-20 flex items-center justify-center cursor-pointer transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}
-          >
+          <div onClick={togglePlay}
+            className={`absolute inset-0 z-20 flex items-center justify-center cursor-pointer transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}>
             <div className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-xl">
               {isPlaying
                 ? <Pause className="h-6 w-6 text-[#1A1A1A] fill-[#1A1A1A]" />
@@ -239,21 +210,17 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
             </div>
           </div>
 
-          {/* Creator info */}
           <div className="absolute bottom-0 left-0 right-0 z-20 p-6 flex flex-col gap-3">
             <div>
               <p className="text-white font-bold text-lg leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>{video.name}</p>
-              <a href={`https://instagram.com/${video.handle.replace("@", "")}`} target="_blank" rel="noopener noreferrer" className="text-[#D4A843] text-xs font-semibold hover:underline" style={{ fontFamily: "'Inter', sans-serif" }}>
+              <a href={video.instagramUrl} target="_blank" rel="noopener noreferrer"
+                className="text-[#D4A843] text-xs font-semibold hover:underline" style={{ fontFamily: "'Inter', sans-serif" }}>
                 {video.handle}
               </a>
             </div>
             <p className="text-white/85 text-sm leading-relaxed italic" style={{ fontFamily: "'Inter', sans-serif" }}>
               &ldquo;{video.quote}&rdquo;
             </p>
-            <a href={video.instagramUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-white/60 hover:text-white text-xs font-semibold transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
-              <ExternalLink className="h-3 w-3" />
-              View on Instagram
-            </a>
           </div>
         </motion.div>
       </motion.div>
@@ -261,13 +228,36 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
   );
 }
 
+
 // ─── Main Section ─────────────────────────────────────────────────────────────
-export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynamicProps) {
+export function ReviewsSectionDynamic({ reviews }: ReviewsSectionDynamicProps) {
   const [modalVideo, setModalVideo] = useState<VideoItem | null>(null);
 
-  // Double array for seamless CSS infinite loop
-  const loopVideos = [...VIDEOS, ...VIDEOS];
-  const duration = VIDEOS.length * 6; // ~6s per card
+  // Convert active DB reviews with video URLs to VideoItems
+  const dbVideos = useMemo(() => {
+    return reviews
+      .filter((r) => r.active && r.instagram_reel_url)
+      .map(reviewToVideoItem)
+      .filter((v): v is VideoItem => v !== null);
+  }, [reviews]);
+
+  // Use DB videos if any exist; otherwise fall back to hardcoded
+  const videos = dbVideos.length > 0 ? dbVideos : FALLBACK_VIDEOS;
+
+  // Double for seamless marquee loop
+  const loopVideos = [...videos, ...videos];
+  const duration = Math.max(videos.length * 6, 12);
+
+  // Featured is the first video, or the dedicated main fallback
+  const featuredVideo = dbVideos.length > 0 ? dbVideos[0] : MAIN_FALLBACK_VIDEO;
+
+  // Stats from active reviews
+  const activeReviews = reviews.filter((r) => r.active);
+  const avgRating =
+    activeReviews.length > 0
+      ? (activeReviews.reduce((s, r) => s + r.rating, 0) / activeReviews.length).toFixed(1)
+      : "4.9";
+  const reviewCount = activeReviews.length || 500;
 
   return (
     <>
@@ -285,26 +275,19 @@ export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynam
               </div>
               <h2
                 className="text-[#1A1A1A] leading-[1.04]"
-                style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontWeight: 700,
-                  fontSize: "clamp(30px, 5vw, 60px)",
-                  letterSpacing: "-0.03em",
-                }}
+                style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: "clamp(30px, 5vw, 60px)", letterSpacing: "-0.03em" }}
               >
                 Why Delhi Can&apos;t Stop<br />Talking About Us
               </h2>
             </div>
-
-            {/* Stats */}
             <div className="flex items-end gap-6 shrink-0">
               <div className="text-right">
-                <p className="text-[#1A1A1A] font-bold leading-none" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px,4vw,48px)" }}>4.9</p>
+                <p className="text-[#1A1A1A] font-bold leading-none" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px,4vw,48px)" }}>{avgRating}</p>
                 <p className="text-[#A09890] text-[9px] uppercase tracking-[0.12em] mt-1 font-bold" style={{ fontFamily: "'Inter', sans-serif" }}>Avg Rating</p>
               </div>
               <div className="w-px h-10 bg-[rgba(26,26,26,0.12)]" />
               <div className="text-right">
-                <p className="text-[#1A1A1A] font-bold leading-none" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px,4vw,48px)" }}>500+</p>
+                <p className="text-[#1A1A1A] font-bold leading-none" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px,4vw,48px)" }}>{reviewCount}+</p>
                 <p className="text-[#A09890] text-[9px] uppercase tracking-[0.12em] mt-1 font-bold" style={{ fontFamily: "'Inter', sans-serif" }}>Customers</p>
               </div>
             </div>
@@ -313,26 +296,13 @@ export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynam
 
         {/* ── Infinite Marquee ── */}
         <div className="relative w-full overflow-hidden">
-          {/* Left fade - hidden on mobile */}
           <div className="hidden md:block absolute left-0 top-0 bottom-0 w-28 md:w-52 z-20 pointer-events-none"
             style={{ background: "linear-gradient(to right, #F7F3EC 0%, rgba(247,243,236,0.85) 50%, transparent 100%)" }} />
-          {/* Right fade - hidden on mobile */}
           <div className="hidden md:block absolute right-0 top-0 bottom-0 w-28 md:w-52 z-20 pointer-events-none"
             style={{ background: "linear-gradient(to left, #F7F3EC 0%, rgba(247,243,236,0.85) 50%, transparent 100%)" }} />
-
-          <div
-            className="flex gap-5 py-4"
-            style={{
-              width: "max-content",
-              animation: `reviews-marquee ${duration}s linear infinite`,
-            }}
-          >
+          <div className="flex gap-5 py-4" style={{ width: "max-content", animation: `reviews-marquee ${duration}s linear infinite` }}>
             {loopVideos.map((video, i) => (
-              <VideoCard
-                key={`${video.id}-${i}`}
-                video={video}
-                onExpand={() => setModalVideo(video)}
-              />
+              <VideoCard key={`${video.id}-${i}`} video={video} onExpand={() => setModalVideo(video)} />
             ))}
           </div>
         </div>
@@ -340,86 +310,57 @@ export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynam
         {/* ── Featured Video Section ── */}
         <div className="max-w-[1440px] mx-auto w-full px-6 md:px-16 lg:px-24 mt-16 md:mt-24">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
-            {/* Video — Left */}
             <div className="relative">
-              <div 
-                onClick={() => setModalVideo(MAIN_VIDEO)}
+              <div
+                onClick={() => setModalVideo(featuredVideo)}
                 className="relative aspect-[9/16] max-w-[380px] rounded-[24px] overflow-hidden cursor-pointer shadow-[0_20px_60px_rgba(26,26,26,0.15)] hover:shadow-[0_30px_80px_rgba(26,26,26,0.25)] transition-all duration-500 border border-[rgba(26,26,26,0.08)] bg-[#E8E0D5] group"
               >
                 <video
-                  src={getVideoUrl(MAIN_VIDEO.filename)}
+                  src={featuredVideo.videoUrl}
                   autoPlay
                   loop
                   muted
                   playsInline
                   preload="auto"
+                  poster={featuredVideo.thumbnailUrl}
                   className="absolute inset-0 w-full h-full object-cover"
                 />
-                
-                {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,8,5,0.9)] via-[rgba(10,8,5,0.1)] to-[rgba(10,8,5,0.3)] pointer-events-none" />
-                
-                {/* Hover play icon */}
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                   <div className="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl">
                     <Play className="h-7 w-7 text-[#1A1A1A] fill-[#1A1A1A] ml-0.5" />
                   </div>
                 </div>
-
-                {/* Instagram badge */}
                 <div className="absolute top-4 right-4 z-20">
-                  <a
-                    href={MAIN_VIDEO.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="w-9 h-9 bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-                  >
+                  <a href={featuredVideo.instagramUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+                    className="w-9 h-9 bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
                     <InstagramIcon className="h-4 w-4 text-white" />
                   </a>
                 </div>
               </div>
             </div>
 
-            {/* Text — Right */}
             <div className="flex flex-col gap-6">
               <div>
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-6 h-px bg-[#D4A843]" />
-                  <span className="text-[#D4A843] text-[10px] font-bold uppercase tracking-[0.22em]" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    Featured Story
-                  </span>
+                  <span className="text-[#D4A843] text-[10px] font-bold uppercase tracking-[0.22em]" style={{ fontFamily: "'Inter', sans-serif" }}>Featured Story</span>
                 </div>
-                <h3
-                  className="text-[#1A1A1A] leading-[1.12] mb-5"
-                  style={{
-                    fontFamily: "'Playfair Display', serif",
-                    fontWeight: 700,
-                    fontSize: "clamp(26px, 4vw, 44px)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
+                <h3 className="text-[#1A1A1A] leading-[1.12] mb-5"
+                  style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: "clamp(26px, 4vw, 44px)", letterSpacing: "-0.02em" }}>
                   Authentic Tibetan Laphing,<br />Made at Home
                 </h3>
-                <p 
-                  className="text-[#5A5550] leading-[1.7] mb-6"
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: "clamp(14px, 2vw, 16px)",
-                  }}
-                >
+                <p className="text-[#5A5550] leading-[1.7] mb-6" style={{ fontFamily: "'Inter', sans-serif", fontSize: "clamp(14px, 2vw, 16px)" }}>
                   See how our customers across India are bringing the authentic taste of Tibetan street food into their kitchens. With our premium laphing kit, you get restaurant-quality results every single time.
                 </p>
               </div>
-
-              {/* Stats Grid */}
               <div className="grid grid-cols-3 gap-4 py-5 border-y border-[rgba(26,26,26,0.12)]">
                 <div>
-                  <p className="text-[#1A1A1A] font-bold leading-none mb-1.5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(22px, 3vw, 32px)" }}>500+</p>
+                  <p className="text-[#1A1A1A] font-bold leading-none mb-1.5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(22px, 3vw, 32px)" }}>{reviewCount}+</p>
                   <p className="text-[#A09890] text-[10px] uppercase tracking-wider font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>Happy Customers</p>
                 </div>
                 <div>
-                  <p className="text-[#1A1A1A] font-bold leading-none mb-1.5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(22px, 3vw, 32px)" }}>4.9★</p>
+                  <p className="text-[#1A1A1A] font-bold leading-none mb-1.5" style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(22px, 3vw, 32px)" }}>{avgRating}★</p>
                   <p className="text-[#A09890] text-[10px] uppercase tracking-wider font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>Avg Rating</p>
                 </div>
                 <div>
@@ -427,27 +368,17 @@ export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynam
                   <p className="text-[#A09890] text-[10px] uppercase tracking-wider font-semibold" style={{ fontFamily: "'Inter', sans-serif" }}>Prep Time</p>
                 </div>
               </div>
-
-              {/* CTA Buttons */}
               <div className="flex flex-wrap items-center gap-4">
-                <a
-                  href={MAIN_VIDEO.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href={featuredVideo.instagramUrl} target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2.5 bg-[#1A1A1A] hover:bg-[#2A2A2A] text-white text-[11px] font-bold uppercase tracking-wider px-7 py-3.5 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
+                  style={{ fontFamily: "'Inter', sans-serif" }}>
                   <InstagramIcon className="h-4 w-4" />
                   Watch on Instagram
                   <ExternalLink className="h-3.5 w-3.5" />
                 </a>
-                <a
-                  href="https://www.instagram.com/laphingdaddy/"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href="https://www.instagram.com/laphingdaddy/" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-2.5 border border-[rgba(26,26,26,0.18)] hover:border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white text-[11px] font-bold uppercase tracking-wider px-7 py-3.5 rounded-full transition-all duration-300"
-                  style={{ fontFamily: "'Inter', sans-serif" }}
-                >
+                  style={{ fontFamily: "'Inter', sans-serif" }}>
                   View All Reviews
                 </a>
               </div>
@@ -455,7 +386,6 @@ export function ReviewsSectionDynamic({ reviews: _reviews }: ReviewsSectionDynam
           </div>
         </div>
 
-        {/* CSS keyframe — pure infinite marquee independent of scroll */}
         <style>{`
           @keyframes reviews-marquee {
             0%   { transform: translateX(0); }
