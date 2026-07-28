@@ -265,8 +265,8 @@ export function ReviewsSectionDynamic({ reviews }: ReviewsSectionDynamicProps) {
   const loopVideos = [...videos, ...videos];
   const duration = Math.max(videos.length * 6, 12);
 
-  // Featured is the first video, or the dedicated main fallback
-  const featuredVideo = dbVideos.length > 0 ? dbVideos[0] : MAIN_FALLBACK_VIDEO;
+  // Featured section always shows main.mp4
+  const featuredVideo = MAIN_FALLBACK_VIDEO;
 
   // Stats from active reviews
   const activeReviews = reviews.filter((r) => r.active);
