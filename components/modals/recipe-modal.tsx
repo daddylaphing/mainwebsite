@@ -4,9 +4,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChefHat, Clock, Users } from "lucide-react";
 import { useEffect } from "react";
 
+import type { RecipeStep } from "@/lib/recipe-guides-server";
+
 interface RecipeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  steps?: RecipeStep[];
 }
 
 const INGREDIENTS = [
@@ -61,7 +64,8 @@ const SERVING_TIPS = [
   "Store unused sheets refrigerated and consume within 2 days.",
 ];
 
-export function RecipeModal({ isOpen, onClose }: RecipeModalProps) {
+export function RecipeModal({ isOpen, onClose, steps: propSteps }: RecipeModalProps) {
+  const STEPS = propSteps && propSteps.length > 0 ? propSteps : PREPARATION_STEPS;
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -176,7 +180,7 @@ export function RecipeModal({ isOpen, onClose }: RecipeModalProps) {
                       Preparation Steps
                     </h3>
                     <div className="space-y-4">
-                      {PREPARATION_STEPS.map((step) => (
+                      {STEPS.map((step) => (
                         <div
                           key={step.step}
                           className="flex gap-4 bg-white border border-[#E6DFD5] rounded-xl p-5 shadow-sm"

@@ -15,6 +15,7 @@ import { ReviewCardSkeleton } from "@/components/ui/loading-skeleton";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { getFeaturedProducts } from "@/lib/products";
 import { getReviews } from "@/lib/reviews";
+import { getRecipeGuide } from "@/lib/recipe-guides-server";
 import { getFAQs } from "@/lib/faqs-server";
 import { CurvedLoopDivider } from "@/components/home/curved-loop-divider";
 import { FloatingSpiceFlakes } from "@/components/ui/floating-spice-flakes";
@@ -43,6 +44,8 @@ async function ReviewsData() {
 
 export default async function HomePage() {
   const faqs = await getFAQs();
+  const recipeGuide = await getRecipeGuide();
+  const recipeSteps = recipeGuide?.steps ?? [];
 
   const businessSchema = {
     "@context": "https://schema.org",
@@ -162,7 +165,7 @@ export default async function HomePage() {
 
         {/* Preparation Guide — 3D Stack */}
         <ErrorBoundary>
-          <PreparationScrollStack />
+          <PreparationScrollStack steps={recipeSteps} />
         </ErrorBoundary>
 
         {/* Founder — 04 */}

@@ -3,41 +3,21 @@
 import { motion } from "framer-motion";
 import { Clock, ChefHat } from "lucide-react";
 import { useState } from "react";
+import type { RecipeStep } from "@/lib/recipe-guides-server";
 
-const STEPS = [
-  {
-    step: 1,
-    title: "Prepare the Sheet",
-    description: "Remove the fresh laphing sheet from its vacuum-sealed packaging and lay it flat on a clean plate or cutting board.",
-    time: "30s",
-  },
-  {
-    step: 2,
-    title: "Prepare Soya Granules",
-    description: "Soak the soya granules in water for 2-3 minutes, then squeeze out excess water before using. This step is essential for the perfect texture.",
-    time: "3min",
-  },
-  {
-    step: 3,
-    title: "Apply Garlic Water",
-    description: "Drizzle our aromatic garlic water evenly over the entire surface of the sheet to build the base flavor profile.",
-    time: "30s",
-  },
-  {
-    step: 4,
-    title: "Add Signature Chilli Oil",
-    description: "Spread our slow-cooked, handcrafted chilli oil across the sheet. Adjust the amount to suit your personal spice threshold.",
-    time: "30s",
-  },
-  {
-    step: 5,
-    title: "Roll, Cut & Serve",
-    description: "Roll the sheet tightly into a cylinder, slice it into bite-sized pieces, and serve immediately for peak texture and taste.",
-    time: "60s",
-  },
+const FALLBACK_STEPS: RecipeStep[] = [
+  { step: 1, title: "Prepare the Sheet", description: "Remove the fresh laphing sheet from its vacuum-sealed packaging and lay it flat on a clean plate or cutting board.", time: "30s" },
+  { step: 2, title: "Prepare Soya Granules", description: "Soak the soya granules in water for 2-3 minutes, then squeeze out excess water before using. This step is essential for the perfect texture.", time: "3min" },
+  { step: 3, title: "Apply Garlic Water", description: "Drizzle our aromatic garlic water evenly over the entire surface of the sheet to build the base flavor profile.", time: "30s" },
+  { step: 4, title: "Add Signature Chilli Oil", description: "Spread our slow-cooked, handcrafted chilli oil across the sheet. Adjust the amount to suit your personal spice threshold.", time: "30s" },
+  { step: 5, title: "Roll, Cut & Serve", description: "Roll the sheet tightly into a cylinder, slice it into bite-sized pieces, and serve immediately for peak texture and taste.", time: "60s" },
 ];
 
-export function PreparationGuide() {
+interface PreparationGuideProps {
+  steps?: RecipeStep[];
+}
+
+export function PreparationGuide({ steps = FALLBACK_STEPS }: PreparationGuideProps) {
   const [activeStep, setActiveStep] = useState(0);
 
   return (
@@ -71,7 +51,7 @@ export function PreparationGuide() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
         {/* Left Side: Step List */}
         <div className="lg:col-span-7 flex flex-col gap-4">
-          {STEPS.map((s, index) => (
+          {steps.map((s, index) => (
             <motion.div
               key={s.step}
               initial={{ opacity: 0, x: -20 }}
