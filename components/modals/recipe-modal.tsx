@@ -46,12 +46,6 @@ const PREPARATION_STEPS = [
   },
   {
     step: 5,
-    title: "Sprinkle Seasoning Mix",
-    description: "Dust our secret blend of spices and salt evenly over the layers. This ties all the flavors together and adds that authentic street-food punch.",
-    time: "15 sec",
-  },
-  {
-    step: 6,
     title: "Roll, Cut & Serve",
     description: "Roll the sheet tightly into a cylinder from one end to the other. Using a sharp knife, slice it into bite-sized pieces (about 1-inch thick). Arrange on a plate, garnish with fresh coriander if desired, and serve immediately.",
     time: "60 sec",

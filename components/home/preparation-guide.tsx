@@ -31,12 +31,6 @@ const STEPS = [
   },
   {
     step: 5,
-    title: "Sprinkle Seasoning Mix",
-    description: "Dust our secret blend of spices and salt evenly over the layers to bind the flavor combinations together.",
-    time: "15s",
-  },
-  {
-    step: 6,
     title: "Roll, Cut & Serve",
     description: "Roll the sheet tightly into a cylinder, slice it into bite-sized pieces, and serve immediately for peak texture and taste.",
     time: "60s",

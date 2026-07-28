@@ -55,18 +55,6 @@ const STEPS = [
   },
   {
     step: "05",
-    title: "Sprinkle Seasoning Mix",
-    description: "Dust our proprietary Tibetan spice blend to tie all flavors together in a perfect, warm balance.",
-    bgColor: "bg-[#F7F3EC] border border-[#E6DFD5]",
-    textColor: "text-[#1A1A1A]",
-    descriptionColor: "text-[#7A7570]",
-    accentColor: "text-[#6E1D25]",
-    tag: "Final Polish",
-    badgeColor: "border-black/10 bg-black/5 text-[#1A1A1A]",
-    dotColor: "bg-[#6E1D25]",
-  },
-  {
-    step: "06",
     title: "Roll, Cut, and Enjoy!",
     description: "Roll the sheet tightly into a cylinder, cut it into bite-sized segments, and dive into authentic Tibetan comfort.",
     bgColor: "bg-[#D4A843] border border-[#B38C2B]",
