@@ -13,20 +13,20 @@ const STEPS = [
   },
   {
     step: 2,
+    title: "Prepare Soya Granules",
+    description: "Soak the soya granules in water for 2-3 minutes, then squeeze out excess water before using. This step is essential for the perfect texture.",
+    time: "3min",
+  },
+  {
+    step: 3,
     title: "Apply Garlic Water",
     description: "Drizzle our aromatic garlic water evenly over the entire surface of the sheet to build the base flavor profile.",
     time: "30s",
   },
   {
-    step: 3,
+    step: 4,
     title: "Add Signature Chilli Oil",
     description: "Spread our slow-cooked, handcrafted chilli oil across the sheet. Adjust the amount to suit your personal spice threshold.",
-    time: "30s",
-  },
-  {
-    step: 4,
-    title: "Drizzle Laphing Sauce",
-    description: "Drizzle the signature soy-umami sauce base over the sheet to balance the heat with rich savory depth.",
     time: "30s",
   },
   {

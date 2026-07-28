@@ -9,7 +9,7 @@ const STEPS = [
     step: "01",
     title: "Lay Starch Sheets Flat",
     description: "Unwrap our signature cold starch sheets (silky, chewy, and handset fresh every morning) and lay them flat on a clean board.",
-    bgColor: "bg-[#F7F3EC] border border-[#E6DFD5]", // Light Cream
+    bgColor: "bg-[#F7F3EC] border border-[#E6DFD5]",
     textColor: "text-[#1A1A1A]",
     descriptionColor: "text-[#7A7570]",
     accentColor: "text-[#6E1D25]",
@@ -19,9 +19,21 @@ const STEPS = [
   },
   {
     step: "02",
+    title: "Prepare Soya Granules",
+    description: "Soak the soya granules in water for 2-3 minutes, then squeeze out excess water before using. This softens them for perfect texture.",
+    bgColor: "bg-[#FFFFFF] border border-[#E6DFD5]",
+    textColor: "text-[#1A1A1A]",
+    descriptionColor: "text-[#7A7570]",
+    accentColor: "text-[#6E1D25]",
+    tag: "Hydration Step",
+    badgeColor: "border-black/10 bg-black/5 text-[#1A1A1A]",
+    dotColor: "bg-[#6E1D25]",
+  },
+  {
+    step: "03",
     title: "Infuse Garlic Water",
     description: "Drizzle the fresh garlic water evenly across the surface. This builds the foundational aromatic umami layer.",
-    bgColor: "bg-[#FFFFFF] border border-[#E6DFD5]", // Crisp White
+    bgColor: "bg-[#FFFFFF] border border-[#E6DFD5]",
     textColor: "text-[#1A1A1A]",
     descriptionColor: "text-[#7A7570]",
     accentColor: "text-[#6E1D25]",
@@ -30,10 +42,10 @@ const STEPS = [
     dotColor: "bg-[#6E1D25]",
   },
   {
-    step: "03",
+    step: "04",
     title: "Drizzle Chilli Oil",
     description: "Spread our slow-cooked, whole-spice-tempered chilli oil. Customize the quantity to balance the perfect heat level.",
-    bgColor: "bg-[#6E1D25] border border-[#521319]", // Deep Maroon
+    bgColor: "bg-[#6E1D25] border border-[#521319]",
     textColor: "text-[#FAFAF8]",
     descriptionColor: "text-white/80",
     accentColor: "text-[#D4A843]",
@@ -42,10 +54,10 @@ const STEPS = [
     dotColor: "bg-[#D4A843]",
   },
   {
-    step: "04",
-    title: "Glaze with Spice Dust",
-    description: "Dust our proprietary Tibetan spice mix to tie all flavors together in a perfect, warm balance.",
-    bgColor: "bg-[#F7F3EC] border border-[#E6DFD5]", // Light Cream
+    step: "05",
+    title: "Sprinkle Seasoning Mix",
+    description: "Dust our proprietary Tibetan spice blend to tie all flavors together in a perfect, warm balance.",
+    bgColor: "bg-[#F7F3EC] border border-[#E6DFD5]",
     textColor: "text-[#1A1A1A]",
     descriptionColor: "text-[#7A7570]",
     accentColor: "text-[#6E1D25]",
@@ -54,10 +66,10 @@ const STEPS = [
     dotColor: "bg-[#6E1D25]",
   },
   {
-    step: "05",
+    step: "06",
     title: "Roll, Cut, and Enjoy!",
     description: "Roll the sheet tightly into a cylinder, cut it into bite-sized segments, and dive into authentic Tibetan comfort.",
-    bgColor: "bg-[#D4A843] border border-[#B38C2B]", // Mustard Gold
+    bgColor: "bg-[#D4A843] border border-[#B38C2B]",
     textColor: "text-[#1A1A1A]",
     descriptionColor: "text-[#33221C]/80",
     accentColor: "text-[#6E1D25]",

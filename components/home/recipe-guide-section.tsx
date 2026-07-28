@@ -8,9 +8,9 @@ import { useProxiedUrl } from "@/lib/hooks/use-proxied-url";
 
 const STEPS = [
   { step: "01", title: "Prepare the Sheet", description: "Remove the fresh laphing sheet from its vacuum-sealed packaging and lay it flat on a clean plate or cutting board.", time: "30s" },
-  { step: "02", title: "Apply Garlic Water", description: "Drizzle our aromatic garlic water evenly over the entire surface of the sheet to build the base flavor profile.", time: "30s" },
-  { step: "03", title: "Add Signature Chilli Oil", description: "Spread our slow-cooked, handcrafted chilli oil across the sheet. Adjust the amount to suit your personal spice threshold.", time: "30s" },
-  { step: "04", title: "Drizzle Laphing Sauce", description: "Drizzle the signature soy-umami sauce base over the sheet to balance the heat with rich savory depth.", time: "30s" },
+  { step: "02", title: "Prepare Soya Granules", description: "Soak the soya granules in water for 2-3 minutes, then squeeze out excess water thoroughly. This softens them for the perfect texture.", time: "3min" },
+  { step: "03", title: "Apply Garlic Water", description: "Drizzle our aromatic garlic water evenly over the entire surface of the sheet to build the base flavor profile.", time: "30s" },
+  { step: "04", title: "Add Signature Chilli Oil", description: "Spread our slow-cooked, handcrafted chilli oil across the sheet. Adjust the amount to suit your personal spice threshold.", time: "30s" },
   { step: "05", title: "Sprinkle Seasoning Mix", description: "Dust our secret blend of spices and salt evenly over the layers to bind the flavor combinations together.", time: "15s" },
   { step: "06", title: "Roll, Cut & Serve", description: "Roll the sheet tightly into a cylinder, slice it into bite-sized pieces, and serve immediately for peak texture and taste.", time: "60s" },
 ];

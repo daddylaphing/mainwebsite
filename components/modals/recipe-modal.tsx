@@ -13,7 +13,7 @@ const INGREDIENTS = [
   { name: "Fresh Laphing Sheet", amount: "1 sheet", included: true },
   { name: "Signature Chilli Oil", amount: "2-3 tbsp", included: true },
   { name: "Garlic Water", amount: "2 tbsp", included: true },
-  { name: "Laphing Sauce (Soy-based)", amount: "2 tbsp", included: true },
+  { name: "Soya Granules", amount: "1 portion", included: true },
   { name: "Secret Seasoning Mix", amount: "1 tsp", included: true },
   { name: "Fresh Coriander", amount: "For garnish", included: false },
   { name: "Crushed Peanuts", amount: "Optional", included: false },
@@ -28,20 +28,20 @@ const PREPARATION_STEPS = [
   },
   {
     step: 2,
+    title: "Prepare Soya Granules",
+    description: "Soak the soya granules in water for 2-3 minutes until soft, then squeeze out all excess water thoroughly. This step is essential for the correct texture.",
+    time: "3 min",
+  },
+  {
+    step: 3,
     title: "Apply Garlic Water",
     description: "Drizzle the aromatic garlic water evenly over the entire surface of the sheet. This builds the base flavor profile and adds that signature tangy kick.",
     time: "30 sec",
   },
   {
-    step: 3,
+    step: 4,
     title: "Add Signature Chilli Oil",
     description: "Spread our slow-cooked, handcrafted chilli oil across the sheet. Start with 2 tablespoons and adjust based on your spice preference. The oil should coat evenly.",
-    time: "30 sec",
-  },
-  {
-    step: 4,
-    title: "Drizzle Laphing Sauce",
-    description: "Pour the signature soy-umami sauce base over the sheet. This balances the heat with rich savory depth. Don't skip this step!",
     time: "30 sec",
   },
   {
