@@ -90,35 +90,49 @@ function InstagramIcon({ className }: { className?: string }) {
 }
 
 // ─── Video Card ───────────────────────────────────────────────────────────────
+// Cards show a static gradient background (no video preload) to save bandwidth.
+// Video only loads when user clicks to open the modal.
 function VideoCard({ video, onExpand }: { video: VideoItem; onExpand: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
+
+  // Pick a deterministic gradient based on the video id for visual variety
+  const gradients = [
+    "from-[#3a1c1c] via-[#6E1D25] to-[#1a0a0a]",
+    "from-[#1a1a2e] via-[#4a2060] to-[#0a0a1a]",
+    "from-[#1a2e1a] via-[#2d5a27] to-[#0a1a0a]",
+    "from-[#2e2a1a] via-[#6b5b1a] to-[#1a1a0a]",
+    "from-[#1a2a2e] via-[#1a5a6b] to-[#0a1a1a]",
+  ];
+  const gradientIndex = video.id.charCodeAt(video.id.length - 1) % gradients.length;
+  const gradient = gradients[gradientIndex];
 
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onExpand}
-      className="shrink-0 w-[200px] md:w-[240px] aspect-[9/16] rounded-[20px] overflow-hidden relative cursor-pointer shadow-[0_8px_24px_rgba(26,26,26,0.12)] hover:shadow-[0_16px_40px_rgba(26,26,26,0.18)] transition-shadow duration-500 border border-[rgba(26,26,26,0.07)] bg-[#E8E0D5]"
+      className="shrink-0 w-[200px] md:w-[240px] aspect-[9/16] rounded-[20px] overflow-hidden relative cursor-pointer shadow-[0_8px_24px_rgba(26,26,26,0.12)] hover:shadow-[0_16px_40px_rgba(26,26,26,0.18)] transition-shadow duration-500 border border-[rgba(26,26,26,0.07)]"
       style={{ willChange: "transform" }}
     >
-      {/* Autoplay muted video for preview */}
-      <video
-        src={video.videoUrl}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        poster={video.thumbnailUrl}
-        className="absolute inset-0 w-full h-full object-cover z-0"
-      />
+      {/* Static background — no video download until user clicks */}
+      {video.thumbnailUrl ? (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={video.thumbnailUrl}
+          alt={video.name}
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          loading="lazy"
+        />
+      ) : (
+        <div className={`absolute inset-0 bg-gradient-to-br ${gradient} z-0`} />
+      )}
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,8,5,0.88)] via-[rgba(10,8,5,0.06)] to-[rgba(10,8,5,0.22)] z-10 pointer-events-none" />
 
-      {/* Hover play icon */}
-      <div className={`absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}>
-        <div className="w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+      {/* Play icon — always visible (not just on hover) to signal it's a video */}
+      <div className="absolute inset-0 z-20 flex items-center justify-center">
+        <div className={`w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transition-transform duration-200 ${isHovered ? "scale-110" : "scale-100"}`}>
           <Play className="h-4 w-4 text-[#1A1A1A] fill-[#1A1A1A] ml-0.5" />
         </div>
       </div>
@@ -330,29 +344,33 @@ export function ReviewsSectionDynamic({ reviews }: ReviewsSectionDynamicProps) {
             <div className="relative">
               <div
                 onClick={() => setModalVideo(featuredVideo)}
-                className="relative aspect-[9/16] max-w-[380px] rounded-[24px] overflow-hidden cursor-pointer shadow-[0_20px_60px_rgba(26,26,26,0.15)] hover:shadow-[0_30px_80px_rgba(26,26,26,0.25)] transition-all duration-500 border border-[rgba(26,26,26,0.08)] bg-[#E8E0D5] group"
+                className="relative aspect-[9/16] max-w-[380px] rounded-[24px] overflow-hidden cursor-pointer shadow-[0_20px_60px_rgba(26,26,26,0.15)] hover:shadow-[0_30px_80px_rgba(26,26,26,0.25)] transition-all duration-500 border border-[rgba(26,26,26,0.08)] group"
               >
-                <video
-                  src={featuredVideo.videoUrl}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  poster={featuredVideo.thumbnailUrl}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,8,5,0.9)] via-[rgba(10,8,5,0.1)] to-[rgba(10,8,5,0.3)] pointer-events-none" />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                  <div className="w-16 h-16 bg-white/95 backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl">
+                {/* Static background — dark gradient, no video download on page load */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#3a1c1c] via-[#6E1D25] to-[#1a0a0a]" />
+
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,8,5,0.85)] via-[rgba(10,8,5,0.1)] to-[rgba(10,8,5,0.25)] pointer-events-none z-10" />
+
+                {/* Always-visible play button */}
+                <div className="absolute inset-0 flex items-center justify-center z-20">
+                  <div className="w-16 h-16 bg-white/90 group-hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-2xl transition-transform duration-300 group-hover:scale-110">
                     <Play className="h-7 w-7 text-[#1A1A1A] fill-[#1A1A1A] ml-0.5" />
                   </div>
                 </div>
-                <div className="absolute top-4 right-4 z-20">
+
+                {/* Instagram badge */}
+                <div className="absolute top-4 right-4 z-30">
                   <a href={featuredVideo.instagramUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
                     className="w-9 h-9 bg-gradient-to-br from-[#833AB4] via-[#FD1D1D] to-[#F77737] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform">
                     <InstagramIcon className="h-4 w-4 text-white" />
                   </a>
+                </div>
+
+                {/* Label at bottom */}
+                <div className="absolute bottom-6 left-6 right-6 z-20">
+                  <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-1" style={{ fontFamily: "'Inter', sans-serif" }}>Tap to watch</p>
+                  <p className="text-white font-bold text-base leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>{featuredVideo.quote}</p>
                 </div>
               </div>
             </div>
