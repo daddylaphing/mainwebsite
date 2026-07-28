@@ -14,7 +14,7 @@ import { ProductsSectionLoading } from "@/components/home/products-section-loadi
 import { ReviewCardSkeleton } from "@/components/ui/loading-skeleton";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { getFeaturedProducts } from "@/lib/products";
-import { getFeaturedReviews } from "@/lib/reviews";
+import { getReviews } from "@/lib/reviews";
 import { getFAQs } from "@/lib/faqs-server";
 import { CurvedLoopDivider } from "@/components/home/curved-loop-divider";
 import { FloatingSpiceFlakes } from "@/components/ui/floating-spice-flakes";
@@ -37,7 +37,7 @@ async function ProductsData() {
 }
 
 async function ReviewsData() {
-  const reviews = await getFeaturedReviews(6);
+  const reviews = await getReviews();
   return <ReviewsSectionDynamic reviews={reviews ?? []} />;
 }
 
