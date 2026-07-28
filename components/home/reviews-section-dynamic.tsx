@@ -25,26 +25,39 @@ interface VideoItem {
 
 /**
  * Convert a DB Review to VideoItem.
- * - instagram_reel_url: if it ends in .mp4 or contains supabase storage → use as videoUrl directly.
- *   Otherwise treat it as the Instagram link and derive no videoUrl (skip).
- * - thumbnail_url: used as poster/thumbnail image for the card background.
- * The admin form now saves Supabase storage MP4 URLs in instagram_reel_url.
+ * Priority for video URL:
+ * 1. instagram_reel_url if it's a direct MP4/storage URL
+ * 2. thumbnail_url if it's a storage video URL (old seed data pattern)
+ * Otherwise skip.
  */
 function reviewToVideoItem(review: Review): VideoItem | null {
-  const url = review.instagram_reel_url;
-  if (!url) return null;
+  const reelUrl = review.instagram_reel_url || "";
+  const thumbUrl = review.thumbnail_url || "";
 
-  const isDirectVideo = url.includes(".mp4") || url.includes("supabase") || url.includes("/storage/");
-  if (!isDirectVideo) return null; // Skip pure Instagram reel links — no video to play
+  const isStorageUrl = (u: string) =>
+    u.includes(".mp4") || u.includes("/storage/v1/object/public/reviews/videos");
+
+  const videoUrl = isStorageUrl(reelUrl)
+    ? reelUrl
+    : isStorageUrl(thumbUrl)
+    ? thumbUrl
+    : null;
+
+  if (!videoUrl) return null;
+
+  // Instagram link: use reel URL only if it's actually an Instagram URL
+  const instagramUrl = reelUrl.includes("instagram.com")
+    ? reelUrl
+    : `https://www.instagram.com/laphingdaddy/`;
 
   return {
     id: review.id,
-    videoUrl: url,
+    videoUrl,
     name: review.reviewer_name,
     handle: review.reviewer_instagram || `@${review.reviewer_name.toLowerCase().replace(/\s+/g, "")}`,
-    instagramUrl: url, // Will point to storage URL; Instagram badge is still shown
+    instagramUrl,
     quote: review.quote,
-    thumbnailUrl: review.thumbnail_url || undefined,
+    thumbnailUrl: undefined,
   };
 }
 
@@ -233,16 +246,20 @@ function VideoModal({ video, onClose }: { video: VideoItem; onClose: () => void 
 export function ReviewsSectionDynamic({ reviews }: ReviewsSectionDynamicProps) {
   const [modalVideo, setModalVideo] = useState<VideoItem | null>(null);
 
-  // Convert active DB reviews with video URLs to VideoItems
+  // DB videos (active reviews with a playable video URL)
   const dbVideos = useMemo(() => {
     return reviews
-      .filter((r) => r.active && r.instagram_reel_url)
+      .filter((r) => r.active)
       .map(reviewToVideoItem)
       .filter((v): v is VideoItem => v !== null);
   }, [reviews]);
 
-  // Use DB videos if any exist; otherwise fall back to hardcoded
-  const videos = dbVideos.length > 0 ? dbVideos : FALLBACK_VIDEOS;
+  // Show DB videos first, then any fallbacks not already covered by a DB review (matched by name)
+  const dbNames = new Set(dbVideos.map((v) => v.name.toLowerCase()));
+  const extraFallbacks = FALLBACK_VIDEOS.filter(
+    (v) => !dbNames.has(v.name.toLowerCase())
+  );
+  const videos = [...dbVideos, ...extraFallbacks];
 
   // Double for seamless marquee loop
   const loopVideos = [...videos, ...videos];
