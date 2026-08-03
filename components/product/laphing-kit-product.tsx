@@ -136,9 +136,9 @@ export function LaphingKitProduct({ product }: LaphingKitProductProps) {
   };
 
   const kitIncludes = [
-    { name: "3 Fresh Laphing Sheets", icon: Package },
-    { name: "Signature Chilli Oil (3 Portions)", icon: Package },
-    { name: "Garlic Water (3 Portions)", icon: Package },
+    { name: "1 Fresh Laphing Sheet", icon: Package },
+    { name: "Signature Chilli Oil", icon: Package },
+    { name: "Garlic Water", icon: Package },
     { name: "Soya Chunks", icon: Package },
     { name: "Wai Wai Crispy Topping", icon: Package },
     { name: "Step-by-Step Guide", icon: Package },
