@@ -99,7 +99,7 @@ export function KitCustomizer({ kitQuantity, onChange, disabled = false }: KitCu
           Customize Your Kit
         </h3>
         <p className="text-sm text-[#7A7570] mb-6">
-          Every kit includes 3 fresh laphing sheets and materials to make 3 portions: signature chilli oil, garlic water, soya chunks, and crispy wai wai topping. Add extras below.
+          Every kit includes 1 fresh laphing sheet with signature chilli oil, garlic water, soya chunks, and crispy wai wai topping. Add extras below.
         </p>
 
         <div className="space-y-4">
